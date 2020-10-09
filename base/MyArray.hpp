@@ -13,7 +13,7 @@ public :
 		this->pAddress = new T[this->m_Capacity];
 	}
 	
-	//拷贝构造
+	
 	MyArray(const MyArray& arr)
 	{
 		cout << "MyArray的拷贝构造调用" <<endl;
