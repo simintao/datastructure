@@ -93,37 +93,37 @@ public:
     explicit Iterator(Map<KEY, VALUE, CMP> *container)
         : _container(container) {
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     explicit Iterator(Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     void init(Map<KEY, VALUE, CMP> *container) {
       _container = container;
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     void init(Map<KEY, VALUE, CMP> &container) {
       _container = &container;
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     bool hasNext() {
-      return _container != nullptr && iter_ != _container->end();
+      return _container != nullptr && _iter != _container->end();
     }
-    VALUE next() { return iter_++->second; }
+    VALUE next() { return _iter++->second; }
     void next(KEY &key, VALUE &value) {
-      key = iter_->first;
-      value = iter_->second;
-      iter_++;
+      key = _iter->first;
+      value = _iter->second;
+      _iter++;
     }
     Map<KEY, VALUE, CMP> *container() { return _container; }
 
   private:
     Map<KEY, VALUE, CMP> *_container;
-    typename Map<KEY, VALUE, CMP>::iterator iter_;
+    typename Map<KEY, VALUE, CMP>::iterator _iter;
   };
 
   class ConstIterator {
@@ -132,37 +132,37 @@ public:
     explicit ConstIterator(const Map<KEY, VALUE, CMP> *container)
         : _container(container) {
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     explicit ConstIterator(const Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     void init(const Map<KEY, VALUE, CMP> *container) {
       _container = container;
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     void init(const Map<KEY, VALUE, CMP> &container) {
       _container = &container;
       if (_container != nullptr)
-        iter_ = _container->begin();
+        _iter = _container->begin();
     }
     bool hasNext() {
-      return _container != nullptr && iter_ != _container->end();
+      return _container != nullptr && _iter != _container->end();
     }
-    VALUE next() { return iter_++->second; }
+    VALUE next() { return _iter++->second; }
     void next(KEY &key, VALUE &value) {
-      key = iter_->first;
-      value = iter_->second;
-      iter_++;
+      key = _iter->first;
+      value = _iter->second;
+      _iter++;
     }
     const Map<KEY, VALUE, CMP> *container() { return _container; }
 
   private:
     const Map<KEY, VALUE, CMP> *_container;
-    typename Map<KEY, VALUE, CMP>::const_iterator iter_;
+    typename Map<KEY, VALUE, CMP>::const_iterator _iter;
   };
 };
 
