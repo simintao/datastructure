@@ -171,7 +171,7 @@ public:
 };
 
 template <class KEY>
-bool Set<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
+bool HSet<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
                           const absl::flat_hash_set<KEY> *set2) {
   if ((set1 == nullptr || set1->empty()) && (set2 == nullptr || set2->empty()))
     return true;
@@ -191,7 +191,7 @@ bool Set<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
 }
 
 template <class KEY>
-bool Set<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
+bool HSet<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
   if (this->empty() && set2->empty())
     return true;
   else {
@@ -206,13 +206,13 @@ bool Set<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
 }
 
 template <class KEY>
-bool Set<KEY>::intersects(absl::flat_hash_set<KEY> &set1,
+bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> &set1,
                                absl::flat_hash_set<KEY> &set2) {
   return intersects(&set1, &set2);
 }
 
 template <class KEY>
-bool Set<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
+bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
                                absl::flat_hash_set<KEY> *set2) {
   if (set1 && !set1->empty() && set2 && !set2->empty()) {
     const absl::flat_hash_set<KEY> *small = set1;
@@ -257,14 +257,14 @@ bool Set<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
  * @return false 
  */
 template <class KEY>
-bool operator<(const Set<KEY> &set1, const Set<KEY> &set2) {
+bool operator<(const HSet<KEY> &set1, const HSet<KEY> &set2) {
   const absl::flat_hash_set<KEY> &set1_base = set1;
   const absl::flat_hash_set<KEY> &set2_base = set2;
   return set1_base < set2_base;
 }
 
 template <class KEY>
-void Set<KEY>::insertSet(const absl::flat_hash_set<KEY> *set2) {
+void HSet<KEY>::insertSet(const absl::flat_hash_set<KEY> *set2) {
   if (set2)
     this->insert(set2->begin(), set2->end());
 }
