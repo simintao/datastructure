@@ -1,17 +1,13 @@
-// Copyright (c) 2020, Pcl.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/**
+ * @file Set.hh
+ * @author simin tao (taosm@pcl.ac.cn)
+ * @brief The set container for the eda project.
+ * @version 0.1
+ * @date 2020-10-09
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 
 #pragma once
 
@@ -19,7 +15,10 @@
 
 namespace pcl {
 
-// Add convenience functions around STL container.
+/**
+ * @brief Add convenience functions around abseil set container.
+ * 
+ */
 template <class KEY, class CMP = std::less<KEY>>
 class Set : public absl::btree_set<KEY, CMP> {
 public:
@@ -28,7 +27,12 @@ public:
   Set() : absl::btree_set<KEY, CMP>() {}
   explicit Set(const CMP &cmp) : absl::btree_set<KEY, CMP>(cmp) {}
 
-  // Find the entry corresponding to key.
+  /**
+   * @brief Find the entry corresponding to key.
+   * 
+   * @param key 
+   * @return KEY 
+   */
   KEY findKey(const KEY key) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
@@ -36,17 +40,37 @@ public:
     else
       return nullptr;
   }
-  // Find out if key is in the set.
+
+  /**
+   * @brief Find out if key is in the set.
+   * 
+   * @param key 
+   * @return true when has key.
+   * @return false when do not has key.
+   */
   bool hasKey(const KEY key) const {
     auto find_iter = this->find(key);
     return find_iter != this->end();
   }
 
-  // Slowaris STL doesn't support operator== on sets.
+   /**
+   * @brief Judge whether the two set is equal. 
+   * 
+   * @param set1 
+   * @param set2 
+   * @return true when the two set is equal.
+   * @return false 
+   */
   static bool equal(const absl::btree_set<KEY, CMP> *set1,
                     const absl::btree_set<KEY, CMP> *set2);
 
-  // True if set2 is a subset of this set.
+  /**
+   * @brief Judge the set2 is the subset of the set.
+   * 
+   * @param set2 
+   * @return true if set2 is a subset of this set.
+   * @return false 
+   */
   bool isSubset(const absl::btree_set<KEY, CMP> *set2);
 
   void insertSet(const absl::btree_set<KEY, CMP> *set2);
@@ -67,11 +91,16 @@ public:
   static bool intersects(absl::btree_set<KEY, CMP> *set1,
                          absl::btree_set<KEY, CMP> *set2);
 
-  // Java style container itererator
-  //  Set::Iterator<Key*> iter(set);
-  //  while (iter.hasNext()) {
-  //    Key *v = iter.next();
-  //  }
+
+  /**
+   * @brief Java style container itererator.
+   * 
+   *  for example:
+   *  Set::Iterator<Key*> iter(set);
+   *  while (iter.hasNext()) {
+   *    Key *v = iter.next();
+   *  }
+   */
   class Iterator {
   public:
     Iterator() : _container(nullptr) {}
@@ -218,7 +247,16 @@ bool Set<KEY, CMP>::intersects(absl::btree_set<KEY, CMP> *set1,
   return false;
 }
 
-// A complicated way to call the base class operator<.
+/**
+ * @brief A complicated way to call the base class operator<.
+ * 
+ * @tparam KEY 
+ * @tparam CMP 
+ * @param set1 
+ * @param set2 
+ * @return true 
+ * @return false 
+ */
 template <class KEY, class CMP>
 bool operator<(const Set<KEY, CMP> &set1, const Set<KEY, CMP> &set2) {
   const absl::btree_set<KEY, CMP> &set1_base = set1;
