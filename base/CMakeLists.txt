@@ -9,4 +9,4 @@ add_subdirectory(abseil-cpp)
 add_executable(test MapTest.cc)
 
 # Declare dependency on the absl::strings library
-target_link_libraries(test gtest_main gtest)
+target_link_libraries(test gtest_main gtest pthread)

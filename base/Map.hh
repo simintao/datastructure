@@ -17,7 +17,7 @@
 
 #include "absl/container/btree_map.h"
 
-namespace pcl {
+namespace pcl {    
 
 // Add convenience functions around abseil container.
 template <class KEY, class VALUE, class CMP = std::less<KEY>>
@@ -79,7 +79,7 @@ public:
 
   void deleteContentsClear() {
     deleteContents();
-    std::map<KEY, VALUE, CMP>::clear();
+    Map<KEY, VALUE, CMP>::clear();
   }
 
   // Java style container itererator
@@ -90,22 +90,22 @@ public:
   class Iterator {
   public:
     Iterator() : _container(nullptr) {}
-    explicit Iterator(std::map<KEY, VALUE, CMP> *container)
+    explicit Iterator(Map<KEY, VALUE, CMP> *container)
         : _container(container) {
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    explicit Iterator(std::map<KEY, VALUE, CMP> &container)
+    explicit Iterator(Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    void init(std::map<KEY, VALUE, CMP> *container) {
+    void init(Map<KEY, VALUE, CMP> *container) {
       _container = container;
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    void init(std::map<KEY, VALUE, CMP> &container) {
+    void init(Map<KEY, VALUE, CMP> &container) {
       _container = &container;
       if (_container != nullptr)
         iter_ = _container->begin();
@@ -119,32 +119,32 @@ public:
       value = iter_->second;
       iter_++;
     }
-    std::map<KEY, VALUE, CMP> *container() { return _container; }
+    Map<KEY, VALUE, CMP> *container() { return _container; }
 
   private:
-    std::map<KEY, VALUE, CMP> *_container;
-    typename std::map<KEY, VALUE, CMP>::iterator iter_;
+    Map<KEY, VALUE, CMP> *_container;
+    typename Map<KEY, VALUE, CMP>::iterator iter_;
   };
 
   class ConstIterator {
   public:
     ConstIterator() : _container(nullptr) {}
-    explicit ConstIterator(const std::map<KEY, VALUE, CMP> *container)
+    explicit ConstIterator(const Map<KEY, VALUE, CMP> *container)
         : _container(container) {
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    explicit ConstIterator(const std::map<KEY, VALUE, CMP> &container)
+    explicit ConstIterator(const Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    void init(const std::map<KEY, VALUE, CMP> *container) {
+    void init(const Map<KEY, VALUE, CMP> *container) {
       _container = container;
       if (_container != nullptr)
         iter_ = _container->begin();
     }
-    void init(const std::map<KEY, VALUE, CMP> &container) {
+    void init(const Map<KEY, VALUE, CMP> &container) {
       _container = &container;
       if (_container != nullptr)
         iter_ = _container->begin();
@@ -158,11 +158,11 @@ public:
       value = iter_->second;
       iter_++;
     }
-    const std::map<KEY, VALUE, CMP> *container() { return _container; }
+    const Map<KEY, VALUE, CMP> *container() { return _container; }
 
   private:
-    const std::map<KEY, VALUE, CMP> *_container;
-    typename std::map<KEY, VALUE, CMP>::const_iterator iter_;
+    const Map<KEY, VALUE, CMP> *_container;
+    typename Map<KEY, VALUE, CMP>::const_iterator iter_;
   };
 };
 
