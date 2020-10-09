@@ -7,72 +7,72 @@ class Array
 {
 public :
 	Array(int capacity) {
-		cout << "Array的有参构造调用" <<endl;
-		this->m_Capacity = capacity;
-		this->m_Size = 0;
-		this->pAddress = new T[this->m_Capacity];
+		
+		this->_capacity = capacity;
+		this->_size = 0;
+		this->address = new T[this->_capacity];
 	}
 	
 	
 	Array(const Array& arr)
 	{
-		cout << "Array的拷贝构造调用" <<endl;
-		this->m_Capacity = arr.m_Capacity;
-		this->m_Size = arr.m_Size;
-		this->pAddress = new T[arr.m_Capacity];
-		for (int i = 0; i < this->m_Size; i++) {
-			this->pAddress[i] = arr.pAddress[i];
+		
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->address = new T[arr._capacity];
+		for (int i = 0; i < this->_size; i++) {
+			this->address[i] = arr.address[i];
 		}
 	}
 	Array& operator=(const Array& arr) 
 	{
-		cout << "Array的operator=调用" <<endl;
-		if (this->pAddress != NULL) {
-			delete[] this->pAddress;
-			this->pAddress = NULL;
-			this->m_Capacity = 0;
-			this->m_Size = 0;
+		
+		if (this->address != NULL) {
+			delete[] this->address;
+			this->address = NULL;
+			this->_capacity = 0;
+			this->_size = 0;
 		}
-		this->m_Capacity = arr.m_Capacity;
-		this->m_Size = arr.m_Size;
-		this->pAddress = new T[arr.m_Capacity];
-		for (int i = 0; i < this->m_Size; i++) {
-			this->pAddress[i] = arr.pAddress[i];
+		this->_capacity = arr._capacity;
+		this->_size = arr._size;
+		this->address = new T[arr._capacity];
+		for (int i = 0; i < this->_size; i++) {
+			this->address[i] = arr.address[i];
 		}
 		return *this;
 	}
 	void Push_Back(const T& val) {
-		if (this->m_Capacity == this->m_Size) {
+		if (this->_capacity == this->_size) {
 			return;
 		}
-		this->pAddress[this->m_Size] = val;
-		this->m_Size++;
+		this->address[this->_size] = val;
+		this->_size++;
 	}
 	void Pop_Back() {
-		if (this->m_Capacity == 0) {
+		if (this->_capacity == 0) {
 			return;
 		}
-		this->m_Size--;
+		this->_size--;
 	}
 	T& operator[](int index) {
-		return this->pAddress[index];
+		return this->address[index];
 	}
 	int getCapacity() {
-		return this->m_Capacity;
+		return this->_capacity;
 	}
 	int getSize() {
-		return this->m_Size;
+		return this->_size;
 	}
 
 	~Array() {
-		if (this->pAddress != NULL) {
-			cout << "Array的析构函数构造调用"<<endl;
-			delete[] this->pAddress;
-			this->pAddress = NULL;
+		if (this->address != NULL) {
+			
+			delete[] this->address;
+			this->address = NULL;
 		}
 	}
 private:
-	T* pAddress;
-	int m_Capacity;
-	int m_Size;
+	T* address;
+	int _capacity;
+	int _size;
 };
