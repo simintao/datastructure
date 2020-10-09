@@ -25,7 +25,7 @@ namespace pcl {
 template <class KEY, class VALUE>
 class HMap : public absl::flat_hash_map<KEY, VALUE> {
 public:
-  using Base = typename Map::flat_hash_map;
+  using Base = typename HMap::flat_hash_map;
 
   HMap() : absl::flat_hash_map<KEY, VALUE>() {}
   using Base::Base;

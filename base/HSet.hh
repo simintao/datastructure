@@ -20,11 +20,11 @@ namespace pcl {
  * 
  */
 template <class KEY>
-class Set : public absl::flat_hash_set<KEY> {
+class HSet : public absl::flat_hash_set<KEY> {
 public:
-  using Base = typename Set::flat_hash_set;
+  using Base = typename HSet::flat_hash_set;
   using Base::Base;
-  Set() : absl::flat_hash_set<KEY>() {}
+  HSet() : absl::flat_hash_set<KEY>() {}
 
   /**
    * @brief Find the entry corresponding to key.
