@@ -177,8 +177,8 @@ bool HSet<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
     return true;
   else if (set1 && set2) {
     if (set1->size() == set2->size()) {
-      typename Set<KEY>::ConstIterator iter1(set1);
-      typename Set<KEY>::ConstIterator iter2(set2);
+      typename HSet<KEY>::ConstIterator iter1(set1);
+      typename HSet<KEY>::ConstIterator iter2(set2);
       while (iter1.hasNext() && iter2.hasNext()) {
         if (iter1.next() != iter2.next())
           return false;
@@ -195,7 +195,7 @@ bool HSet<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
   if (this->empty() && set2->empty())
     return true;
   else {
-    typename Set<KEY>::ConstIterator iter2(set2);
+    typename HSet<KEY>::ConstIterator iter2(set2);
     while (iter2.hasNext()) {
       const KEY key2 = iter2.next();
       if (!hasKey(key2))
