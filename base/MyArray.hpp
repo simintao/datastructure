@@ -24,7 +24,7 @@ public :
 			this->pAddress[i] = arr.pAddress[i];
 		}
 	}
-	//operator= 防止浅拷贝问题
+	//operator= 
 	MyArray& operator=(const MyArray& arr) 
 	{
 		cout << "MyArray的operator=调用" <<endl;
