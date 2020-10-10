@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-using namespace std;
+using namespace pcl;
 
 template<class T>
 class Array
