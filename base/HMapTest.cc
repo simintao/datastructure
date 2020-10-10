@@ -1,4 +1,4 @@
-#include "HMap.hh"
+#include "HMap.h"
 #include "gtest/gtest.h"
 
 using pcl::HMap;

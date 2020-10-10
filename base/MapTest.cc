@@ -1,4 +1,4 @@
-#include "Map.hh"
+#include "Map.h"
 #include "gtest/gtest.h"
 
 using pcl::Map;

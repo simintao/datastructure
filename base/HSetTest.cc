@@ -1,4 +1,4 @@
-#include "HSet.hh"
+#include "HSet.h"
 #include "gtest/gtest.h"
 
 using pcl::HSet;
