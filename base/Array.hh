@@ -41,14 +41,14 @@ public :
 		}
 		return *this;
 	}
-	void Push_Back(const T& val) {
+	void pushBack(const T& val) {
 		if (this->_capacity == this->_size) {
 			return;
 		}
 		this->address[this->_size] = val;
 		this->_size++;
 	}
-	void Pop_Back() {
+	void popBack() {
 		if (this->_capacity == 0) {
 			return;
 		}
