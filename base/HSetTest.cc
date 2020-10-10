@@ -5,7 +5,7 @@ using pcl::HSet;
 
 namespace {
 
-TEST(SetTest, Ctor) {
+TEST(HSetTest, Ctor) {
   HSet<int> hset = {1, 2, 3};
 
   EXPECT_TRUE(hset.hasKey(1));
