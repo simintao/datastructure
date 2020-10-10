@@ -11,4 +11,4 @@ TEST(MapTest, Ctor) {
   EXPECT_STREQ(bmap.findKey(1), "test");
 }
 
-} // namespace
+}  // namespace

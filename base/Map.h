@@ -4,27 +4,29 @@
  * @brief The map container for the eda project.
  * @version 0.1
  * @date 2020-10-09
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 
 #pragma once
 
+#include <functional>
+
 #include "absl/container/btree_map.h"
 
-namespace pcl {    
+namespace pcl {
 
 /**
  * @brief Add convenience functions around abseil container.
- * 
- * @tparam KEY 
- * @tparam VALUE 
- * @tparam CMP 
+ *
+ * @tparam KEY
+ * @tparam VALUE
+ * @tparam CMP
  */
 template <class KEY, class VALUE, class CMP = std::less<KEY>>
 class Map : public absl::btree_map<KEY, VALUE, CMP> {
-public:
+ public:
   using Base = typename Map::btree_map;
 
   Map() : absl::btree_map<KEY, VALUE, CMP>() {}
@@ -33,10 +35,10 @@ public:
 
   /**
    * @brief Find out if key is in the map.
-   * 
-   * @param key 
+   *
+   * @param key
    * @return true if find out.
-   * @return false 
+   * @return false
    */
   bool hasKey(const KEY key) const { return this->find(key) != this->end(); }
 
@@ -75,14 +77,12 @@ public:
 
   void deleteContents() {
     Iterator iter(this);
-    while (iter.hasNext())
-      delete iter.next();
+    while (iter.hasNext()) delete iter.next();
   }
 
   void deleteArrayContents() {
     Iterator iter(this);
-    while (iter.hasNext())
-      delete[] iter.next();
+    while (iter.hasNext()) delete[] iter.next();
   }
 
   void deleteContentsClear() {
@@ -90,38 +90,32 @@ public:
     Map<KEY, VALUE, CMP>::clear();
   }
 
-
   /**
    * @brief Java style container itererator.
-   *    
+   *
    * Map::Iterator<string *, Value, stringLess> iter(map);
    * while (iter.hasNext()) {
    *   Value *v = iter.next();
    * }
-   * 
+   *
    */
   class Iterator {
-  public:
+   public:
     Iterator() : _container(nullptr) {}
-    explicit Iterator(Map<KEY, VALUE, CMP> *container)
-        : _container(container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+    explicit Iterator(Map<KEY, VALUE, CMP> *container) : _container(container) {
+      if (_container != nullptr) _iter = _container->begin();
     }
     explicit Iterator(Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(Map<KEY, VALUE, CMP> *container) {
       _container = container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(Map<KEY, VALUE, CMP> &container) {
       _container = &container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
@@ -134,33 +128,29 @@ public:
     }
     Map<KEY, VALUE, CMP> *container() { return _container; }
 
-  private:
+   private:
     Map<KEY, VALUE, CMP> *_container;
     typename Map<KEY, VALUE, CMP>::iterator _iter;
   };
 
   class ConstIterator {
-  public:
+   public:
     ConstIterator() : _container(nullptr) {}
     explicit ConstIterator(const Map<KEY, VALUE, CMP> *container)
         : _container(container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     explicit ConstIterator(const Map<KEY, VALUE, CMP> &container)
         : _container(&container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(const Map<KEY, VALUE, CMP> *container) {
       _container = container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(const Map<KEY, VALUE, CMP> &container) {
       _container = &container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
@@ -173,10 +163,10 @@ public:
     }
     const Map<KEY, VALUE, CMP> *container() { return _container; }
 
-  private:
+   private:
     const Map<KEY, VALUE, CMP> *_container;
     typename Map<KEY, VALUE, CMP>::const_iterator _iter;
   };
 };
 
-} // namespace pcl
+}  // namespace pcl

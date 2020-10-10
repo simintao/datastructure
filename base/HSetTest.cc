@@ -11,4 +11,4 @@ TEST(HSetTest, Ctor) {
   EXPECT_TRUE(hset.hasKey(1));
 }
 
-} // namespace
+}  // namespace

@@ -11,4 +11,4 @@ TEST(HMapTest, Ctor) {
   EXPECT_STREQ(hmap.findKey(1), "test");
 }
 
-} // namespace
+}  // namespace

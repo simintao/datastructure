@@ -3,17 +3,16 @@
 
 namespace pcl {
 
-template <class T> class Array {
-public:
-  Array(int capacity) {
-
+template <class T>
+class Array {
+ public:
+  explict Array(int capacity) {
     this->_capacity = capacity;
     this->_size = 0;
     this->address = new T[this->_capacity];
   }
 
   Array(const Array &arr) {
-
     this->_capacity = arr._capacity;
     this->_size = arr._size;
     this->address = new T[arr._capacity];
@@ -22,7 +21,6 @@ public:
     }
   }
   Array &operator=(const Array &arr) {
-
     if (this->address != NULL) {
       delete[] this->address;
       this->address = NULL;
@@ -56,15 +54,14 @@ public:
 
   ~Array() {
     if (this->address != NULL) {
-
       delete[] this->address;
       this->address = NULL;
     }
   }
 
-private:
+ private:
   T *address;
   int _capacity;
   int _size;
 };
-} // namespace pcl
+}  // namespace pcl

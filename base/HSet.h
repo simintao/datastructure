@@ -4,9 +4,9 @@
  * @brief The hash set container for the eda project.
  * @version 0.1
  * @date 2020-10-09
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 
 #pragma once
@@ -17,20 +17,20 @@ namespace pcl {
 
 /**
  * @brief Add convenience functions around abseil set container.
- * 
+ *
  */
 template <class KEY>
 class HSet : public absl::flat_hash_set<KEY> {
-public:
+ public:
   using Base = typename HSet::flat_hash_set;
   using Base::Base;
   HSet() : absl::flat_hash_set<KEY>() {}
 
   /**
    * @brief Find the entry corresponding to key.
-   * 
-   * @param key 
-   * @return KEY 
+   *
+   * @param key
+   * @return KEY
    */
   KEY findKey(const KEY key) const {
     auto find_iter = this->find(key);
@@ -42,8 +42,8 @@ public:
 
   /**
    * @brief Find out if key is in the set.
-   * 
-   * @param key 
+   *
+   * @param key
    * @return true when has key.
    * @return false when do not has key.
    */
@@ -52,23 +52,23 @@ public:
     return find_iter != this->end();
   }
 
-   /**
-   * @brief Judge whether the two set is equal. 
-   * 
-   * @param set1 
-   * @param set2 
+  /**
+   * @brief Judge whether the two set is equal.
+   *
+   * @param set1
+   * @param set2
    * @return true when the two set is equal.
-   * @return false 
+   * @return false
    */
   static bool equal(const absl::flat_hash_set<KEY> *set1,
                     const absl::flat_hash_set<KEY> *set2);
 
   /**
    * @brief Judge the set2 is the subset of the set.
-   * 
-   * @param set2 
+   *
+   * @param set2
    * @return true if set2 is a subset of this set.
-   * @return false 
+   * @return false
    */
   bool isSubset(const absl::flat_hash_set<KEY> *set2);
 
@@ -76,8 +76,7 @@ public:
 
   void deleteContents() {
     Iterator iter(this);
-    while (iter.hasNext())
-      delete iter.next();
+    while (iter.hasNext()) delete iter.next();
   }
 
   void deleteContentsClear() {
@@ -90,10 +89,9 @@ public:
   static bool intersects(absl::flat_hash_set<KEY> *set1,
                          absl::flat_hash_set<KEY> *set2);
 
-
   /**
    * @brief Java style container itererator.
-   * 
+   *
    *  for example:
    *  Set::Iterator<Key*> iter(set);
    *  while (iter.hasNext()) {
@@ -101,27 +99,23 @@ public:
    *  }
    */
   class Iterator {
-  public:
+   public:
     Iterator() : _container(nullptr) {}
     explicit Iterator(absl::flat_hash_set<KEY> *container)
         : _container(container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     explicit Iterator(absl::flat_hash_set<KEY> &container)
         : _container(&container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(absl::flat_hash_set<KEY> *container) {
       _container = container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(absl::flat_hash_set<KEY> &container) {
       _container = &container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
@@ -129,33 +123,29 @@ public:
     KEY next() { return *_iter++; }
     absl::flat_hash_set<KEY> *container() { return _container; }
 
-  private:
+   private:
     absl::flat_hash_set<KEY> *_container;
     typename absl::flat_hash_set<KEY>::iterator _iter;
   };
 
   class ConstIterator {
-  public:
+   public:
     ConstIterator() : _container(nullptr) {}
     explicit ConstIterator(const absl::flat_hash_set<KEY> *container)
         : _container(container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     explicit ConstIterator(const absl::flat_hash_set<KEY> &container)
         : _container(&container) {
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(const absl::flat_hash_set<KEY> *container) {
       _container = container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
     void init(const absl::flat_hash_set<KEY> &container) {
       _container = &container;
-      if (_container != nullptr)
-        _iter = _container->begin();
+      if (_container != nullptr) _iter = _container->begin();
     }
 
     bool hasNext() {
@@ -164,7 +154,7 @@ public:
     KEY next() { return *_iter++; }
     const absl::flat_hash_set<KEY> *container() { return _container; }
 
-  private:
+   private:
     const absl::flat_hash_set<KEY> *_container;
     typename absl::flat_hash_set<KEY>::const_iterator _iter;
   };
@@ -172,7 +162,7 @@ public:
 
 template <class KEY>
 bool HSet<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
-                          const absl::flat_hash_set<KEY> *set2) {
+                      const absl::flat_hash_set<KEY> *set2) {
   if ((set1 == nullptr || set1->empty()) && (set2 == nullptr || set2->empty()))
     return true;
   else if (set1 && set2) {
@@ -180,8 +170,7 @@ bool HSet<KEY>::equal(const absl::flat_hash_set<KEY> *set1,
       typename HSet<KEY>::ConstIterator iter1(set1);
       typename HSet<KEY>::ConstIterator iter2(set2);
       while (iter1.hasNext() && iter2.hasNext()) {
-        if (iter1.next() != iter2.next())
-          return false;
+        if (iter1.next() != iter2.next()) return false;
       }
       return true;
     } else
@@ -198,8 +187,7 @@ bool HSet<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
     typename HSet<KEY>::ConstIterator iter2(set2);
     while (iter2.hasNext()) {
       const KEY key2 = iter2.next();
-      if (!hasKey(key2))
-        return false;
+      if (!hasKey(key2)) return false;
     }
     return true;
   }
@@ -207,13 +195,13 @@ bool HSet<KEY>::isSubset(const absl::flat_hash_set<KEY> *set2) {
 
 template <class KEY>
 bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> &set1,
-                               absl::flat_hash_set<KEY> &set2) {
+                           absl::flat_hash_set<KEY> &set2) {
   return intersects(&set1, &set2);
 }
 
 template <class KEY>
 bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
-                               absl::flat_hash_set<KEY> *set2) {
+                           absl::flat_hash_set<KEY> *set2) {
   if (set1 && !set1->empty() && set2 && !set2->empty()) {
     const absl::flat_hash_set<KEY> *small = set1;
     const absl::flat_hash_set<KEY> *big = set2;
@@ -238,8 +226,7 @@ bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
     } else {
       for (/* empty */; iter2 != last2; ++iter2) {
         const KEY key2 = *iter2;
-        if (big->find(key2) != last1)
-          return true;
+        if (big->find(key2) != last1) return true;
       }
     }
   }
@@ -248,13 +235,13 @@ bool HSet<KEY>::intersects(absl::flat_hash_set<KEY> *set1,
 
 /**
  * @brief A complicated way to call the base class operator<.
- * 
- * @tparam KEY 
- *  
- * @param set1 
- * @param set2 
- * @return true 
- * @return false 
+ *
+ * @tparam KEY
+ *
+ * @param set1
+ * @param set2
+ * @return true
+ * @return false
  */
 template <class KEY>
 bool operator<(const HSet<KEY> &set1, const HSet<KEY> &set2) {
@@ -265,8 +252,7 @@ bool operator<(const HSet<KEY> &set1, const HSet<KEY> &set2) {
 
 template <class KEY>
 void HSet<KEY>::insertSet(const absl::flat_hash_set<KEY> *set2) {
-  if (set2)
-    this->insert(set2->begin(), set2->end());
+  if (set2) this->insert(set2->begin(), set2->end());
 }
 
-} // namespace pcl
+}  // namespace pcl
