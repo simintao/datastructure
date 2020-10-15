@@ -33,34 +33,34 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::Base;
   explicit Map(const CMP& cmp) : absl::btree_map<KEY, VALUE, CMP>(cmp) {}
 
-    // using Base::begin;
-  // using Base::cbegin;
-  // using Base::cend;
-  // using Base::clear;
-  // using Base::empty;
-  // using Base::end;
-  // using Base::erase;
-  // using Base::size;
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::empty;
+  using Base::end;
+  using Base::erase;
+  using Base::size;
 
-  // inline VALUE& first() {
-  //   assert(!empty());
-  //   return *begin();
-  // }
+  inline VALUE& first() {
+    assert(!empty());
+    return *begin();
+  }
 
-  // inline const VALUE& first() const {
-  //   assert(!empty());
-  //   return *cbegin();
-  // }
+  inline const VALUE& first() const {
+    assert(!empty());
+    return *cbegin();
+  }
 
-  // inline const KEY& firstKey() const {
-  //   assert(!empty());
-  //   return cbegin().key();
-  // }
+  inline const KEY& firstKey() const {
+    assert(!empty());
+    return cbegin().key();
+  }
 
-  // inline VALUE& last() {
-  //   assert(!empty());
-  //   return *(end() - 1);
-  // }
+  inline VALUE& last() {
+    assert(!empty());
+    return *(end() - 1);
+  }
 
   /**
    * @brief Find out if key is in the map.
