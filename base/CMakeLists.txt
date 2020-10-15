@@ -31,6 +31,7 @@ SET(AbslLibs
         absl_graphcycles_internal
         absl_hash
         absl_hashtablez_sampler
+        absl_hash_generator_testing
         absl_int128
         absl_leak_check
         absl_leak_check_disable
