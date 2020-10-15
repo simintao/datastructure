@@ -1,0 +1,5 @@
+# This is "close" to correct but has a number of bugs that prevent
+# using it on the source tree.
+Language: Cpp
+BasedOnStyle: Google
+PointerAlignment: Left

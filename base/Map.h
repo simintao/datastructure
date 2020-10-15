@@ -31,7 +31,36 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
 
   Map() : absl::btree_map<KEY, VALUE, CMP>() {}
   using Base::Base;
-  explicit Map(const CMP &cmp) : absl::btree_map<KEY, VALUE, CMP>(cmp) {}
+  explicit Map(const CMP& cmp) : absl::btree_map<KEY, VALUE, CMP>(cmp) {}
+
+    // using Base::begin;
+  // using Base::cbegin;
+  // using Base::cend;
+  // using Base::clear;
+  // using Base::empty;
+  // using Base::end;
+  // using Base::erase;
+  // using Base::size;
+
+  // inline VALUE& first() {
+  //   assert(!empty());
+  //   return *begin();
+  // }
+
+  // inline const VALUE& first() const {
+  //   assert(!empty());
+  //   return *cbegin();
+  // }
+
+  // inline const KEY& firstKey() const {
+  //   assert(!empty());
+  //   return cbegin().key();
+  // }
+
+  // inline VALUE& last() {
+  //   assert(!empty());
+  //   return *(end() - 1);
+  // }
 
   /**
    * @brief Find out if key is in the map.
@@ -53,7 +82,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   }
   void findKey(const KEY key,
                // Return Values.
-               VALUE &value, bool &exists) const {
+               VALUE& value, bool& exists) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
       value = find_iter->second;
@@ -61,9 +90,9 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     } else
       exists = false;
   }
-  void findKey(const KEY &key,
+  void findKey(const KEY& key,
                // Return Values.
-               KEY &map_key, VALUE &value, bool &exists) const {
+               KEY& map_key, VALUE& value, bool& exists) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
       map_key = find_iter->first;
@@ -73,7 +102,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       exists = false;
   }
 
-  void insert(const KEY &key, VALUE value) { this->operator[](key) = value; }
+  void insert(const KEY& key, VALUE value) { this->operator[](key) = value; }
 
   void deleteContents() {
     Iterator iter(this);
@@ -102,18 +131,18 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   class Iterator {
    public:
     Iterator() : _container(nullptr) {}
-    explicit Iterator(Map<KEY, VALUE, CMP> *container) : _container(container) {
+    explicit Iterator(Map<KEY, VALUE, CMP>* container) : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit Iterator(Map<KEY, VALUE, CMP> &container)
+    explicit Iterator(Map<KEY, VALUE, CMP>& container)
         : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(Map<KEY, VALUE, CMP> *container) {
+    void init(Map<KEY, VALUE, CMP>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(Map<KEY, VALUE, CMP> &container) {
+    void init(Map<KEY, VALUE, CMP>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -121,34 +150,34 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       return _container != nullptr && _iter != _container->end();
     }
     VALUE next() { return _iter++->second; }
-    void next(KEY &key, VALUE &value) {
+    void next(KEY& key, VALUE& value) {
       key = _iter->first;
       value = _iter->second;
       _iter++;
     }
-    Map<KEY, VALUE, CMP> *container() { return _container; }
+    Map<KEY, VALUE, CMP>* container() { return _container; }
 
    private:
-    Map<KEY, VALUE, CMP> *_container;
+    Map<KEY, VALUE, CMP>* _container;
     typename Map<KEY, VALUE, CMP>::iterator _iter;
   };
 
   class ConstIterator {
    public:
     ConstIterator() : _container(nullptr) {}
-    explicit ConstIterator(const Map<KEY, VALUE, CMP> *container)
+    explicit ConstIterator(const Map<KEY, VALUE, CMP>* container)
         : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit ConstIterator(const Map<KEY, VALUE, CMP> &container)
+    explicit ConstIterator(const Map<KEY, VALUE, CMP>& container)
         : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const Map<KEY, VALUE, CMP> *container) {
+    void init(const Map<KEY, VALUE, CMP>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const Map<KEY, VALUE, CMP> &container) {
+    void init(const Map<KEY, VALUE, CMP>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -156,15 +185,15 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       return _container != nullptr && _iter != _container->end();
     }
     VALUE next() { return _iter++->second; }
-    void next(KEY &key, VALUE &value) {
+    void next(KEY& key, VALUE& value) {
       key = _iter->first;
       value = _iter->second;
       _iter++;
     }
-    const Map<KEY, VALUE, CMP> *container() { return _container; }
+    const Map<KEY, VALUE, CMP>* container() { return _container; }
 
    private:
-    const Map<KEY, VALUE, CMP> *_container;
+    const Map<KEY, VALUE, CMP>* _container;
     typename Map<KEY, VALUE, CMP>::const_iterator _iter;
   };
 };

@@ -3,8 +3,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 # Abseil requires C++11
 SET(CMAKE_CXX_STANDARD 11)
 
-# Process Abseil's CMake build system
-ADD_SUBDIRECTORY(abseil-cpp)
+# Process Abseil
+INCLUDE_DIRECTORIES("./abseil/include")
+LINK_DIRECTORIES("./abseil/lib")
 
 AUX_SOURCE_DIRECTORY(./ SourceFiles)
 
