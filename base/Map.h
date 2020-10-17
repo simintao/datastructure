@@ -62,6 +62,15 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     return *(end() - 1);
   }
 
+  inline VALUE& last() const {
+    assert(!empty());
+    return *(cend() - 1);
+  }
+
+  inline const KEY& lastKey() const {
+    assert(!empty());
+    return *(cend() - 1).key();
+  }
   /**
    * @brief Find out if key is in the map.
    *
@@ -130,71 +139,140 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
    */
   class Iterator {
    public:
-    Iterator() : _container(nullptr) {}
-    explicit Iterator(Map<KEY, VALUE, CMP>* container) : _container(container) {
-      if (_container != nullptr) _iter = _container->begin();
+    Iterator() {}
+    explicit Iterator(Map<KEY, VALUE, CMP>* container) {
+      if (container != nullptr) _iter = container->begin();
     }
-    explicit Iterator(Map<KEY, VALUE, CMP>& container)
-        : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
+    explicit Iterator(const Map<KEY, VALUE, CMP>& container) {
+      if (container != nullptr) _iter = container->begin();
     }
     void init(Map<KEY, VALUE, CMP>* container) {
-      _container = container;
-      if (_container != nullptr) _iter = _container->begin();
+      container = container;
+      if (container != nullptr) _iter = container->begin();
     }
-    void init(Map<KEY, VALUE, CMP>& container) {
-      _container = &container;
-      if (_container != nullptr) _iter = _container->begin();
+    void init(const Map<KEY, VALUE, CMP>& container) {
+      if (container != nullptr) _iter = container->begin();
     }
-    bool hasNext() {
-      return _container != nullptr && _iter != _container->end();
-    }
+    bool hasNext() { return container != nullptr && _iter != container->end(); }
     VALUE next() { return _iter++->second; }
-    void next(KEY& key, VALUE& value) {
-      key = _iter->first;
-      value = _iter->second;
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
       _iter++;
     }
-    Map<KEY, VALUE, CMP>* container() { return _container; }
+    Map<KEY, VALUE, CMP>* container() { return container; }
 
    private:
-    Map<KEY, VALUE, CMP>* _container;
     typename Map<KEY, VALUE, CMP>::iterator _iter;
   };
+  friend class Iterator;
 
   class ConstIterator {
    public:
-    ConstIterator() : _container(nullptr) {}
-    explicit ConstIterator(const Map<KEY, VALUE, CMP>* container)
-        : _container(container) {
-      if (_container != nullptr) _iter = _container->begin();
+    ConstIterator() {}
+    explicit ConstIterator(const Map<KEY, VALUE, CMP>* container) {
+      if (container != nullptr) _iter = container->begin();
     }
-    explicit ConstIterator(const Map<KEY, VALUE, CMP>& container)
-        : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
+    explicit ConstIterator(const Map<KEY, VALUE, CMP>& container) {
+      if (container != nullptr) _iter = container->begin();
     }
     void init(const Map<KEY, VALUE, CMP>* container) {
-      _container = container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (container != nullptr) _iter = container->begin();
     }
     void init(const Map<KEY, VALUE, CMP>& container) {
-      _container = &container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (container != nullptr) _iter = container->begin();
     }
-    bool hasNext() {
-      return _container != nullptr && _iter != _container->end();
-    }
+    bool hasNext() { return container != nullptr && _iter != container->end(); }
     VALUE next() { return _iter++->second; }
-    void next(KEY& key, VALUE& value) {
-      key = _iter->first;
-      value = _iter->second;
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
       _iter++;
     }
-    const Map<KEY, VALUE, CMP>* container() { return _container; }
+
+    inline const Map<KEY, VALUE, CMP>* container() { return container; }
+    inline const KEY& key() const { return _iter->first(); }
+    inline const VALUE& value() const { return _iter->second(); }
+    inline const VALUE& operator*() const { return _iter->value(); }
+    inline const VALUE* operator->() const { return &(_iter->value()); }
+    inline bool operator==(const ConstIterator& o) const {
+      return _iter == o._iter;
+    }
+    inline bool operator!=(const ConstIterator& o) const {
+      return _iter != o._iter;
+    }
+
+    inline ConstIterator& operator++() {
+      _iter++;
+      return *this;
+    }
+
+    inline ConstIterator operator++(int) {
+      ConstIterator r = *this;
+      _iter++;
+      return r;
+    }
+
+    inline ConstIterator& operator--() {
+      _iter--;
+      return *this;
+    }
+
+    inline ConstIterator& operator--(int) {
+      ConstIterator r = *this;
+      _iter--;
+      return r;
+    }
+
+    inline ConstIterator operator+(int j) const {
+      ConstIterator r = *this;
+      if (j > 0) {
+        while (j--) {
+          ++r;
+        }
+      } else {
+        while (j++) {
+          --r;
+        }
+      }
+    }
+
+    inline ConstIterator operator-(int j) const { return operator+(-j); }
+
+    friend inline ConstIterator operator+(int j, ConstIterator k) {
+      return k + j;
+    }
 
    private:
-    const Map<KEY, VALUE, CMP>* _container;
     typename Map<KEY, VALUE, CMP>::const_iterator _iter;
+  };
+
+  class KeyIterator {
+   public:
+    KeyIterator() = default;
+    explicit KeyIterator(ConstIterator o) : i(o) {}
+
+    const KEY& operator*() const { return i.key(); }
+    const KEY* operator->() const { return &i.key(); }
+    bool operator==(KeyIterator o) const { return i == o.i; }
+    bool operator!=(KeyIterator o) const { return i != o.i; }
+
+    inline KeyIterator& operator++() {
+      ++i;
+      return *this;
+    }
+
+    inline KeyIterator operator++(int) { return KeyIterator(i++); }
+
+    inline KeyIterator& operator--() {
+      --i;
+      return *this;
+    }
+
+    inline KeyIterator operator--(int) { return KeyIterator(i--); }
+
+   private:
+    ConstIterator i;
   };
 };
 
