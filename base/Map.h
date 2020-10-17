@@ -41,12 +41,18 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::cbegin;
   using Base::cend;
   using Base::clear;
+  using Base::contains;
+  using Base::count;
   using Base::emplace;
   using Base::empty;
   using Base::end;
   using Base::erase;
+  using Base::extract;
+  using Base::find;
   using Base::insert;
+  using Base::merge;
   using Base::size;
+  using Base::swap;
 
   template <typename... Args>
   iterator emplaceHint(const citerator hint, Args... args) {
@@ -102,24 +108,26 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   }
   void findKey(const KEY key,
                // Return Values.
-               VALUE& value, bool& exists) const {
+               VALUE* value, bool* exists) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
-      value = find_iter->second;
-      exists = true;
-    } else
-      exists = false;
+      *value = find_iter->second;
+      *exists = true;
+    } else {
+      *exists = false;
+    }
   }
   void findKey(const KEY& key,
                // Return Values.
-               KEY& map_key, VALUE& value, bool& exists) const {
+               KEY* map_key, VALUE* value, bool* exists) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end()) {
-      map_key = find_iter->first;
-      value = find_iter->second;
-      exists = true;
-    } else
-      exists = false;
+      *map_key = find_iter->first;
+      *value = find_iter->second;
+      *exists = true;
+    } else {
+      *exists = false;
+    }
   }
 
   void insert(const KEY& key, VALUE value) { this->operator[](key) = value; }
