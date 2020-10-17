@@ -12,16 +12,17 @@ TEST(MapTest, Ctor) {
 }
 
 TEST(MultimapTest, Ctor) {
-  Multimap<int, std::string> mmap = {{1, "test"}};
+  Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
   std::cout << mmap.size() << std::endl;
 
-  mmap.insert(1, "test1");
+  mmap.insert(1, "test2");
   std::cout << mmap.size() << std::endl;
 
-  auto values = mmap.find(1);
-
-  std::cout << values->second << std::endl;
+  auto values = mmap.values(1);
+  for (auto i : values) {
+    std::cout << i << '\n';
+  }
 }
 
 }  // namespace

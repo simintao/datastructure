@@ -12,6 +12,7 @@
 #pragma once
 
 #include <functional>
+#include <list>
 #include <utility>
 
 #include "absl/container/btree_map.h"
@@ -306,6 +307,15 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
     insert(ValueType(key, value));
   }
 
+  std::list<VALUE> values(const KEY& key) {
+    auto ret_values = equal_range(key);
+    std::list<VALUE> ret_list;
+    for (auto i = ret_values.first; i != ret_values.second; ++i) {
+      ret_list.push_back(i->second);
+    }
+
+    return ret_list;
+  }
   class Iterator {
    public:
     Iterator() = default;
