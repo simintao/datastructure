@@ -39,38 +39,17 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
    */
   bool hasKey(const KEY key) const { return this->find(key) != this->end(); }
 
-  // Find the value corresponding to key.
-  VALUE
-  findKey(const KEY key) const {
+  VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
       return find_iter->second;
     else
-      return nullptr;
-  }
-  void findKey(const KEY key,
-               // Return Values.
-               VALUE &value, bool &exists) const {
-    auto find_iter = this->find(key);
-    if (find_iter != this->end()) {
-      value = find_iter->second;
-      exists = true;
-    } else
-      exists = false;
-  }
-  void findKey(const KEY &key,
-               // Return Values.
-               KEY &map_key, VALUE &value, bool &exists) const {
-    auto find_iter = this->find(key);
-    if (find_iter != this->end()) {
-      map_key = find_iter->first;
-      value = find_iter->second;
-      exists = true;
-    } else
-      exists = false;
+      return default_value;
   }
 
-  void insert(const KEY &key, VALUE value) { this->operator[](key) = value; }
+  void insert(const KEY& key, const VALUE& value) {
+    this->operator[](key) = value;
+  }
 
   void deleteContents() {
     Iterator iter(this);
@@ -99,17 +78,18 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   class Iterator {
    public:
     Iterator() : _container(nullptr) {}
-    explicit Iterator(HMap<KEY, VALUE> *container) : _container(container) {
+    explicit Iterator(HMap<KEY, VALUE>* container) : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit Iterator(HMap<KEY, VALUE> &container) : _container(&container) {
+    explicit Iterator(const HMap<KEY, VALUE>& container)
+        : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(HMap<KEY, VALUE> *container) {
+    void init(HMap<KEY, VALUE>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(HMap<KEY, VALUE> &container) {
+    void init(const HMap<KEY, VALUE>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -117,34 +97,34 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
       return _container != nullptr && _iter != _container->end();
     }
     VALUE next() { return _iter++->second; }
-    void next(KEY &key, VALUE &value) {
-      key = _iter->first;
-      value = _iter->second;
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
       _iter++;
     }
-    HMap<KEY, VALUE> *container() { return _container; }
+    HMap<KEY, VALUE>* container() { return _container; }
 
    private:
-    HMap<KEY, VALUE> *_container;
+    HMap<KEY, VALUE>* _container;
     typename HMap<KEY, VALUE>::iterator _iter;
   };
 
   class ConstIterator {
    public:
     ConstIterator() : _container(nullptr) {}
-    explicit ConstIterator(const HMap<KEY, VALUE> *container)
+    explicit ConstIterator(const HMap<KEY, VALUE>* container)
         : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit ConstIterator(const HMap<KEY, VALUE> &container)
+    explicit ConstIterator(const HMap<KEY, VALUE>& container)
         : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const HMap<KEY, VALUE> *container) {
+    void init(const HMap<KEY, VALUE>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const HMap<KEY, VALUE> &container) {
+    void init(const HMap<KEY, VALUE>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -152,15 +132,15 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
       return _container != nullptr && _iter != _container->end();
     }
     VALUE next() { return _iter++->second; }
-    void next(KEY &key, VALUE &value) {
-      key = _iter->first;
-      value = _iter->second;
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
       _iter++;
     }
-    const HMap<KEY, VALUE> *container() { return _container; }
+    const HMap<KEY, VALUE>* container() { return _container; }
 
    private:
-    const HMap<KEY, VALUE> *_container;
+    const HMap<KEY, VALUE>* _container;
     typename HMap<KEY, VALUE>::const_iterator _iter;
   };
 };

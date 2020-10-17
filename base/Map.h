@@ -95,12 +95,12 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   bool hasKey(const KEY key) const { return this->find(key) != this->end(); }
 
   // Find the value corresponding to key.
-  const VALUE value(const KEY key, const VALUE& defaultValue = VALUE()) const {
+  const VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
     auto find_iter = this->find(key);
     if (find_iter != this->end())
       return find_iter->second;
     else
-      return defaultValue;
+      return default_value;
   }
 
   void insert(const KEY& key, const VALUE& value) {
