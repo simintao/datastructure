@@ -12,6 +12,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 #include "absl/container/btree_map.h"
 
@@ -33,14 +34,24 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::Base;
   explicit Map(const CMP& cmp) : absl::btree_map<KEY, VALUE, CMP>(cmp) {}
 
+  using iterator = typename Base::iterator;
+  using citerator = typename Base::const_iterator;
+
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
   using Base::clear;
+  using Base::emplace;
   using Base::empty;
   using Base::end;
   using Base::erase;
+  using Base::insert;
   using Base::size;
+
+  template <typename... Args>
+  iterator emplaceHint(const citerator hint, Args... args) {
+    return emplace_hint(hint, std::forward<Args>(args)...);
+  }
 
   inline VALUE& first() {
     assert(!empty());
@@ -153,16 +164,16 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     void init(const Map<KEY, VALUE, CMP>& container) {
       if (container != nullptr) _iter = container->begin();
     }
-    bool hasNext() { return container != nullptr && _iter != container->end(); }
+    bool hasNext() { return _iter != _container->end(); }
     VALUE next() { return _iter++->second; }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
       *value = _iter->second;
       _iter++;
     }
-    Map<KEY, VALUE, CMP>* container() { return container; }
 
    private:
+    Map<KEY, VALUE, CMP>* _container;
     typename Map<KEY, VALUE, CMP>::iterator _iter;
   };
   friend class Iterator;
@@ -182,7 +193,9 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     void init(const Map<KEY, VALUE, CMP>& container) {
       if (container != nullptr) _iter = container->begin();
     }
-    bool hasNext() { return container != nullptr && _iter != container->end(); }
+    bool hasNext() {
+      return _container != nullptr && _iter != _container->end();
+    }
     VALUE next() { return _iter++->second; }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
@@ -190,7 +203,6 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       _iter++;
     }
 
-    inline const Map<KEY, VALUE, CMP>* container() { return container; }
     inline const KEY& key() const { return _iter->first(); }
     inline const VALUE& value() const { return _iter->second(); }
     inline const VALUE& operator*() const { return _iter->value(); }
@@ -202,50 +214,12 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       return _iter != o._iter;
     }
 
-    inline ConstIterator& operator++() {
-      _iter++;
-      return *this;
-    }
-
-    inline ConstIterator operator++(int) {
-      ConstIterator r = *this;
-      _iter++;
-      return r;
-    }
-
-    inline ConstIterator& operator--() {
-      _iter--;
-      return *this;
-    }
-
-    inline ConstIterator& operator--(int) {
-      ConstIterator r = *this;
-      _iter--;
-      return r;
-    }
-
-    inline ConstIterator operator+(int j) const {
-      ConstIterator r = *this;
-      if (j > 0) {
-        while (j--) {
-          ++r;
-        }
-      } else {
-        while (j++) {
-          --r;
-        }
-      }
-    }
-
-    inline ConstIterator operator-(int j) const { return operator+(-j); }
-
-    friend inline ConstIterator operator+(int j, ConstIterator k) {
-      return k + j;
-    }
-
    private:
-    typename Map<KEY, VALUE, CMP>::const_iterator _iter;
+    Map<KEY, VALUE, CMP>* _container;
+    typename Map<KEY, VALUE, CMP>::citerator _iter;
   };
+
+  friend class ConstIterator;
 
   class KeyIterator {
    public:
@@ -257,23 +231,11 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     bool operator==(KeyIterator o) const { return i == o.i; }
     bool operator!=(KeyIterator o) const { return i != o.i; }
 
-    inline KeyIterator& operator++() {
-      ++i;
-      return *this;
-    }
-
-    inline KeyIterator operator++(int) { return KeyIterator(i++); }
-
-    inline KeyIterator& operator--() {
-      --i;
-      return *this;
-    }
-
-    inline KeyIterator operator--(int) { return KeyIterator(i--); }
-
    private:
     ConstIterator i;
   };
+
+  friend class KeyIterator;
 };
 
 }  // namespace pcl
