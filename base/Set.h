@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "absl/container/btree_set.h"
 
 namespace pcl {
@@ -24,9 +26,27 @@ class Set : public absl::btree_set<KEY, CMP> {
  public:
   using Base = typename Set::btree_set;
   using Base::Base;
-  Set() : absl::btree_set<KEY, CMP>() {}
-  explicit Set(const CMP &cmp) : absl::btree_set<KEY, CMP>(cmp) {}
 
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::contains;
+  using Base::count;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::empty;
+  using Base::end;
+  using Base::equal_range;
+  using Base::erase;
+  using Base::extract;
+  using Base::get_allocator;
+  using Base::insert;
+  using Base::key_comp;
+  using Base::max_size;
+  using Base::merge;
+  using Base::size;
+  using Base::swap;
   /**
    * @brief Find the entry corresponding to key.
    *

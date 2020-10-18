@@ -24,7 +24,35 @@ class HSet : public absl::flat_hash_set<KEY> {
  public:
   using Base = typename HSet::flat_hash_set;
   using Base::Base;
-  HSet() : absl::flat_hash_set<KEY>() {}
+
+  using Base::begin;
+  using Base::bucket_count;
+  using Base::capacity;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::contains;
+  using Base::count;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::empty;
+  using Base::end;
+  using Base::equal_range;
+  using Base::erase;
+  using Base::extract;
+  using Base::find;
+  using Base::get_allocator;
+  using Base::hash_function;
+  using Base::insert;
+  using Base::key_eq;
+  using Base::load_factor;
+  using Base::max_load_factor;
+  using Base::max_size;
+  using Base::merge;
+  using Base::rehash;
+  using Base::reserve;
+  using Base::size;
+  using Base::swap;
 
   /**
    * @brief Find the entry corresponding to key.
