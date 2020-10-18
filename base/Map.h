@@ -49,6 +49,8 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::find;
   using Base::insert;
   using Base::merge;
+  using Base::rbegin;
+  using Base::rend;
   using Base::size;
   using Base::swap;
 
@@ -297,6 +299,8 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using Base::find;
   using Base::insert;
   using Base::merge;
+  using Base::rbegin;
+  using Base::rend;
   using Base::size;
   using Base::swap;
 
