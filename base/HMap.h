@@ -177,4 +177,11 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   };
 };
 
+template <class KEY, class VALUE>
+class HMultiMap : public HMap<KEY, VALUE> {
+ public:
+  using Base = typename HMultiMap::HMap;
+  using Base::Base;
+};
+
 }  // namespace pcl
