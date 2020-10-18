@@ -29,6 +29,15 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
 
   HMap() : absl::flat_hash_map<KEY, VALUE>() {}
   using Base::Base;
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::empty;
+  using Base::end;
+  using Base::erase;
+  using Base::insert;
+  using Base::size;
 
   /**
    * @brief Find out if key is in the map.
