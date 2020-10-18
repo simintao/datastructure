@@ -9,6 +9,8 @@ dist/
 
 build/
 
+.vscode/
+
 Doxyfile
 
 # Compiled Java class files
