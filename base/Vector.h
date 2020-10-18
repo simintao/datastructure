@@ -5,7 +5,7 @@
 
 namespace pcl {
 template <typename T>
-class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
+class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
  public:
   using Base = typename EfficientVector::InlinedVector;
   using iterator = typename Base::iterator;

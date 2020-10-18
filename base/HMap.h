@@ -28,16 +28,39 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   using Base = typename HMap::flat_hash_map;
 
   HMap() : absl::flat_hash_map<KEY, VALUE>() {}
+
   using Base::Base;
+
+  using Base::at;
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
   using Base::clear;
+  using Base::contains;
+  using Base::count;
+  using Base::emplace;
+  using Base::emplace_hint;
   using Base::empty;
   using Base::end;
+  using Base::equal_range;
   using Base::erase;
+  using Base::extract;
+  using Base::find;
   using Base::insert;
+  using Base::insert_or_assign;
+  using Base::merge;
+  using Base::rehash;
+  using Base::reserve;
   using Base::size;
+  using Base::swap;
+  using Base::try_emplace;
+  using Base::operator[];
+  using Base::bucket_count;
+  using Base::get_allocator;
+  using Base::hash_function;
+  using Base::key_eq;
+  using Base::load_factor;
+  using Base::max_load_factor;
 
   /**
    * @brief Find out if key is in the map.
