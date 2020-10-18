@@ -33,14 +33,14 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
     pushBack(val);
     return *this;
   }
-  // friend EfficientVector<T>& operator+(const EfficientVector<T>& val1,
-  //                                      const EfficientVector<T>& val2) {
-  //   for (EfficientVector<T>::iterator it = val2.first(); it != val2.last();
-  //        it++) {
-  //     val1.pushBack(*it);
-  //   }
-  //   return val1;
-  // }
+  friend EfficientVector<T>& operator+(const EfficientVector<T>& val1,
+                                       const EfficientVector<T>& val2) {
+    for (EfficientVector<T>::iterator it = val2.first(); it != val2.last();
+         it++) {
+      val1.pushBack(*it);
+    }
+    return val1;
+  }
 
   bool contains(const T& val) {
     iterator b = this->first();
