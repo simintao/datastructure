@@ -18,7 +18,7 @@
 namespace pcl {
 
 /**
- * @brief Add convenience functions around abseil set container.
+ * @brief A wrap set container.
  *
  */
 template <class KEY, class CMP = std::less<KEY>>
@@ -353,5 +353,45 @@ void Set<KEY, CMP>::insertSet(const Set<KEY, CMP>* set2) {
     this->insert(set2->begin(), set2->end());
   }
 }
+
+/**
+ * @brief A wrap multi set container.
+ *
+ */
+template <class KEY, class CMP = std::less<KEY>>
+class Multiset : public absl::btree_multiset<KEY, CMP> {
+ public:
+  using Base = typename Multiset::btree_multiset;
+  using Base::Base;
+
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::contains;
+  using Base::count;
+  using Base::crbegin;
+  using Base::crend;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::empty;
+  using Base::end;
+  using Base::equal_range;
+  using Base::erase;
+  using Base::extract;
+  using Base::find;
+  using Base::get_allocator;
+  using Base::insert;
+  using Base::key_comp;
+  using Base::lower_bound;
+  using Base::max_size;
+  using Base::merge;
+  using Base::rbegin;
+  using Base::rend;
+  using Base::size;
+  using Base::swap;
+  using Base::upper_bound;
+  using Base::value_comp;
+};
 
 }  // namespace pcl
