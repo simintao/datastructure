@@ -16,6 +16,7 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
   using Base::Base;
 
   bool isEmpty() { return this->empty(); }
+  void pushBack(const T& v) { this->push_back(v); }
   void pushBack(T&& v) { this->push_back(v); }
   void popBack() { this->pop_back(); }
   size_t getSize() const { return this->size(); }
@@ -29,28 +30,29 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
   citerator last() const { return this->end(); }
   void grow(size_t n) { this->resize(n); }
 
-  EfficientVector<T>& operator+=(T const& val) {
+  EfficientVector<T>& operator+=(const T& val) {
     pushBack(val);
     return *this;
   }
   friend EfficientVector<T>& operator+(const EfficientVector<T>& val1,
                                        const EfficientVector<T>& val2) {
-    for (EfficientVector<T>::iterator it = val2.first(); it != val2.last();
+    EfficientVector<T>* ret_val = new EfficientVector<T>;
+    for (EfficientVector<T>::citerator it = val2.first(); it != val2.last();
          it++) {
-      val1.pushBack(*it);
+      ret_val->pushBack(*it);
     }
-    return val1;
+    return *ret_val;
   }
 
   bool contains(const T& val) {
-    iterator b = this->first();
-    iterator e = this->last();
+    citerator b = this->first();
+    citerator e = this->last();
     return std::find(b, e, val) != e;
   }
 
   int count(const T& val) {
-    iterator b = this->first();
-    iterator e = this->end();
+    citerator b = this->first();
+    citerator e = this->end();
     return static_cast<int>((std::count(b, e, val)));
   }
 
@@ -58,8 +60,8 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
     size_t size = this->getSize();
     if (start < 0) start = std::max((size_t)0, start + size);
     if (start < size) {
-      iterator n = this->first() + start - 1;
-      iterator e = this->last();
+      citerator n = this->first() + start - 1;
+      citerator e = this->last();
       while (++n != e) {
         if (*n == val) return n - this->first();
       }
@@ -74,8 +76,8 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
     else if (start >= size)
       start = size - 1;
     if (start > 0) {
-      iterator b = this->first();
-      iterator n = this->first + start + 1;
+      citerator b = this->first();
+      citerator n = this->first() + start + 1;
       while (n != b) {
         if (*--n == val) return n - b;
       }
@@ -83,10 +85,10 @@ class EfficientVector : public absl::InlinedVector<T, /*N=*/256> {
     return -1;
   }
 
-  EfficientVector<T>& mid(size_t pos, size_t len) const {
+  EfficientVector<T>& mid(size_t pos, size_t len) {
     EfficientVector<T>* midVector = new EfficientVector<T>();
-    iterator from = this->first() + pos;
-    iterator to = this->first() + pos + len;
+    citerator from = this->first() + pos;
+    citerator to = this->first() + pos + len;
     for (from; from != to; ++from) {
       midVector->pushBack(*from);
     }
