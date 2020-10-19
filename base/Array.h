@@ -6,7 +6,7 @@ namespace pcl {
 template <class T>
 class Array {
  public:
-  explict Array(int capacity) {
+  Array(int capacity) {
     this->_capacity = capacity;
     this->_size = 0;
     this->address = new T[this->_capacity];
