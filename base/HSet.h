@@ -16,8 +16,9 @@
 namespace pcl {
 
 /**
- * @brief Add convenience functions around abseil set container.
+ * @brief A hash set container made up of unique keys.
  *
+ * The inherited base class is google abseil hash set.
  */
 template <class KEY>
 class HSet : public absl::flat_hash_set<KEY> {
@@ -275,5 +276,17 @@ template <class KEY>
 void HSet<KEY>::insertSet(const HSet<KEY> *set2) {
   if (set2) this->insert(set2->begin(), set2->end());
 }
+
+/**
+ * @brief A hash set of multiple elements with equivalent keys.
+ *
+ * @tparam KEY Type of key objects.
+ */
+template <typename KEY>
+class HMultiset : public HSet<KEY> {
+ public:
+  using Base = typename HMultiset::HSet;
+  using Base::Base;
+};
 
 }  // namespace pcl

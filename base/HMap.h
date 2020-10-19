@@ -16,7 +16,7 @@
 namespace pcl {
 
 /**
- * @brief Add convenience functions around abseil container.
+ * @brief A hash map of unique key.
  *
  * @tparam KEY
  * @tparam VALUE
@@ -177,6 +177,12 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   };
 };
 
+/**
+ * @brief A hash map of multiple elements with equivalent keys.
+ *
+ * @tparam KEY Type of key objects.
+ * @tparam VALUE Type of value objects.
+ */
 template <class KEY, class VALUE>
 class HMultiMap : public HMap<KEY, VALUE> {
  public:

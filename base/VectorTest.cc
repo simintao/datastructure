@@ -12,4 +12,6 @@ TEST(VectorTest, Push) {
        ++it) {
     std::cout << *it << std::endl;
   }
+
+  ev.isEmpty();
 }
