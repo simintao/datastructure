@@ -40,6 +40,8 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::clear;
   using Base::contains;
   using Base::count;
+  using Base::crbegin;
+  using Base::crend;
   using Base::emplace;
   using Base::emplace_hint;
   using Base::empty;
