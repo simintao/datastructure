@@ -69,6 +69,64 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
 
+  inline Set<KEY, CMP>& operator<<(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator|=(const Set<KEY, CMP>& other) {
+    unite(other);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator|=(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator&=(const Set<KEY, CMP>& other) {
+    intersect(other);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator&=(const KEY& value) {
+    Set<KEY, CMP> result;
+    if (contains(value)) result.insert(value);
+    return (*this = result);
+  }
+  inline Set<KEY, CMP>& operator+=(const Set<KEY, CMP>& other) {
+    unite(other);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator+=(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator-=(const Set<KEY, CMP>& other) {
+    subtract(other);
+    return *this;
+  }
+  inline Set<KEY, CMP>& operator-=(const KEY& value) {
+    remove(value);
+    return *this;
+  }
+  inline Set<KEY, CMP> operator|(const Set<KEY, CMP>& other) const {
+    Set<KEY, CMP> result = *this;
+    result |= other;
+    return result;
+  }
+  inline Set<KEY, CMP> operator&(const Set<KEY, CMP>& other) const {
+    Set<KEY, CMP> result = *this;
+    result &= other;
+    return result;
+  }
+  inline Set<KEY, CMP> operator+(const Set<KEY, CMP>& other) const {
+    Set<KEY, CMP> result = *this;
+    result += other;
+    return result;
+  }
+  inline Set<KEY, CMP> operator-(const Set<KEY, CMP>& other) const {
+    Set<KEY, CMP> result = *this;
+    result -= other;
+    return result;
+  }
+
   /**
    * @brief Find the entry corresponding to key.
    *
