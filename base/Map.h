@@ -40,7 +40,10 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::clear;
   using Base::contains;
   using Base::count;
+  using Base::crbegin;
+  using Base::crend;
   using Base::emplace;
+  using Base::emplace_hint;
   using Base::empty;
   using Base::end;
   using Base::erase;
@@ -48,13 +51,10 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::find;
   using Base::insert;
   using Base::merge;
+  using Base::rbegin;
+  using Base::rend;
   using Base::size;
   using Base::swap;
-
-  template <typename... Args>
-  iterator emplaceHint(const citerator hint, Args... args) {
-    return emplace_hint(hint, std::forward<Args>(args)...);
-  }
 
   inline VALUE& first() {
     assert(!empty());
@@ -285,6 +285,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
 
  public:
   using Base::Base;
+
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
@@ -300,6 +301,8 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using Base::find;
   using Base::insert;
   using Base::merge;
+  using Base::rbegin;
+  using Base::rend;
   using Base::size;
   using Base::swap;
 

@@ -12,6 +12,7 @@ TEST(VectorTest, Push) {
        ++it) {
     std::cout << *it << std::endl;
   }
+<<<<<<< HEAD
 }
 TEST(VectorTest, Pop) {
   pcl::EfficientVector<int> ev;
@@ -108,3 +109,8 @@ TEST(VectorTest, index1) {
     std::cout << *it4 << std::endl;
   }
 }
+=======
+
+  ev.isEmpty();
+}
+>>>>>>> 3126dfa732a8a4d07119baf4b6fb204cc3d3c1fc
