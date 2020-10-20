@@ -12,10 +12,6 @@ pipelines:
         deployment: test
         # trigger: manual  # Uncomment to make this a manual deployment.
         script: # Modify the commands below to build your repository.
-          - pipe: atlassian/bitbucket-build-statistics:0.2.0
-            variables:
-              BITBUCKET_USERNAME: $BITBUCKET_USERNAME
-              BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
           - mkdir build
           - cd build
           - cmake ..          
