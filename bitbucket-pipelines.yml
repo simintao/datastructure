@@ -11,9 +11,15 @@ pipelines:
         name: Deploy to test
         deployment: test
         # trigger: manual  # Uncomment to make this a manual deployment.
+        caches:
+          - cmake
         script: # Modify the commands below to build your repository.
           - mkdir build
           - cd build
           - cmake ..          
           - make
           - make test
+
+definitions:
+  caches:
+    cmake: vendor/cmake
