@@ -271,6 +271,53 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   friend class KeyIterator;
 };
 
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator==(const Map<KEY, VALUE, CMP>& lhs,
+                       const Map<KEY, VALUE, CMP>& rhs) {
+  const typename Map<KEY, CMP>::Base& lhs_base = lhs;
+  const typename Map<KEY, CMP>::Base& rhs_base = rhs;
+  return lhs_base == rhs_base;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator<(const Map<KEY, VALUE, CMP>& lhs,
+                      const Map<KEY, VALUE, CMP>& rhs) {
+  const typename Map<KEY, CMP>::Base& lhs_base = lhs;
+  const typename Map<KEY, CMP>::Base& rhs_base = rhs;
+  return lhs_base < rhs_base;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator!=(const Map<KEY, VALUE, CMP>& lhs,
+                       const Map<KEY, VALUE, CMP>& rhs) {
+  const typename Map<KEY, CMP>::Base& lhs_base = lhs;
+  const typename Map<KEY, CMP>::Base& rhs_base = rhs;
+  return !(lhs_base == rhs_base);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator<=(const Map<KEY, VALUE, CMP>& lhs,
+                       const Map<KEY, VALUE, CMP>& rhs) {
+  return !(rhs < lhs);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator>=(const Map<KEY, VALUE, CMP>& lhs,
+                       const Map<KEY, VALUE, CMP>& rhs) {
+  return !(lhs < rhs);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator>(const Map<KEY, VALUE, CMP>& lhs,
+                      const Map<KEY, VALUE, CMP>& rhs) {
+  return rhs < lhs;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline void swap(Map<KEY, VALUE, CMP>& lhs, Map<KEY, VALUE, CMP>& rhs) {
+  lhs.swap(rhs);
+}
+
 /**
  * @brief The multimap is an ordered associative container.
  *
