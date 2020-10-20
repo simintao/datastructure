@@ -1,0 +1,23 @@
+# This is a sample build configuration for C++ – Make.
+# Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: gcc:6.5
+
+pipelines:
+  default:
+    - step:
+        name: Deploy to test
+        deployment: test
+        # trigger: manual  # Uncomment to make this a manual deployment.
+        script: # Modify the commands below to build your repository.
+          - pipe: atlassian/bitbucket-build-statistics:0.2.0
+            variables:
+              BITBUCKET_USERNAME: simintao@126.com
+              BITBUCKET_APP_PASSWORD: Tao1atlassian
+          - mkdir build
+          - cd build
+          - cmake ..          
+          - make
+          - make test
