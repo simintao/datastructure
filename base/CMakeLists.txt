@@ -70,8 +70,8 @@ SET(AbslLibs
 #message("libs ${AbslLibs}")
 
 # Process Abseil
-INCLUDE_DIRECTORIES("./abseil/include")
-LINK_DIRECTORIES("./abseil/lib")
+INCLUDE_DIRECTORIES("./abseil/include" "../vendor/")
+LINK_DIRECTORIES("./abseil/lib" "../vendor/")
 
 AUX_SOURCE_DIRECTORY(./ SourceFiles)
 
