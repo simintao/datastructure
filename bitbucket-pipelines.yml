@@ -23,4 +23,4 @@ pipelines:
 
 definitions:
   caches:
-    cmake: vendor/cmake
+    cmake: bin/cmake
