@@ -57,5 +57,4 @@ void test02() {
 TEST(ArrayTest, init) {
   test01();
   test02();
-  system("pause");
 }
