@@ -22,4 +22,20 @@ TEST(SetTest, Subtract) {
   EXPECT_TRUE(Set<int>::equal(&bset1, &bset3));
 }
 
+TEST(SetTest, less) {
+  Set<int> bset1 = {1, 2, 3};
+  Set<int> bset2 = {2, 3, 4};
+
+  bset1 < bset2;
+}
+
+TEST(SetTest, swap) {
+  Set<int> bset1 = {1, 2, 3};
+  Set<int> bset2 = {2, 3, 4};
+
+  swap(bset1, bset2);
+
+  EXPECT_FALSE(bset1.hasKey(1));
+}
+
 }  // namespace

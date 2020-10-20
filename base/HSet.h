@@ -16,7 +16,7 @@
 namespace pcl {
 
 /**
- * @brief A hash set container made up of unique keys.
+ * @brief A wrap hash set container made up of unique keys.
  *
  * The inherited base class is google abseil hash set.
  */
