@@ -100,6 +100,7 @@ TEST(MapTest, crend) {
 }
 
 TEST(MapTest, emplace) {
+  // emplace would construct the object in place.
   Map<std::string, std::string> m;
 
   // uses pair's move constructor
@@ -122,6 +123,8 @@ TEST(MapTest, emplace) {
 }
 
 TEST(MapTest, emplace_hint) {
+  // emplace_hint would construct the object in place and insert the object
+  // before the hint.
   Map<std::string, std::string> m;
   auto hint = m.begin();
 
@@ -147,6 +150,35 @@ TEST(MapTest, emplace_hint) {
 TEST(MapTest, empty) {
   Map<std::string, std::string> m;
   EXPECT_TRUE(m.empty());
+}
+
+TEST(MapTest, erase) {
+  Map<int, std::string> c = {{1, "one"},  {2, "two"},  {3, "three"},
+                             {4, "four"}, {5, "five"}, {6, "six"}};
+
+  // erase all odd numbers from c
+  for (auto it = c.begin(); it != c.end();) {
+    if (it->first % 2 == 1)
+      it = c.erase(it);
+    else
+      ++it;
+  }
+
+  for (auto &p : c) {
+    std::cout << p.first << "=>" << p.second << std::endl;
+  }
+
+  // use range erase
+  c.erase(c.begin(), --c.end());
+
+  for (auto &p : c) {
+    std::cout << p.first << "=>" << p.second << std::endl;
+  }
+
+  // use erase key
+  c.erase(6);
+
+  EXPECT_TRUE(c.empty());
 }
 
 TEST(MultimapTest, Ctor) {
