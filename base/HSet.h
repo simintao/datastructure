@@ -56,6 +56,7 @@ class HSet : public absl::flat_hash_set<KEY> {
   using Base::reserve;
   using Base::size;
   using Base::swap;
+  using Base::operator=;
 
   /**
    * @brief Find the entry corresponding to key.

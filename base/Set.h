@@ -57,6 +57,7 @@ class Set : public absl::btree_set<KEY, CMP> {
   using Base::swap;
   using Base::upper_bound;
   using Base::value_comp;
+  using Base::operator=;
 
   /**
    * @brief Removes all items from this set that are contained in the other set.
@@ -424,6 +425,7 @@ class Multiset : public absl::btree_multiset<KEY, CMP> {
   using Base::swap;
   using Base::upper_bound;
   using Base::value_comp;
+  using Base::operator=;
 };
 
 template <typename KEY, typename CMP>
