@@ -31,9 +31,11 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
  public:
   using Base = typename Map::btree_map;
   using iterator = typename Base::iterator;
-  using citerator = typename Base::const_iterator;
+  using const_iterator = typename Base::const_iterator;
 
   using Base::Base;
+
+  using Base::at;
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
@@ -55,6 +57,15 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base::rend;
   using Base::size;
   using Base::swap;
+  using Base::operator[];
+  using Base::equal_range;
+  using Base::lower_bound;
+  using Base::upper_bound;
+
+  template <typename K, typename V, typename C>
+  friend bool operator==(const Map<K, V, C>&, const Map<K, V, C>&);
+  template <typename K, typename V, typename C>
+  friend bool operator<(const Map<K, V, C>&, const Map<K, V, C>&);
 
   inline VALUE& first() {
     assert(!empty());
@@ -230,7 +241,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
 
    private:
     Map<KEY, VALUE, CMP>* _container = nullptr;
-    typename Map<KEY, VALUE, CMP>::citerator _iter;
+    typename Map<KEY, VALUE, CMP>::const_iterator _iter;
   };
 
   friend class ConstIterator;
@@ -265,7 +276,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
 
    private:
     Map<KEY, VALUE, CMP>* _container;
-    typename Map<KEY, VALUE, CMP>::citerator _iter;
+    typename Map<KEY, VALUE, CMP>::const_iterator _iter;
   };
 
   friend class KeyIterator;
@@ -327,7 +338,7 @@ template <typename KEY, typename VALUE, typename CMP = std::less<KEY>>
 class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using Base = typename Multimap::btree_multimap;
   using iterator = typename Base::iterator;
-  using citerator = typename Base::const_iterator;
+  using const_iterator = typename Base::const_iterator;
   using ValueType = typename Base::value_type;
 
  public:
@@ -434,7 +445,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
 
    private:
     Multimap<KEY, VALUE, CMP>* _container;
-    typename Multimap<KEY, VALUE, CMP>::citerator _iter;
+    typename Multimap<KEY, VALUE, CMP>::const_iterator _iter;
   };
   friend class ConstIterator;
 
@@ -469,7 +480,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
 
    private:
     Multimap<KEY, VALUE, CMP>* _container;
-    typename Multimap<KEY, VALUE, CMP>::citerator _iter;
+    typename Multimap<KEY, VALUE, CMP>::const_iterator _iter;
   };
 
   friend class KeyIterator;
