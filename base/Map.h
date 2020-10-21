@@ -350,7 +350,10 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using Base::clear;
   using Base::contains;
   using Base::count;
+  using Base::crbegin;
+  using Base::crend;
   using Base::emplace;
+  using Base::emplace_hint;
   using Base::empty;
   using Base::end;
   using Base::equal_range;
@@ -358,11 +361,20 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using Base::extract;
   using Base::find;
   using Base::insert;
+  using Base::lower_bound;
   using Base::merge;
   using Base::rbegin;
   using Base::rend;
   using Base::size;
   using Base::swap;
+  using Base::upper_bound;
+  using Base::operator=;
+
+  template <typename K, typename V, typename C>
+  friend bool operator==(const Multimap<K, V, C>&, const Multimap<K, V, C>&);
+
+  template <typename K, typename V, typename C>
+  friend bool operator<(const Multimap<K, V, C>&, const Multimap<K, V, C>&);
 
   void insert(const KEY& key, const VALUE& value) {
     insert(ValueType(key, value));
