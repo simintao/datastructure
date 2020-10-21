@@ -60,6 +60,45 @@ TEST(MapTest, at_exception) {
   ASSERT_THROW(bmap.at(1), std::out_of_range);
 }
 
+TEST(MapTest, begin) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  EXPECT_STREQ(bmap.begin()->second, "a");
+}
+
+TEST(MapTest, cbegin) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  EXPECT_STREQ(bmap.cbegin()->second, "a");
+}
+
+TEST(MapTest, end) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  EXPECT_TRUE(bmap.find(3) == bmap.end());
+}
+
+TEST(MapTest, cend) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  EXPECT_TRUE(bmap.find(3) == bmap.cend());
+}
+
+TEST(MapTest, rbegin) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  EXPECT_STREQ(bmap.rbegin()->second, "b");
+}
+
+TEST(MapTest, rend) {
+  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
+  for (auto p = bmap.rbegin(); p != bmap.rend(); p++) {
+    std::cout << p->first << " " << p->second << std::endl;
+  }
+}
+
+TEST(MapTest, crend) {
+  Map<int, const char *> bmap{{1, "a"}, {1, "b"}};
+  for (auto p = bmap.crbegin(); p != bmap.crend(); p++) {
+    std::cout << p->first << " " << p->second << std::endl;
+  }
+}
+
 TEST(MultimapTest, Ctor) {
   Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
