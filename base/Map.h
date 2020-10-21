@@ -96,6 +96,33 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     assert(!empty());
     return *(cend() - 1).key();
   }
+
+  /**
+   * @brief Get all map keys.
+   *
+   * @return std::list<KEY> all map keys.
+   */
+  std::list<KEY> keys() const {
+    std::list<KEY> ret_value;
+    for (auto p : *this) {
+      ret_value.push_back(p->first);
+    }
+    return ret_value;
+  }
+
+  /**
+   * @brief Get all map values.
+   *
+   * @return std::list<VALUE> all map values.
+   */
+  std::list<VALUE> values() const {
+    std::list<VALUE> ret_value;
+    for (auto p : *this) {
+      ret_value.push_back(p->second);
+    }
+    return ret_value;
+  }
+
   /**
    * @brief Find out if key is in the map.
    *
@@ -108,10 +135,11 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   // Find the value corresponding to key.
   const VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
     auto find_iter = this->find(key);
-    if (find_iter != this->end())
+    if (find_iter != this->end()) {
       return find_iter->second;
-    else
+    } else {
       return default_value;
+    }
   }
 
   void insert(const KEY& key, const VALUE& value) {
@@ -120,12 +148,16 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
 
   void deleteContents() {
     Iterator iter(this);
-    while (iter.hasNext()) delete iter.next();
+    while (iter.hasNext()) {
+      delete iter.next();
+    }
   }
 
   void deleteArrayContents() {
     Iterator iter(this);
-    while (iter.hasNext()) delete[] iter.next();
+    while (iter.hasNext()) {
+      delete[] iter.next();
+    }
   }
 
   void deleteContentsClear() {
