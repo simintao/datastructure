@@ -221,7 +221,7 @@ inline bool operator==(const HMultiMap<KEY, VALUE>& x,
 
 template <typename KEY, typename VALUE>
 inline bool operator!=(const HMultiMap<KEY, VALUE>& x,
-                       const HMultiMap<KEY, VALUE> y) {
+                       const HMultiMap<KEY, VALUE>& y) {
   return !(x == y);
 }
 

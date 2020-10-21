@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "absl/container/flat_hash_set.h"
 
 namespace pcl {
@@ -89,7 +91,7 @@ class HSet : public absl::flat_hash_set<KEY> {
    * @return true when the two set is equal.
    * @return false
    */
-  static bool equal(const HSet<KEY> *set1, const HSet<KEY> *set2);
+  static bool equal(const HSet<KEY>* set1, const HSet<KEY>* set2);
 
   /**
    * @brief Judge the set2 is the subset of the set.
@@ -98,9 +100,9 @@ class HSet : public absl::flat_hash_set<KEY> {
    * @return true if set2 is a subset of this set.
    * @return false
    */
-  bool isSubset(const HSet<KEY> *set2);
+  bool isSubset(const HSet<KEY>* set2);
 
-  void insertSet(const HSet<KEY> *set2);
+  void insertSet(const HSet<KEY>* set2);
 
   void deleteContents() {
     Iterator iter(this);
@@ -112,7 +114,7 @@ class HSet : public absl::flat_hash_set<KEY> {
     this->clear();
   }
 
-  static bool intersects(HSet<KEY> *set1, HSet<KEY> *set2);
+  static bool intersects(HSet<KEY>* set1, HSet<KEY>* set2);
 
   /**
    * @brief Java style container itererator.
@@ -126,17 +128,17 @@ class HSet : public absl::flat_hash_set<KEY> {
   class Iterator {
    public:
     Iterator() : _container(nullptr) {}
-    explicit Iterator(HSet<KEY> *container) : _container(container) {
+    explicit Iterator(HSet<KEY>* container) : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit Iterator(HSet<KEY> &container) : _container(&container) {
+    explicit Iterator(HSet<KEY>& container) : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(HSet<KEY> *container) {
+    void init(HSet<KEY>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const HSet<KEY> &container) {
+    void init(const HSet<KEY>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -144,28 +146,28 @@ class HSet : public absl::flat_hash_set<KEY> {
       return _container != nullptr && _iter != _container->end();
     }
     KEY next() { return *_iter++; }
-    HSet<KEY> *container() { return _container; }
+    HSet<KEY>* container() { return _container; }
 
    private:
-    HSet<KEY> *_container;
+    HSet<KEY>* _container;
     typename HSet<KEY>::iterator _iter;
   };
 
   class ConstIterator {
    public:
     ConstIterator() : _container(nullptr) {}
-    explicit ConstIterator(const HSet<KEY> *container) : _container(container) {
+    explicit ConstIterator(const HSet<KEY>* container) : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit ConstIterator(const HSet<KEY> &container)
+    explicit ConstIterator(const HSet<KEY>& container)
         : _container(&container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const HSet<KEY> *container) {
+    void init(const HSet<KEY>* container) {
       _container = container;
       if (_container != nullptr) _iter = _container->begin();
     }
-    void init(const HSet<KEY> &container) {
+    void init(const HSet<KEY>& container) {
       _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
@@ -174,16 +176,16 @@ class HSet : public absl::flat_hash_set<KEY> {
       return _container != nullptr && _iter != _container->end();
     }
     KEY next() { return *_iter++; }
-    const HSet<KEY> *container() { return _container; }
+    const HSet<KEY>* container() { return _container; }
 
    private:
-    const HSet<KEY> *_container;
+    const HSet<KEY>* _container;
     typename HSet<KEY>::const_iterator _iter;
   };
 };
 
 template <class KEY>
-bool HSet<KEY>::equal(const HSet<KEY> *set1, const HSet<KEY> *set2) {
+bool HSet<KEY>::equal(const HSet<KEY>* set1, const HSet<KEY>* set2) {
   if ((set1 == nullptr || set1->empty()) &&
       (set2 == nullptr || set2->empty())) {
     return true;
@@ -206,7 +208,7 @@ bool HSet<KEY>::equal(const HSet<KEY> *set1, const HSet<KEY> *set2) {
 }
 
 template <class KEY>
-bool HSet<KEY>::isSubset(const HSet<KEY> *set2) {
+bool HSet<KEY>::isSubset(const HSet<KEY>* set2) {
   if (this->empty() && set2->empty()) {
     return true;
   } else {
@@ -220,10 +222,10 @@ bool HSet<KEY>::isSubset(const HSet<KEY> *set2) {
 }
 
 template <class KEY>
-bool HSet<KEY>::intersects(HSet<KEY> *set1, HSet<KEY> *set2) {
+bool HSet<KEY>::intersects(HSet<KEY>* set1, HSet<KEY>* set2) {
   if (set1 && !set1->empty() && set2 && !set2->empty()) {
-    const HSet<KEY> *small = set1;
-    const HSet<KEY> *big = set2;
+    const HSet<KEY>* small = set1;
+    const HSet<KEY>* big = set2;
     if (small->size() > big->size()) {
       small = set2;
       big = set1;
@@ -266,15 +268,30 @@ bool HSet<KEY>::intersects(HSet<KEY> *set1, HSet<KEY> *set2) {
  * @return false
  */
 template <class KEY>
-bool operator<(const HSet<KEY> &set1, const HSet<KEY> &set2) {
-  const absl::flat_hash_set<KEY> &set1_base = set1;
-  const absl::flat_hash_set<KEY> &set2_base = set2;
+bool operator<(const HSet<KEY>& set1, const HSet<KEY>& set2) {
+  const typename HSet<KEY>::Base& set1_base = set1;
+  const typename HSet<KEY>::Base& set2_base = set2;
   return set1_base < set2_base;
 }
 
 template <class KEY>
-void HSet<KEY>::insertSet(const HSet<KEY> *set2) {
+void HSet<KEY>::insertSet(const HSet<KEY>* set2) {
   if (set2) this->insert(set2->begin(), set2->end());
+}
+
+template <typename KEY>
+inline void swap(HSet<KEY>& x, HSet<KEY>& y) noexcept(noexcept(x.swap(y))) {
+  x.swap(y);
+}
+
+template <typename KEY>
+inline bool operator==(const HSet<KEY>& x, const HSet<KEY>& y) {
+  return static_cast<const typename HSet<KEY>::Base&>(x) == y;
+}
+
+template <typename KEY>
+inline bool operator!=(const HSet<KEY>& x, const HSet<KEY>& y) {
+  return !(x == y);
 }
 
 /**
@@ -288,5 +305,21 @@ class HMultiset : public HSet<KEY> {
   using Base = typename HMultiset::HSet;
   using Base::Base;
 };
+
+template <typename KEY>
+inline void swap(HMultiset<KEY>& x,
+                 HMultiset<KEY>& y) noexcept(noexcept(x.swap(y))) {
+  x.swap(y);
+}
+
+template <typename KEY>
+inline bool operator==(const HMultiset<KEY>& x, const HMultiset<KEY>& y) {
+  return static_cast<const typename HMultiset<KEY>::Base&>(x) == y;
+}
+
+template <typename KEY>
+inline bool operator!=(const HMultiset<KEY>& x, const HMultiset<KEY>& y) {
+  return !(x == y);
+}
 
 }  // namespace pcl
