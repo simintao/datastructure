@@ -99,6 +99,56 @@ TEST(MapTest, crend) {
   }
 }
 
+TEST(MapTest, emplace) {
+  Map<std::string, std::string> m;
+
+  // uses pair's move constructor
+  m.emplace(std::make_pair(std::string("a"), std::string("a")));
+
+  // uses pair's converting move constructor
+  m.emplace(std::make_pair("b", "abcd"));
+
+  // uses pair's template constructor
+  m.emplace("d", "ddd");
+
+  // uses pair's piecewise constructor
+  m.emplace(std::piecewise_construct, std::forward_as_tuple("c"),
+            std::forward_as_tuple(10, 'c'));
+  // as of C++17, m.try_emplace("c", 10, 'c'); can be used
+
+  for (const auto &p : m) {
+    std::cout << p.first << " => " << p.second << '\n';
+  }
+}
+
+TEST(MapTest, emplace_hint) {
+  Map<std::string, std::string> m;
+  auto hint = m.begin();
+
+  // uses pair's move constructor
+  m.emplace_hint(hint, std::make_pair(std::string("a"), std::string("a")));
+
+  // uses pair's converting move constructor
+  m.emplace_hint(hint, std::make_pair("b", "abcd"));
+
+  // uses pair's template constructor
+  m.emplace_hint(hint, "d", "ddd");
+
+  // uses pair's piecewise constructor
+  m.emplace_hint(hint, std::piecewise_construct, std::forward_as_tuple("c"),
+                 std::forward_as_tuple(10, 'c'));
+  // as of C++17, m.try_emplace("c", 10, 'c'); can be used
+
+  for (const auto &p : m) {
+    std::cout << p.first << " => " << p.second << '\n';
+  }
+}
+
+TEST(MapTest, empty) {
+  Map<std::string, std::string> m;
+  EXPECT_TRUE(m.empty());
+}
+
 TEST(MultimapTest, Ctor) {
   Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
