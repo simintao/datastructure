@@ -474,4 +474,51 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
 
   friend class KeyIterator;
 };
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator==(const Multimap<KEY, VALUE, CMP>& lhs,
+                       const Multimap<KEY, VALUE, CMP>& rhs) {
+  const typename Multimap<KEY, CMP>::Base& lhs_base = lhs;
+  const typename Multimap<KEY, CMP>::Base& rhs_base = rhs;
+  return lhs_base == rhs_base;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator<(const Multimap<KEY, VALUE, CMP>& lhs,
+                      const Multimap<KEY, VALUE, CMP>& rhs) {
+  const typename Multimap<KEY, CMP>::Base& lhs_base = lhs;
+  const typename Multimap<KEY, CMP>::Base& rhs_base = rhs;
+  return lhs_base < rhs_base;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator!=(const Multimap<KEY, VALUE, CMP>& lhs,
+                       const Multimap<KEY, VALUE, CMP>& rhs) {
+  return !(lhs == rhs);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator<=(const Multimap<KEY, VALUE, CMP>& lhs,
+                       const Multimap<KEY, VALUE, CMP>& rhs) {
+  return !(rhs < lhs);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator>=(const Multimap<KEY, VALUE, CMP>& lhs,
+                       const Multimap<KEY, VALUE, CMP>& rhs) {
+  return !(lhs < rhs);
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline bool operator>(const Multimap<KEY, VALUE, CMP>& lhs,
+                      const Multimap<KEY, VALUE, CMP>& rhs) {
+  return rhs < lhs;
+}
+
+template <typename KEY, typename VALUE, typename CMP>
+inline void swap(Multimap<KEY, VALUE, CMP>& lhs,
+                 Multimap<KEY, VALUE, CMP>& rhs) {
+  lhs.swap(rhs);
+}
+
 }  // namespace pcl
