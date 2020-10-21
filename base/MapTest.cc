@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "gtest/gtest-death-test.h"
 #include "gtest/gtest.h"
 
 using pcl::Map;
@@ -55,10 +56,8 @@ TEST(MapTest, at) {
 }
 
 TEST(MapTest, at_exception) {
-  Map<int, const char *> bmap{{1, "a"}, {2, "b"}};
-  const char *value = bmap.at(3);
-
-  EXPECT_STREQ(bmap.at(1), "a");
+  Map<int, const char *> bmap;
+  ASSERT_THROW(bmap.at(1), std::out_of_range);
 }
 
 TEST(MultimapTest, Ctor) {
