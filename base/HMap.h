@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include <utility>
 
 #include "absl/container/flat_hash_map.h"
 
@@ -177,6 +178,22 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   };
 };
 
+template <typename KEY, typename VALUE>
+inline void swap(HMap<KEY, VALUE>& x,
+                 HMap<KEY, VALUE>& y) noexcept(noexcept(x.swap(y))) {
+  x.swap(y);
+}
+
+template <typename KEY, typename VALUE>
+inline bool operator==(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE>& y) {
+  return static_cast<const typename HMap<KEY, VALUE>::Base&>(x) == y;
+}
+
+template <typename KEY, typename VALUE>
+inline bool operator!=(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE> y) {
+  return !(x == y);
+}
+
 /**
  * @brief A hash map of multiple elements with equivalent keys.
  *
@@ -189,5 +206,23 @@ class HMultiMap : public HMap<KEY, VALUE> {
   using Base = typename HMultiMap::HMap;
   using Base::Base;
 };
+
+template <typename KEY, typename VALUE>
+inline void swap(HMultiMap<KEY, VALUE>& x,
+                 HMultiMap<KEY, VALUE>& y) noexcept(noexcept(x.swap(y))) {
+  x.swap(y);
+}
+
+template <typename KEY, typename VALUE>
+inline bool operator==(const HMultiMap<KEY, VALUE>& x,
+                       const HMultiMap<KEY, VALUE>& y) {
+  return static_cast<const typename HMultiMap<KEY, VALUE>::Base&>(x) == y;
+}
+
+template <typename KEY, typename VALUE>
+inline bool operator!=(const HMultiMap<KEY, VALUE>& x,
+                       const HMultiMap<KEY, VALUE> y) {
+  return !(x == y);
+}
 
 }  // namespace pcl
