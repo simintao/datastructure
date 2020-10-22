@@ -115,7 +115,7 @@ TEST(VectorTest, index1) {
     std::cout << *it4 << std::endl;
   }
 }
-<<<<<<< HEAD
+
 TEST(VectorTest, maxNum) {
   pcl::EfficientVector<int> ev;
   for (int i = 0; i < 280; ++i) {
@@ -128,5 +128,4 @@ TEST(VectorTest, maxNum) {
     std::cout << *it4 << std::endl;
   }
 }
-== == == =
->>>>>>> 68bbaa48322998fe5ed751fc886f265be5db6198
+
