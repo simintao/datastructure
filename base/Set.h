@@ -12,14 +12,16 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 #include "absl/container/btree_set.h"
 
 namespace pcl {
 
 /**
- * @brief A wrap set container.
+ * @brief A wrap set container made up of unique keys.
  *
+ * The inherited base class is google abseil btree set.
  */
 template <class KEY, class CMP = std::less<KEY>>
 class Set : public absl::btree_set<KEY, CMP> {
@@ -55,6 +57,7 @@ class Set : public absl::btree_set<KEY, CMP> {
   using Base::swap;
   using Base::upper_bound;
   using Base::value_comp;
+  using Base::operator=;
 
   /**
    * @brief Removes all items from this set that are contained in the other set.
@@ -330,28 +333,58 @@ bool Set<KEY, CMP>::intersects(Set<KEY, CMP>* set1, Set<KEY, CMP>* set2) {
   return false;
 }
 
-/**
- * @brief A complicated way to call the base class operator<.
- *
- * @tparam KEY
- * @tparam CMP
- * @param set1
- * @param set2
- * @return true
- * @return false
- */
-template <class KEY, class CMP>
-bool operator<(const Set<KEY, CMP>& set1, const Set<KEY, CMP>& set2) {
-  const absl::btree_set<KEY, CMP>& set1_base = set1;
-  const absl::btree_set<KEY, CMP>& set2_base = set2;
-  return set1_base < set2_base;
-}
-
 template <class KEY, class CMP>
 void Set<KEY, CMP>::insertSet(const Set<KEY, CMP>* set2) {
   if (set2) {
     this->insert(set2->begin(), set2->end());
   }
+}
+
+template <typename KEY, typename CMP>
+inline bool operator==(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base == set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator!=(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base != set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator<(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base < set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator<=(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base <= set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator>=(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base >= set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator>(const Set<KEY, CMP>& lhs, const Set<KEY, CMP>& rhs) {
+  const typename Set<KEY, CMP>::Base& set1_base = lhs;
+  const typename Set<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base > set2_base;
+}
+
+template <typename KEY, typename CMP>
+void swap(Set<KEY, CMP>& x, Set<KEY, CMP>& y) {
+  return x.swap(y);
 }
 
 /**
@@ -380,7 +413,7 @@ class Multiset : public absl::btree_multiset<KEY, CMP> {
   using Base::erase;
   using Base::extract;
   using Base::find;
-  using Base::get_allocator;
+  using Base::g;
   using Base::insert;
   using Base::key_comp;
   using Base::lower_bound;
@@ -392,6 +425,60 @@ class Multiset : public absl::btree_multiset<KEY, CMP> {
   using Base::swap;
   using Base::upper_bound;
   using Base::value_comp;
+  using Base::operator=;
 };
+
+template <typename KEY, typename CMP>
+inline bool operator==(const Multiset<KEY, CMP>& lhs,
+                       const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base == set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator!=(const Multiset<KEY, CMP>& lhs,
+                       const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base != set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator<(const Multiset<KEY, CMP>& lhs,
+                      const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base < set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator<=(const Multiset<KEY, CMP>& lhs,
+                       const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base <= set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator>=(const Multiset<KEY, CMP>& lhs,
+                       const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base >= set2_base;
+}
+
+template <typename KEY, typename CMP>
+inline bool operator>(const Multiset<KEY, CMP>& lhs,
+                      const Multiset<KEY, CMP>& rhs) {
+  const typename Multiset<KEY, CMP>::Base& set1_base = lhs;
+  const typename Multiset<KEY, CMP>::Base& set2_base = rhs;
+  return set1_base > set2_base;
+}
+
+template <typename KEY, typename CMP>
+void swap(Multiset<KEY, CMP>& x, Multiset<KEY, CMP>& y) {
+  return x.swap(y);
+}
 
 }  // namespace pcl

@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
 # Abseil requires C++11
 SET(CMAKE_CXX_STANDARD 11)
@@ -70,12 +70,12 @@ SET(AbslLibs
 #message("libs ${AbslLibs}")
 
 # Process Abseil
-INCLUDE_DIRECTORIES("./abseil/include")
-LINK_DIRECTORIES("./abseil/lib")
+INCLUDE_DIRECTORIES("./abseil/include" "../third_party/googletest")
+LINK_DIRECTORIES("./abseil/lib" "../third_party/googletest")
 
 AUX_SOURCE_DIRECTORY(./ SourceFiles)
 
 ADD_EXECUTABLE(contain_test ${SourceFiles})
 
 # Declare dependency on the absl::strings library
-TARGET_LINK_LIBRARIES(contain_test gtest_main gtest pthread ${AbslLibs})
+TARGET_LINK_LIBRARIES(contain_test gmock_main gtest gmock pthread ${AbslLibs})
