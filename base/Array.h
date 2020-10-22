@@ -1,67 +1,73 @@
+/**
+ * @file Array.h
+ * @author Lh
+ * @brief The Array container for the eda project.
+ * @version 0.1
+ * @date 2020-10-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #pragma once
-#include <iostream>
+#include <algorithm>
+
+#include "absl/container/fixed_array.h"
 
 namespace pcl {
-
-template <class T>
-class Array {
+template <typename T>
+class EfficientArray : public absl::FixedArray<T, /* N= */ 256> {
  public:
-  Array(int capacity) {
-    this->_capacity = capacity;
-    this->_size = 0;
-    this->address = new T[this->_capacity];
+  using Base = typename EfficientArray::FixedArray;
+  using pointer = typename Base::pointer;
+  using const_pointer = typename Base::const_pointer;
+  using reference = typename Base::reference;
+  using const_reference = typename Base::const_reference;
+  using iterator = typename Base::iterator;
+  using const_iterator = typename Base::const_iterator;
+
+  using Base::Base;
+
+  size_t getSize() { return this->size(); }
+  bool isEmpty() { return this->empty(); }
+  pointer data() { return this->data(); }
+  const_pointer data() const { return this->data(); }
+  reference at(size_t i) { return this->at(i); }
+  const_reference at(size_t i) const { return this->at(i); }
+  reference getFront() { return this->front(); }
+  const_reference getFront() const { return this->front(); }
+  reference getBack() { return this->back(); }
+  const_reference getBack() const { return this->back(); }
+  iterator first() { return this->begin(); }
+  const_iterator first() const { return this->begin(); }
+  iterator last() { return this->end(); }
+  const_iterator last() const { return this->end(); }
+  void allFill(const T& val) { this->fill(val); }
+
+  
+  friend bool operator==(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return absl::equal(lhs.first(), lhs.last(), rhs.first(), rhs.last());
   }
 
-  Array(const Array &arr) {
-    this->_capacity = arr._capacity;
-    this->_size = arr._size;
-    this->address = new T[arr._capacity];
-    for (int i = 0; i < this->_size; i++) {
-      this->address[i] = arr.address[i];
-    }
-  }
-  Array &operator=(const Array &arr) {
-    if (this->address != NULL) {
-      delete[] this->address;
-      this->address = NULL;
-      this->_capacity = 0;
-      this->_size = 0;
-    }
-    this->_capacity = arr._capacity;
-    this->_size = arr._size;
-    this->address = new T[arr._capacity];
-    for (int i = 0; i < this->_size; i++) {
-      this->address[i] = arr.address[i];
-    }
-    return *this;
-  }
-  void pushBack(const T &val) {
-    if (this->_capacity == this->_size) {
-      return;
-    }
-    this->address[this->_size] = val;
-    this->_size++;
-  }
-  void popBack() {
-    if (this->_capacity == 0) {
-      return;
-    }
-    this->_size--;
-  }
-  T &operator[](int index) { return this->address[index]; }
-  int getCapacity() { return this->_capacity; }
-  int getSize() { return this->_size; }
-
-  ~Array() {
-    if (this->address != NULL) {
-      delete[] this->address;
-      this->address = NULL;
-    }
+  friend bool operator!=(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return !(lhs == rhs);
   }
 
- private:
-  T *address;
-  int _capacity;
-  int _size;
+  friend bool operator<(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return std::lexicographical_compare(lhs.first(), lhs.last(), rhs.first(),
+                                        rhs.last());
+  }
+
+  friend bool operator>(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return rhs < lhs;
+  }
+
+  friend bool operator<=(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return !(rhs < lhs);
+  }
+
+  friend bool operator>=(const EfficientArray& lhs, const EfficientArray& rhs) {
+    return !(lhs < rhs);
+  }
 };
+
 }  // namespace pcl
