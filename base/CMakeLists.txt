@@ -78,4 +78,4 @@ AUX_SOURCE_DIRECTORY(./ SourceFiles)
 ADD_EXECUTABLE(contain_test ${SourceFiles})
 
 # Declare dependency on the absl::strings library
-TARGET_LINK_LIBRARIES(contain_test gtest_main gtest pthread ${AbslLibs})
+TARGET_LINK_LIBRARIES(contain_test gmock_main gtest gmock pthread ${AbslLibs})

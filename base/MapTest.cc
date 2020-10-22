@@ -1,9 +1,12 @@
 #include "Map.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest-death-test.h"
 #include "gtest/gtest.h"
 
 using pcl::Map;
 using pcl::Multimap;
+
+using namespace testing;
 
 namespace {
 TEST(MapTest, initializer_list) {
@@ -148,8 +151,12 @@ TEST(MapTest, emplace_hint) {
 }
 
 TEST(MapTest, empty) {
-  Map<std::string, std::string> m;
-  EXPECT_TRUE(m.empty());
+  Map<int, std::string> m;
+
+  // auto IsEmpty = [](Map<std::string, std::string> &m) { return m.empty(); };
+
+  EXPECT_THAT(m, IsEmpty());
+  // EXPECT_TRUE(m.empty());
 }
 
 TEST(MapTest, erase) {
@@ -179,6 +186,33 @@ TEST(MapTest, erase) {
   c.erase(6);
 
   EXPECT_TRUE(c.empty());
+}
+
+TEST(MapTest, extract) {
+  Map<int, char> cont{{1, 'a'}, {2, 'b'}, {3, 'c'}};
+
+  auto print = [](std::pair<const int, char> &n) {
+    std::cout << " " << n.first << '(' << n.second << ')';
+  };
+
+  std::cout << "Start:";
+  std::for_each(cont.begin(), cont.end(), print);
+  std::cout << '\n';
+
+  // Extract node handle and change key
+  auto nh = cont.extract(1);
+
+  std::cout << "After extract and before insert:";
+  std::for_each(cont.begin(), cont.end(), print);
+  std::cout << '\n';
+
+  // Insert node handle back
+  cont.insert(move(nh));
+  cont.extract(cont.begin());
+
+  std::cout << "End:";
+  std::for_each(cont.begin(), cont.end(), print);
+  std::cout << '\n';
 }
 
 TEST(MultimapTest, Ctor) {
