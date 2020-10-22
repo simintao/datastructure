@@ -33,34 +33,53 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
 
+  /*constructor and destructor*/
   using Base::Base;
+  using Base::operator=;
+  ~Map() = default;
 
+  /*accessor*/
   using Base::at;
+  using Base::operator[];
+
+  /*iterators*/
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
-  using Base::clear;
-  using Base::contains;
-  using Base::count;
   using Base::crbegin;
   using Base::crend;
-  using Base::emplace;
-  using Base::emplace_hint;
-  using Base::empty;
   using Base::end;
-  using Base::erase;
-  using Base::extract;
-  using Base::find;
-  using Base::insert;
-  using Base::merge;
   using Base::rbegin;
   using Base::rend;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
   using Base::size;
+
+  /*modifier*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::insert_or_assign;
+  using Base::merge;
   using Base::swap;
-  using Base::operator[];
+  using Base::try_emplace;
+
+  /*lookup*/
+  using Base::contains;
+  using Base::count;
   using Base::equal_range;
+  using Base::find;
   using Base::lower_bound;
   using Base::upper_bound;
+
+  /*observers*/
+  using Base::key_comp;
+  using Base::value_comp;
 
   template <typename K, typename V, typename C>
   friend bool operator==(const Map<K, V, C>&, const Map<K, V, C>&);
