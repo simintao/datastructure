@@ -7,23 +7,25 @@ TEST(ArrayTest, base) {
   for (int i = 0; i < 3; i++) {
     ea[i] = i + 2;
   }
-  for (pcl::EfficientArray<int>::const_iterator it = ea.first();
-       it != ea.last(); ++it) {
+  for (pcl::EfficientArray<int>::const_iterator it = ea.begin(); it != ea.end();
+       ++it) {
     std::cout << *it << std::endl;
   }
 
-  int size = ea.getSize();
-  bool empty = ea.isEmpty();
+  int size = ea.size();
+  bool empty = ea.empty();
   std::cout << size << " " << empty << std::endl;
-  int &front = ea.getFront();
-  int &back = ea.getBack();
-  const int *first = ea.first();
-  const int *last = ea.last();
+  int &front = ea.front();
+  int &back = ea.back();
+  const int *begin = ea.begin();
+  const int *end = ea.end();
+
   std::cout << front << " " << back << std::endl;
-  std::cout << *first << " " << *last << std::endl;
-  ea.allFill(6);
-  for (pcl::EfficientArray<int>::const_iterator it = ea.first();
-       it != ea.last(); ++it) {
+  std::cout << *begin << " " << *end << std::endl;
+  
+  ea.fill(6);
+  for (pcl::EfficientArray<int>::const_iterator it = ea.begin(); it != ea.end();
+       ++it) {
     std::cout << *it << std::endl;
   }
 }
@@ -35,20 +37,20 @@ TEST(ArrayTest, operator) {
     ea1[i] = i + 2;
     ea2[i] = i + 2;
   }
-  for (pcl::EfficientArray<int>::const_iterator it = ea1.first();
-       it != ea1.last(); ++it) {
+  for (pcl::EfficientArray<int>::const_iterator it = ea1.begin();
+       it != ea1.end(); ++it) {
     std::cout << *it << std::endl;
   }
   bool isEqual = (ea1 == ea2) ? true : false;
   bool nEqual = (ea1 != ea2) ? true : false;
   std::cout << isEqual << std::endl;
   std::cout << nEqual << std::endl;
-  int size = ea1.getSize();
-  bool empty = ea1.isEmpty();
+  int size = ea1.size();
+  bool empty = ea1.empty();
   std::cout << size << " " << empty << std::endl;
-  ea1.allFill(6);
-  for (pcl::EfficientArray<int>::const_iterator it = ea1.first();
-       it != ea1.last(); ++it) {
+  ea1.fill(6);
+  for (pcl::EfficientArray<int>::const_iterator it = ea1.begin();
+       it != ea1.end(); ++it) {
     std::cout << *it << std::endl;
   }
 }
