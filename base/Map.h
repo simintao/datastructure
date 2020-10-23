@@ -124,7 +124,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   std::list<KEY> keys() const {
     std::list<KEY> ret_value;
     for (auto p : *this) {
-      ret_value.push_back(p->first);
+      ret_value.push_back(p.first);
     }
     return ret_value;
   }
@@ -137,7 +137,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   std::list<VALUE> values() const {
     std::list<VALUE> ret_value;
     for (auto p : *this) {
-      ret_value.push_back(p->second);
+      ret_value.push_back(p.second);
     }
     return ret_value;
   }
