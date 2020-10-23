@@ -546,6 +546,50 @@ TEST(MapTest, ConstIterator) {
   }
 }
 
+TEST(MapTest, NoMemberOperator1) {
+  Map<int, std::string> container1{{1, "x"}, {2, "y"}, {3, "z"}};
+  Map<int, std::string> container2{{1, "x"}, {2, "y"}, {3, "z"}};
+
+  EXPECT_TRUE(container1 == container2);
+}
+
+TEST(MapTest, NoMemberOperator2) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+}
+
+TEST(MapTest, NoMemberOperator3) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 != container2);
+}
+
+TEST(MapTest, NoMemberOperator4) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 <= container2);
+}
+
+TEST(MapTest, NoMemberOperator5) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_FALSE(container1 >= container2);
+}
+
+TEST(MapTest, NoMemberOperator6) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
+}
+
 TEST(MultimapTest, Ctor) {
   Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
