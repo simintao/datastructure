@@ -344,33 +344,50 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using ValueType = typename Base::value_type;
 
  public:
+  /*constructor*/
   using Base::Base;
+  /*destrcutor*/
+  ~Multimap() = default;
 
+  using Base::operator=;
+
+  /*iterator*/
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
-  using Base::clear;
-  using Base::contains;
-  using Base::count;
   using Base::crbegin;
   using Base::crend;
-  using Base::emplace;
-  using Base::emplace_hint;
-  using Base::empty;
   using Base::end;
-  using Base::equal_range;
-  using Base::erase;
-  using Base::extract;
-  using Base::find;
-  using Base::insert;
-  using Base::lower_bound;
-  using Base::merge;
   using Base::rbegin;
   using Base::rend;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
   using Base::size;
+
+  /*modifiers*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::merge;
   using Base::swap;
+
+  /*lookup*/
+  using Base::contains;
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+  using Base::lower_bound;
   using Base::upper_bound;
-  using Base::operator=;
+
+  /*observers*/
+  using Base::get_allocator;
+  using Base::key_comp;
+  using Base::value_comp;
 
   template <typename K, typename V, typename C>
   friend bool operator==(const Multimap<K, V, C>&, const Multimap<K, V, C>&);
@@ -462,42 +479,6 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
     typename Multimap<KEY, VALUE, CMP>::const_iterator _iter;
   };
   friend class ConstIterator;
-
-  class KeyIterator {
-   public:
-    KeyIterator() = default;
-    explicit KeyIterator(const Multimap<KEY, VALUE, CMP>* container) {
-      if (container != nullptr) _iter = container->begin();
-    }
-
-    void init(const Multimap<KEY, VALUE, CMP>* container) {
-      if (container != nullptr) _iter = container->begin();
-    }
-    void init(const Multimap<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) _iter = container->begin();
-    }
-
-    const KEY& operator*() const { return _iter.key(); }
-    const KEY* operator->() const { return &_iter.key(); }
-    bool operator==(KeyIterator o) const { return _iter == o.i; }
-    bool operator!=(KeyIterator o) const { return _iter != o.i; }
-
-    bool hasNext() {
-      return _container != nullptr && _iter != _container->end();
-    }
-    KEY next() { return _iter++->first; }
-    void next(KEY* key, VALUE* value) {
-      *key = _iter->first;
-      *value = _iter->second;
-      _iter++;
-    }
-
-   private:
-    Multimap<KEY, VALUE, CMP>* _container;
-    typename Multimap<KEY, VALUE, CMP>::const_iterator _iter;
-  };
-
-  friend class KeyIterator;
 };
 
 template <typename KEY, typename VALUE, typename CMP>

@@ -590,18 +590,52 @@ TEST(MapTest, NoMemberOperator6) {
   EXPECT_FALSE(container1 < container2);
 }
 
-TEST(MultimapTest, Ctor) {
-  Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
+TEST(MultimapTest, initializer_list) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
 
-  std::cout << mmap.size() << std::endl;
+  EXPECT_STREQ(bmap.values(1).front(), "test");
+  EXPECT_STREQ(bmap.values(1).back(), "test1");
+}
 
-  mmap.insert(1, "test2");
-  std::cout << mmap.size() << std::endl;
+TEST(MultimapTest, copy_constructor) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1(bmap);
 
-  auto values = mmap.values(1);
-  for (auto i : values) {
-    std::cout << i << '\n';
-  }
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, assignmen_operator) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1 = bmap;
+
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, move_constructor) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1(std::move(bmap));
+
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, move_assignment) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1;
+  bmap1 = std::move(bmap);
+
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, range_constructor) {
+  std::vector<std::pair<int, const char *>> v = {{1, "a"}, {1, "b"}};
+  Multimap<int, const char *> bmap1(v.begin(), v.end());
+
+  EXPECT_STREQ(bmap1.values(1).front(), "a");
+  EXPECT_STREQ(bmap1.values(1).back(), "b");
 }
 
 }  // namespace
