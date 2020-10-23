@@ -638,4 +638,18 @@ TEST(MultimapTest, range_constructor) {
   EXPECT_STREQ(bmap1.values(1).back(), "b");
 }
 
+TEST(MultimapTest, count) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+
+  EXPECT_EQ(bmap.count(1), 2);
+}
+
+TEST(MultimapTest, begin) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+
+  for (auto p : bmap) {
+    std::cout << p.second << std::endl;
+  }
+}
+
 }  // namespace
