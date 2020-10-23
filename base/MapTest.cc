@@ -597,6 +597,44 @@ TEST(MultimapTest, initializer_list) {
   EXPECT_STREQ(bmap.values(1).back(), "test1");
 }
 
+<<<<<<< HEAD
+template <class Os, class U, class V>
+Os& operator<<(Os& os, const std::pair<U, V>& p) {
+    return os << p.first << ":" << p.second;
+}
+ 
+// print out a container
+template <class Os, class Co>
+Os& operator<<(Os& os, const Co& co) {
+    os << "{";
+    for (auto const& i : co) { os << ' ' << i; }
+    return os << " }\n";
+}
+
+TEST(MapTest, swap) {
+  Map<std::string, std::string> m1{
+      {"γ", "gamma"},
+      {"β", "beta"},
+      {"α", "alpha"},
+      {"γ", "gamma"},
+  };
+  Map<std::string, std::string> m2{
+      {"ε", "epsilon"}, {"δ", "delta"}, {"ε", "epsilon"}};
+
+  const auto &ref = *(m1.begin());
+  const auto iter = std::next(m1.cbegin());
+
+  std::cout << "──────── before swap ────────\n"
+            << "m1: " << m1 << "m2: " << m2 << "ref: " << ref
+            << "\niter: " << *iter << '\n';
+
+  m1.swap(m2);
+
+  std::cout << "──────── after swap ────────\n"
+            << "m1: " << m1 << "m2: " << m2 << "ref: " << ref
+            << "\niter: " << *iter << '\n';
+}
+
 TEST(MultimapTest, copy_constructor) {
   Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
   Multimap<int, const char *> bmap1(bmap);
