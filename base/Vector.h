@@ -161,6 +161,19 @@ class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
     }
     return *ret_val;
   }
+  /**
+   * @brief Returns the vector val1 followed by all the items in the vector
+   * val2.
+   *
+   * @param val1
+   * @param val2
+   */
+  // friend void operator+(EfficientList<T>& val1, EfficientList<T>& val2) {
+  //   for (EfficientList<T>::iterator it1 = val2.begin(); it1 != val2.end();
+  //        it1++) {
+  //     val1.push_back(*it1);
+  //   }
+  // }
   const_reference operator[](size_t i) const { return data()[i]; }
   reference operator[](size_t i) { return data()[i]; }
 };

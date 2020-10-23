@@ -22,7 +22,7 @@ TEST(ArrayTest, base) {
 
   std::cout << front << " " << back << std::endl;
   std::cout << *begin << " " << *end << std::endl;
-  
+
   ea.fill(6);
   for (pcl::EfficientArray<int>::const_iterator it = ea.begin(); it != ea.end();
        ++it) {

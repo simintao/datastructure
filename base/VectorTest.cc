@@ -136,3 +136,7 @@ TEST(VectorTest, maxNum) {
     std::cout << *it4 << std::endl;
   }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5c835fc1a5fdfb6aa5b412c5826e2e9f86ab7c60
