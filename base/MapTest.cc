@@ -279,9 +279,325 @@ TEST(MapTest, merge) {
   u.merge(mb);
   std::cout << "mb.size(): " << mb.size() << '\n';
   std::cout << "mb.at(5): " << mb.at(5) << '\n';
-  for (auto const &kv : u) std::cout << kv.first << ", " << kv.second << '\n';
+  for (auto const kv : u) std::cout << kv.first << ", " << kv.second << '\n';
+
+  std::cout << std::begin(u)->first;
+
+  auto const &kv1 = std::begin(u);
+
+  std::cout << kv1->first << '\n';
 }
 
+// print out a std::pair
+template <class Os, class U, class V>
+Os &operator<<(Os &os, const std::pair<U, V> &p) {
+  return os << p.first << ":" << p.second;
+}
+
+// print out a container
+template <class Os, class Co>
+Os &operator<<(Os &os, const Co &co) {
+  os << "{";
+  for (auto const &i : co) {
+    os << ' ' << i;
+  }
+  return os << " }\n";
+}
+TEST(MapTest, swap) {
+  Map<std::string, std::string> m1{
+      {"γ", "gamma"},
+      {"β", "beta"},
+      {"α", "alpha"},
+      {"γ", "gamma"},
+  },
+      m2{{"ε", "epsilon"}, {"δ", "delta"}, {"ε", "epsilon"}};
+
+  const auto &ref = *(m1.begin());
+  const auto iter = std::next(m1.cbegin());
+
+  std::cout << "──────── before swap ────────\n"
+            << "m1: " << m1 << "m2: " << m2 << "ref: " << ref
+            << "\niter: " << *iter << '\n';
+
+  m1.swap(m2);
+
+  std::cout << "──────── after swap ────────\n"
+            << "m1: " << m1 << "m2: " << m2 << "ref: " << ref
+            << "\niter: " << *iter << '\n';
+}
+
+TEST(MapTest, try_emplace) {
+  Map<const char *, std::string> m;
+
+  m.try_emplace("a", "a");
+  m.try_emplace("b", "abcd");
+  m.try_emplace("c", 10, 'c');
+  m.try_emplace("c", "Won't be inserted");
+
+  for (const auto &p : m) {
+    std::cout << p.first << " => " << p.second << '\n';
+  }
+}
+
+TEST(MapTest, contains) {
+  Map<int, std::string> m{{1, "a"}};
+  EXPECT_TRUE(m.contains(1));
+}
+
+TEST(MapTest, count) {
+  Map<int, std::string> m{{1, "a"}, {1, "b"}};
+  for (const auto &p : m) {
+    std::cout << p.first << " => " << p.second << '\n';
+  }
+  EXPECT_EQ(m.count(1), 1);
+}
+
+TEST(MapTest, equal_range) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  {
+    auto p = m.equal_range(1);
+
+    EXPECT_EQ(p.first, m.find(1));
+    EXPECT_EQ(p.second, m.find(3));
+  }
+
+  {
+    auto pp = m.equal_range(-1);
+
+    EXPECT_EQ(pp.first, m.begin());
+    EXPECT_EQ(pp.second, m.begin());
+  }
+
+  {
+    auto ppp = m.equal_range(2);
+
+    EXPECT_EQ(ppp.first, m.find(3));
+    EXPECT_EQ(ppp.second, m.find(3));
+  }
+
+  {
+    auto ppp = m.equal_range(4);
+
+    EXPECT_EQ(ppp.first, m.end());
+    EXPECT_EQ(ppp.second, m.end());
+  }
+}
+
+TEST(MapTest, find) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_EQ(m.find(1), m.equal_range(1).first);
+  EXPECT_EQ(m.find(2), m.end());
+}
+
+TEST(MapTest, bound) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_EQ(m.equal_range(2).first, m.lower_bound(2));
+  EXPECT_EQ(m.equal_range(2).second, m.upper_bound(2));
+}
+
+TEST(MapTest, key_comp) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  auto cmp = m.key_comp();
+}
+
+TEST(MapTest, value_comp) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  auto cmp = m.value_comp();
+}
+
+TEST(MapTest, first) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.first(), "zero");
+  EXPECT_EQ(m.firstKey(), 0);
+}
+
+TEST(MapTest, last) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.last(), "three");
+  EXPECT_EQ(m.lastKey(), 3);
+}
+
+TEST(MapTest, keys) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  std::list<int> keys = {0, 1, 3};
+
+  EXPECT_EQ(m.keys(), keys);
+}
+
+TEST(MapTest, values) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  std::list<const char *> values = {"zero", "one", "three"};
+
+  EXPECT_EQ(m.values(), values);
+}
+
+TEST(MapTest, haskey) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_TRUE(m.hasKey(1));
+  EXPECT_FALSE(m.hasKey(4));
+}
+
+TEST(MapTest, value) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.value(1, ""), "one");
+  EXPECT_STREQ(m.value(4, ""), "");
+}
+
+// interface refer to the qt interface.
+TEST(MapTest, insert_qt) {
+  Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  m.insert(4, "four");
+
+  EXPECT_STREQ(m.value(4, ""), "four");
+}
+
+TEST(MapTest, clear) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+
+  container.clear();
+
+  EXPECT_EQ(container.size(), 0);
+  EXPECT_TRUE(container.empty());
+}
+
+TEST(MapTest, max_size) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::size_type max_size = container.max_size();
+}
+
+TEST(MapTest, Iterator) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::Iterator iter(&container);
+  while (iter.hasNext()) {
+    char v = iter.next();
+    std::cout << v << std::endl;
+  }
+}
+
+TEST(MapTest, ConstIterator) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::ConstIterator iter(&container);
+  while (iter.hasNext()) {
+    int key;
+    char value;
+
+    iter.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
+  }
+}
+
+TEST(MapTest, NoMemberOperator1) {
+  Map<int, std::string> container1{{1, "x"}, {2, "y"}, {3, "z"}};
+  Map<int, std::string> container2{{1, "x"}, {2, "y"}, {3, "z"}};
+
+  EXPECT_TRUE(container1 == container2);
+}
+
+TEST(MapTest, NoMemberOperator2) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+}
+
+TEST(MapTest, NoMemberOperator3) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 != container2);
+}
+
+TEST(MapTest, NoMemberOperator4) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 <= container2);
+}
+
+TEST(MapTest, NoMemberOperator5) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_FALSE(container1 >= container2);
+}
+
+TEST(MapTest, NoMemberOperator6) {
+  Map<int, std::string> container1{{1, "x1"}, {2, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {2, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
+}
+
+TEST(MultimapTest, initializer_list) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+
+  EXPECT_STREQ(bmap.values(1).front(), "test");
+  EXPECT_STREQ(bmap.values(1).back(), "test1");
+}
+
+<<<<<<< HEAD
 template <class Os, class U, class V>
 Os& operator<<(Os& os, const std::pair<U, V>& p) {
     return os << p.first << ":" << p.second;
@@ -319,17 +635,58 @@ TEST(MapTest, swap) {
             << "\niter: " << *iter << '\n';
 }
 
-TEST(MultimapTest, Ctor) {
-  Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
+TEST(MultimapTest, copy_constructor) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1(bmap);
 
-  std::cout << mmap.size() << std::endl;
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
 
-  mmap.insert(1, "test2");
-  std::cout << mmap.size() << std::endl;
+TEST(MultimapTest, assignmen_operator) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1 = bmap;
 
-  auto values = mmap.values(1);
-  for (auto i : values) {
-    std::cout << i << '\n';
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, move_constructor) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1(std::move(bmap));
+
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, move_assignment) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+  Multimap<int, const char *> bmap1;
+  bmap1 = std::move(bmap);
+
+  EXPECT_STREQ(bmap1.values(1).front(), "test");
+  EXPECT_STREQ(bmap1.values(1).back(), "test1");
+}
+
+TEST(MultimapTest, range_constructor) {
+  std::vector<std::pair<int, const char *>> v = {{1, "a"}, {1, "b"}};
+  Multimap<int, const char *> bmap1(v.begin(), v.end());
+
+  EXPECT_STREQ(bmap1.values(1).front(), "a");
+  EXPECT_STREQ(bmap1.values(1).back(), "b");
+}
+
+TEST(MultimapTest, count) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+
+  EXPECT_EQ(bmap.count(1), 2);
+}
+
+TEST(MultimapTest, begin) {
+  Multimap<int, const char *> bmap = {{1, "test"}, {1, "test1"}};
+
+  for (auto p : bmap) {
+    std::cout << p.second << std::endl;
   }
 }
 
