@@ -88,32 +88,32 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
 
   inline VALUE& first() {
     assert(!empty());
-    return *begin();
+    return begin()->second;
   }
 
   inline const VALUE& first() const {
     assert(!empty());
-    return *cbegin();
+    return cbegin()->second;
   }
 
   inline const KEY& firstKey() const {
     assert(!empty());
-    return cbegin().key();
+    return cbegin()->first;
   }
 
   inline VALUE& last() {
     assert(!empty());
-    return *(end() - 1);
+    return (--end())->second;
   }
 
-  inline VALUE& last() const {
+  inline const VALUE& last() const {
     assert(!empty());
-    return *(cend() - 1);
+    return (--cend())->second;
   }
 
   inline const KEY& lastKey() const {
     assert(!empty());
-    return *(cend() - 1).key();
+    return (--cend())->first;
   }
 
   /**

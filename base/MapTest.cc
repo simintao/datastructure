@@ -430,6 +430,28 @@ TEST(MapTest, value_comp) {
   auto cmp = m.value_comp();
 }
 
+TEST(MapTest, first) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.first(), "zero");
+  EXPECT_EQ(m.firstKey(), 0);
+}
+
+TEST(MapTest, last) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.last(), "three");
+  EXPECT_EQ(m.lastKey(), 3);
+}
+
 TEST(MultimapTest, Ctor) {
   Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
