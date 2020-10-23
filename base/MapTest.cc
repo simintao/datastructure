@@ -476,6 +476,76 @@ TEST(MapTest, values) {
   EXPECT_EQ(m.values(), values);
 }
 
+TEST(MapTest, haskey) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_TRUE(m.hasKey(1));
+  EXPECT_FALSE(m.hasKey(4));
+}
+
+TEST(MapTest, value) {
+  const Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  EXPECT_STREQ(m.value(1, ""), "one");
+  EXPECT_STREQ(m.value(4, ""), "");
+}
+
+// interface refer to the qt interface.
+TEST(MapTest, insert_qt) {
+  Map<int, const char *> m{
+      {0, "zero"},
+      {1, "one"},
+      {3, "three"},
+  };
+
+  m.insert(4, "four");
+
+  EXPECT_STREQ(m.value(4, ""), "four");
+}
+
+TEST(MapTest, clear) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+
+  container.clear();
+
+  EXPECT_EQ(container.size(), 0);
+  EXPECT_TRUE(container.empty());
+}
+
+TEST(MapTest, max_size) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::size_type max_size = container.max_size();
+}
+
+TEST(MapTest, Iterator) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::Iterator iter(&container);
+  while (iter.hasNext()) {
+    char v = iter.next();
+    std::cout << v << std::endl;
+  }
+}
+
+TEST(MapTest, ConstIterator) {
+  Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
+  Map<int, char>::ConstIterator iter(&container);
+  while (iter.hasNext()) {
+    int key;
+    char value;
+
+    iter.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
+  }
+}
+
 TEST(MultimapTest, Ctor) {
   Multimap<int, std::string> mmap = {{1, "test"}, {1, "test1"}};
 
