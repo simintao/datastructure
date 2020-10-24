@@ -25,27 +25,27 @@ class EfficientArray : public absl::FixedArray<T, /* N= */ 256> {
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
 
+  using Base::at;
+  using Base::back;
   using Base::Base;
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::crbegin;
+  using Base::crend;
+  using Base::data;
+  using Base::empty;
+  using Base::end;
+  using Base::fill;
+  using Base::front;
+  using Base::rbegin;
+  using Base::rend;
+  using Base::size;
 
-  size_t getSize() { return this->size(); }
-  bool isEmpty() { return this->empty(); }
-  pointer data() { return this->data(); }
-  const_pointer data() const { return this->data(); }
-  reference at(size_t i) { return this->at(i); }
-  const_reference at(size_t i) const { return this->at(i); }
-  reference getFront() { return this->front(); }
-  const_reference getFront() const { return this->front(); }
-  reference getBack() { return this->back(); }
-  const_reference getBack() const { return this->back(); }
-  iterator first() { return this->begin(); }
-  const_iterator first() const { return this->begin(); }
-  iterator last() { return this->end(); }
-  const_iterator last() const { return this->end(); }
-  void allFill(const T& val) { this->fill(val); }
+  reference operator[](size_t i) { return data()[i]; }
 
-  
   friend bool operator==(const EfficientArray& lhs, const EfficientArray& rhs) {
-    return absl::equal(lhs.first(), lhs.last(), rhs.first(), rhs.last());
+    return absl::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
   friend bool operator!=(const EfficientArray& lhs, const EfficientArray& rhs) {
@@ -53,8 +53,8 @@ class EfficientArray : public absl::FixedArray<T, /* N= */ 256> {
   }
 
   friend bool operator<(const EfficientArray& lhs, const EfficientArray& rhs) {
-    return std::lexicographical_compare(lhs.first(), lhs.last(), rhs.first(),
-                                        rhs.last());
+    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
+                                        rhs.end());
   }
 
   friend bool operator>(const EfficientArray& lhs, const EfficientArray& rhs) {

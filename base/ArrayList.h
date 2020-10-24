@@ -11,10 +11,10 @@
 #pragma once
 #ifndef ARRAYLIST_H_
 #define ARRAYLIST_H_
-#include "List.h"
+//#include "List.h"
 namespace pcl {
 template <class T, int init = 10>
-class ArrayList : public List<T> {
+class ArrayList {
   int _size;
   int _capacity;
   T** _params;
