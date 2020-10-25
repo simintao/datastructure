@@ -5,8 +5,8 @@
 
 #include "Array.h"
 #include "Vector.h"
-//#include "gtest/gtest.h"
-int main(int argc, char* argv[]) {
+#include "gtest/gtest.h"
+TEST(CompareTest, test1) {
   clock_t startTime, endTime;
   pcl::EfficientArray<int> ar1(100000);
   startTime = clock();
@@ -45,5 +45,4 @@ int main(int argc, char* argv[]) {
   endTime3 = clock();
   std::cout << "the STL vector run time is = " << endTime3 - startTime3
             << std::endl;
-  return 0;
 }

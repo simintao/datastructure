@@ -650,6 +650,11 @@ TEST(MultimapTest, begin) {
   for (auto p : bmap) {
     std::cout << p.second << std::endl;
   }
+
+  Multimap<int, const char *>::const_reverse_iterator it = bmap.crbegin();
+  for (; it != bmap.crend(); it++) {
+    std::cout << it->second << std::endl;
+  }
 }
 
 }  // namespace

@@ -32,6 +32,8 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using Base = typename Map::btree_map;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
   using size_type = typename Base::size_type;
 
   /*constructor and destructor*/
@@ -338,12 +340,14 @@ inline void swap(Map<KEY, VALUE, CMP>& lhs, Map<KEY, VALUE, CMP>& rhs) {
  */
 template <typename KEY, typename VALUE, typename CMP = std::less<KEY>>
 class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
+ public:
   using Base = typename Multimap::btree_multimap;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
   using ValueType = typename Base::value_type;
 
- public:
   /*constructor*/
   using Base::Base;
   /*destrcutor*/
