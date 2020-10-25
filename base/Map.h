@@ -205,19 +205,20 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
         _iter = container->begin();
       }
     }
-    void init(const Map<KEY, VALUE, CMP>& container) {
-      _iter = container.begin();
-    }
+
     bool hasNext() { return _iter != _container->end(); }
-    VALUE next() { return _iter++->second; }
+    Iterator& next() {
+      ++_iter;
+      return *this;
+    }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
       *value = _iter->second;
       _iter++;
     }
 
-    inline const KEY& key() const { return _iter->first(); }
-    inline const VALUE& value() const { return _iter->second(); }
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
     inline const VALUE& operator*() const { return _iter->value(); }
     inline const VALUE& operator->() const { return &_iter->value(); }
     inline bool operator==(const Iterator& o) const { return _iter == o._iter; }
@@ -238,12 +239,6 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
         _iter = container->begin();
       }
     }
-    explicit ConstIterator(const Map<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) {
-        _container = container;
-        _iter = container->begin();
-      }
-    }
 
     void init(const Map<KEY, VALUE, CMP>* container) {
       if (container != nullptr) {
@@ -251,24 +246,22 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
         _iter = container->begin();
       }
     }
-    void init(const Map<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) {
-        _container = container;
-        _iter = container->begin();
-      }
-    }
+
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    VALUE next() { return _iter++->second; }
+    ConstIterator& next() {
+      ++_iter;
+      return *this;
+    }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
       *value = _iter->second;
       _iter++;
     }
 
-    inline const KEY& key() const { return _iter->first(); }
-    inline const VALUE& value() const { return _iter->second(); }
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
     inline const VALUE& operator*() const { return _iter->value(); }
     inline const VALUE& operator->() const { return &_iter->value(); }
     inline bool operator==(const ConstIterator& o) const {
@@ -416,25 +409,36 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
    public:
     Iterator() = default;
     explicit Iterator(Multimap<KEY, VALUE, CMP>* container) {
-      if (container != nullptr) _iter = container->begin();
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
-    explicit Iterator(const Multimap<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) _iter = container->begin();
-    }
+
     void init(Multimap<KEY, VALUE, CMP>* container) {
-      container = container;
-      if (container != nullptr) _iter = container->begin();
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
-    void init(const Multimap<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) _iter = container->begin();
-    }
+
     bool hasNext() { return _iter != _container->end(); }
-    VALUE next() { return _iter++->second; }
+    Iterator& next() {
+      ++_iter;
+      return *this;
+    }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
       *value = _iter->second;
       _iter++;
     }
+
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
+    inline const VALUE& operator*() const { return _iter->value(); }
+    inline const VALUE& operator->() const { return &_iter->value(); }
+    inline bool operator==(const Iterator& o) const { return _iter == o._iter; }
+    inline bool operator!=(const Iterator& o) const { return _iter != o._iter; }
 
    private:
     Multimap<KEY, VALUE, CMP>* _container;
@@ -448,27 +452,29 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
     explicit ConstIterator(const Multimap<KEY, VALUE, CMP>* container) {
       if (container != nullptr) _iter = container->begin();
     }
-    explicit ConstIterator(const Multimap<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) _iter = container->begin();
-    }
+
     void init(const Multimap<KEY, VALUE, CMP>* container) {
-      if (container != nullptr) _iter = container->begin();
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
-    void init(const Multimap<KEY, VALUE, CMP>& container) {
-      if (container != nullptr) _iter = container->begin();
-    }
+
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    VALUE next() { return _iter++->second; }
+    ConstIterator& next() {
+      ++_iter;
+      return *this;
+    }
     void next(KEY* key, VALUE* value) {
       *key = _iter->first;
       *value = _iter->second;
       _iter++;
     }
 
-    inline const KEY& key() const { return _iter->first(); }
-    inline const VALUE& value() const { return _iter->second(); }
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
     inline const VALUE& operator*() const { return _iter->value(); }
     inline const VALUE* operator->() const { return &(_iter->value()); }
     inline bool operator==(const ConstIterator& o) const {

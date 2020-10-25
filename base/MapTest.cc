@@ -529,8 +529,8 @@ TEST(MapTest, Iterator) {
   Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
   Map<int, char>::Iterator iter(&container);
   while (iter.hasNext()) {
-    char v = iter.next();
-    std::cout << v << std::endl;
+    std::cout << iter.value() << std::endl;
+    iter = iter.next();    
   }
 }
 
@@ -654,6 +654,24 @@ TEST(MultimapTest, begin) {
   Multimap<int, const char *>::const_reverse_iterator it = bmap.crbegin();
   for (; it != bmap.crend(); it++) {
     std::cout << it->second << std::endl;
+  }
+}
+
+TEST(MultimapTest, Iterator) {
+  Multimap<const char *, int> bmap = {{"test", 1}, {"test", 2}};
+  Multimap<const char *, int>::Iterator p(&bmap);
+
+  while (p.hasNext()) {
+    std::cout << p.key() << "=>" << p.value() << std::endl;
+    p = p.next();
+  }
+
+  p.init(&bmap);
+  while (p.hasNext()) {
+    const char *key;
+    int value;
+    p.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
   }
 }
 
