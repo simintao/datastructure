@@ -530,7 +530,7 @@ TEST(MapTest, Iterator) {
   Map<int, char>::Iterator iter(&container);
   while (iter.hasNext()) {
     std::cout << iter.value() << std::endl;
-    iter = iter.next();    
+    iter = iter.next();
   }
 }
 
@@ -667,12 +667,74 @@ TEST(MultimapTest, Iterator) {
   }
 
   p.init(&bmap);
-  while (p.hasNext()) {
+  Multimap<const char *, int>::Iterator q = p;
+  while (q.hasNext()) {
     const char *key;
     int value;
-    p.next(&key, &value);
+    q.next(&key, &value);
     std::cout << key << "=>" << value << std::endl;
   }
+
+  Multimap<const char *, int>::ConstIterator q1(&bmap);
+  while (q1.hasNext()) {
+    const char *key;
+    int value;
+    q1.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
+  }
+}
+
+TEST(MultimapTest, NoMemberOperator1) {
+  Map<int, std::string> container1{{1, "x"}, {1, "y"}, {3, "z"}};
+  Map<int, std::string> container2{{1, "x"}, {1, "y"}, {3, "z"}};
+
+  EXPECT_TRUE(container1 == container2);
+}
+
+TEST(MultimapTest, NoMemberOperator2) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+}
+
+TEST(MultimapTest, NoMemberOperator3) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 != container2);
+}
+
+TEST(MultimapTest, NoMemberOperator4) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 <= container2);
+}
+
+TEST(MultimapTest, NoMemberOperator5) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_FALSE(container1 >= container2);
+}
+
+TEST(MultimapTest, NoMemberOperator6) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
+}
+
+TEST(MultimapTest, swap) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+
+  EXPECT_FALSE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
 }
 
 }  // namespace

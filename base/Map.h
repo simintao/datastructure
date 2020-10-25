@@ -450,7 +450,10 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
    public:
     ConstIterator() = default;
     explicit ConstIterator(const Multimap<KEY, VALUE, CMP>* container) {
-      if (container != nullptr) _iter = container->begin();
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
 
     void init(const Multimap<KEY, VALUE, CMP>* container) {
@@ -485,7 +488,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
     }
 
    private:
-    Multimap<KEY, VALUE, CMP>* _container;
+    const Multimap<KEY, VALUE, CMP>* _container;
     typename Multimap<KEY, VALUE, CMP>::const_iterator _iter;
   };
   friend class ConstIterator;
