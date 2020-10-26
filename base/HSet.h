@@ -78,17 +78,108 @@ class HSet : public absl::flat_hash_set<KEY> {
   using Base::key_eq;
 
   /**
-   * @brief Find the entry corresponding to key.
+   * @brief Removes all items from this set that are contained in the other set.
    *
-   * @param key
-   * @return KEY
+   * Returns a reference to this set.
    */
-  KEY findKey(const KEY key) const {
-    auto find_iter = this->find(key);
-    if (find_iter != this->end())
-      return *find_iter;
-    else
-      return nullptr;
+  HSet<KEY>& subtract(const HSet<KEY>& other) {
+    for (const auto& e : other) {
+      erase(e);
+    }
+
+    return *this;
+  }
+
+  HSet<KEY>& unite(const HSet<KEY>& other) {
+    for (const KEY& e : other) {
+      insert(e);
+    }
+    return *this;
+  }
+
+  HSet<KEY>& intersect(const HSet<KEY>& other) {
+    HSet<KEY> copy1;
+    HSet<KEY> copy2;
+    if (size() <= other.size()) {
+      copy1 = *this;
+      copy2 = other;
+    } else {
+      copy1 = other;
+      copy2 = *this;
+      *this = copy1;
+    }
+    for (const auto& e : copy1) {
+      if (!copy2.contains(e)) {
+        erase(e);
+      }
+    }
+    return *this;
+  }
+
+  inline HSet<KEY>& operator<<(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+
+  inline HSet<KEY>& operator|=(const HSet<KEY>& other) {
+    unite(other);
+    return *this;
+  }
+
+  inline HSet<KEY>& operator|=(HSet<KEY>&& other) {
+    unite(other);
+    return *this;
+  }
+  inline HSet<KEY>& operator|=(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+  inline HSet<KEY>& operator&=(const HSet<KEY>& other) {
+    intersect(other);
+    return *this;
+  }
+  inline HSet<KEY>& operator&=(const KEY& value) {
+    HSet<KEY> result;
+    if (contains(value)) {
+      result.insert(value);
+    }
+    return (*this = result);
+  }
+  inline HSet<KEY>& operator+=(HSet<KEY>& other) {
+    merge(other);
+    return *this;
+  }
+  inline HSet<KEY>& operator+=(const KEY& value) {
+    insert(value);
+    return *this;
+  }
+  inline HSet<KEY>& operator-=(const HSet<KEY>& other) {
+    subtract(other);
+    return *this;
+  }
+  inline HSet<KEY>& operator-=(const KEY& value) {
+    erase(value);
+    return *this;
+  }
+  inline HSet<KEY> operator|(const HSet<KEY>& other) const {
+    HSet<KEY> result = *this;
+    result |= other;
+    return result;
+  }
+  inline HSet<KEY> operator&(const HSet<KEY>& other) const {
+    HSet<KEY> result = *this;
+    result &= other;
+    return result;
+  }
+  inline HSet<KEY> operator+(HSet<KEY>& other) const {
+    HSet<KEY> result = *this;
+    result += other;
+    return result;
+  }
+  inline HSet<KEY> operator-(const HSet<KEY>& other) const {
+    HSet<KEY> result = *this;
+    result -= other;
+    return result;
   }
 
   /**
@@ -131,7 +222,7 @@ class HSet : public absl::flat_hash_set<KEY> {
    *  for example:
    *  Set::Iterator<Key*> iter(set);
    *  while (iter.hasNext()) {
-   *    Key *v = iter.next();
+   *    iter.next();
    *  }
    */
   class Iterator {
@@ -198,9 +289,9 @@ class HSet : public absl::flat_hash_set<KEY> {
       return *this;
     }
     const HSet<KEY>* container() { return _container; }
-    inline const KEY& value() const { return _iter->second; }
-    inline const KEY& operator*() const { return _iter->value(); }
-    inline const KEY* operator->() const { return &(_iter->value()); }
+    inline const KEY& value() const { return *_iter; }
+    inline const KEY& operator*() const { return *_iter; }
+    inline const KEY* operator->() const { return &(_iter); }
     inline bool operator==(const ConstIterator& o) const {
       return _iter == o._iter;
     }
@@ -224,9 +315,14 @@ bool HSet<KEY>::equal(const HSet<KEY>* set1, const HSet<KEY>* set2) {
       typename HSet<KEY>::ConstIterator iter1(set1);
       typename HSet<KEY>::ConstIterator iter2(set2);
       while (iter1.hasNext() && iter2.hasNext()) {
-        if (iter1.next() != iter2.next()) {
+        auto& value1 = iter1.value();
+        auto& value2 = iter2.value();
+        if (value1 != value2) {
           return false;
         }
+
+        iter1.next();
+        iter2.next();
       }
       return true;
     } else {
@@ -244,8 +340,12 @@ bool HSet<KEY>::isSubset(const HSet<KEY>* set2) {
   } else {
     typename HSet<KEY>::ConstIterator iter2(set2);
     while (iter2.hasNext()) {
-      const KEY key2 = iter2.next();
-      if (!hasKey(key2)) return false;
+      const KEY key2 = iter2.value();
+      if (!hasKey(key2)) {
+        return false;
+      }
+
+      iter2.next();
     }
     return true;
   }
@@ -285,23 +385,6 @@ bool HSet<KEY>::intersects(HSet<KEY>* set1, HSet<KEY>* set2) {
     }
   }
   return false;
-}
-
-/**
- * @brief A complicated way to call the base class operator<.
- *
- * @tparam KEY
- *
- * @param set1
- * @param set2
- * @return true
- * @return false
- */
-template <class KEY>
-bool operator<(const HSet<KEY>& set1, const HSet<KEY>& set2) {
-  const typename HSet<KEY>::Base& set1_base = set1;
-  const typename HSet<KEY>::Base& set2_base = set2;
-  return set1_base < set2_base;
 }
 
 template <class KEY>
