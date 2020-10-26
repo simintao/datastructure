@@ -6,6 +6,7 @@
 #include "HSet.h"
 #include "gtest/gtest.h"
 
+using pcl::HMultiset;
 using pcl::HSet;
 
 namespace {
@@ -299,6 +300,13 @@ TEST(HSetTest, nonmember7) {
   HSet<int> result_cont = {1, 2, 3, 5, 6};
 
   EXPECT_EQ(cont, result_cont);
+}
+
+TEST(HMultisetTest, ctor) {
+  HMultiset<int> hmultiset = {1, 2, 2, 3};
+  for (auto item : hmultiset) {
+    std::cout << item << std::endl;
+  }
 }
 
 }  // namespace

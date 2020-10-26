@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <unordered_set>
 #include <utility>
 
 #include "absl/container/flat_hash_set.h"
@@ -413,10 +414,54 @@ inline bool operator!=(const HSet<KEY>& x, const HSet<KEY>& y) {
  * @tparam KEY Type of key objects.
  */
 template <typename KEY>
-class HMultiset : public HSet<KEY> {
+class HMultiset : public std::unordered_multiset<KEY> {
  public:
-  using Base = typename HMultiset::HSet;
+  using Base = typename HMultiset::unordered_multiset;
+
+  /*constructor*/
   using Base::Base;
+
+  /*destrcutor*/
+  ~HMultiset() = default;
+  using Base::operator=;
+
+  /*iterator*/
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::end;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
+  using Base::size;
+
+  /*modifier*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::merge;
+  using Base::swap;
+
+  /*lookup*/
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+
+  /*bucket interface*/
+  using Base::bucket_count;
+
+  /*hash policy*/
+  using Base::load_factor;
+  using Base::max_load_factor;
+  using Base::rehash;
+  using Base::reserve;
+
+  using Base::hash_function;
+  using Base::key_eq;
 };
 
 template <typename KEY>
