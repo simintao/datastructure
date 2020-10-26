@@ -27,6 +27,12 @@ template <class KEY, class CMP = std::less<KEY>>
 class Set : public absl::btree_set<KEY, CMP> {
  public:
   using Base = typename Set::btree_set;
+  using key_type = typename Base::key_type;
+  using size_type = typename Base::value_type;
+  using iterator = typename Base::iterator;
+  using const_iterator = typename Base::const_iterator;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
 
   /*constructor*/
   using Base::Base;
@@ -454,37 +460,56 @@ template <class KEY, class CMP = std::less<KEY>>
 class Multiset : public absl::btree_multiset<KEY, CMP> {
  public:
   using Base = typename Multiset::btree_multiset;
-  using Base::Base;
+  using key_type = typename Base::key_type;
+  using size_type = typename Base::value_type;
+  using iterator = typename Base::iterator;
+  using const_iterator = typename Base::const_iterator;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
 
+  /*constructor*/
+  using Base::Base;
+  /*destructor*/
+  ~Multiset() = default;
+  using Base::operator=;
+
+  /*iterators*/
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
-  using Base::clear;
-  using Base::contains;
-  using Base::count;
   using Base::crbegin;
   using Base::crend;
-  using Base::emplace;
-  using Base::emplace_hint;
-  using Base::empty;
   using Base::end;
-  using Base::equal_range;
-  using Base::erase;
-  using Base::extract;
-  using Base::find;
-  using Base::g;
-  using Base::insert;
-  using Base::key_comp;
-  using Base::lower_bound;
-  using Base::max_size;
-  using Base::merge;
   using Base::rbegin;
   using Base::rend;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
   using Base::size;
+
+  /*modifiers*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::merge;
   using Base::swap;
+
+  /*lookup*/
+  using Base::contains;
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+  using Base::lower_bound;
   using Base::upper_bound;
+
+  /*observers*/
+  using Base::get_allocator;
+  using Base::key_comp;
   using Base::value_comp;
-  using Base::operator=;
 };
 
 template <typename KEY, typename CMP>
