@@ -85,12 +85,44 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
 
+  Set<KEY, CMP>& unite(const Set<KEY, CMP>& other) {
+    for (const KEY& e : other) {
+      insert(e);
+    }
+    return *this;
+  }
+
+  Set<KEY, CMP>& intersect(const Set<KEY, CMP>& other) {
+    Set<KEY, CMP> copy1;
+    Set<KEY, CMP> copy2;
+    if (size() <= other.size()) {
+      copy1 = *this;
+      copy2 = other;
+    } else {
+      copy1 = other;
+      copy2 = *this;
+      *this = copy1;
+    }
+    for (const auto& e : copy1) {
+      if (!copy2.contains(e)) {
+        erase(e);
+      }
+    }
+    return *this;
+  }
+
   inline Set<KEY, CMP>& operator<<(const KEY& value) {
     insert(value);
     return *this;
   }
+
   inline Set<KEY, CMP>& operator|=(const Set<KEY, CMP>& other) {
-    merge(other);
+    unite(other);
+    return *this;
+  }
+
+  inline Set<KEY, CMP>& operator|=(Set<KEY, CMP>&& other) {
+    unite(other);
     return *this;
   }
   inline Set<KEY, CMP>& operator|=(const KEY& value) {
@@ -103,10 +135,12 @@ class Set : public absl::btree_set<KEY, CMP> {
   }
   inline Set<KEY, CMP>& operator&=(const KEY& value) {
     Set<KEY, CMP> result;
-    if (contains(value)) result.insert(value);
+    if (contains(value)) {
+      result.insert(value);
+    }
     return (*this = result);
   }
-  inline Set<KEY, CMP>& operator+=(const Set<KEY, CMP>& other) {
+  inline Set<KEY, CMP>& operator+=(Set<KEY, CMP>& other) {
     merge(other);
     return *this;
   }
@@ -132,7 +166,7 @@ class Set : public absl::btree_set<KEY, CMP> {
     result &= other;
     return result;
   }
-  inline Set<KEY, CMP> operator+(const Set<KEY, CMP>& other) const {
+  inline Set<KEY, CMP> operator+(Set<KEY, CMP>& other) const {
     Set<KEY, CMP> result = *this;
     result += other;
     return result;
@@ -141,20 +175,6 @@ class Set : public absl::btree_set<KEY, CMP> {
     Set<KEY, CMP> result = *this;
     result -= other;
     return result;
-  }
-
-  /**
-   * @brief Find the entry corresponding to key.
-   *
-   * @param key
-   * @return KEY
-   */
-  KEY findKey(const KEY key) const {
-    auto find_iter = this->find(key);
-    if (find_iter != this->end())
-      return *find_iter;
-    else
-      return nullptr;
   }
 
   /**
@@ -197,7 +217,7 @@ class Set : public absl::btree_set<KEY, CMP> {
    *  for example:
    *  Set::Iterator<Key*> iter(set);
    *  while (iter.hasNext()) {
-   *    Key *v = iter.next();
+   *    iter.next();
    *  }
    */
   class Iterator {
@@ -315,15 +335,27 @@ bool Set<KEY, CMP>::isSubset(const Set<KEY, CMP>* set2) {
   } else {
     typename Set<KEY, CMP>::ConstIterator iter2(set2);
     while (iter2.hasNext()) {
-      const KEY key2 = iter2.next();
+      const KEY key2 = iter2.value();
       if (!hasKey(key2)) {
         return false;
       }
+
+      iter2.next();
     }
     return true;
   }
 }
 
+/**
+ * @brief Judge whether the two set has at least one common item.
+ *
+ * @tparam KEY
+ * @tparam CMP
+ * @param set1
+ * @param set2
+ * @return true if this set has at least one item in common with other.
+ * @return false
+ */
 template <class KEY, class CMP>
 bool Set<KEY, CMP>::intersects(Set<KEY, CMP>* set1, Set<KEY, CMP>* set2) {
   if (set1 && !set1->empty() && set2 && !set2->empty()) {

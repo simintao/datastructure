@@ -137,4 +137,264 @@ TEST(SetTest, equal) {
   EXPECT_TRUE(Set<int>::equal(&cont, &cont1));
 }
 
+TEST(SetTest, operator1) {
+  Set<int> cont = {1, 2, 3};
+  cont << 4;
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+}
+
+TEST(SetTest, operator2) {
+  Set<int> cont = {1, 2, 3};
+  Set<int> cont1 = {4, 5, 6};
+
+  cont |= cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+}
+
+TEST(SetTest, operator3) {
+  Set<int> cont = {1, 2, 3};
+  Set<int> cont1 = {4, 5, 6};
+
+  cont |= std::move(cont1);
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4, 5, 6};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator4) {
+  Set<int> cont = {1, 2, 3};
+
+  cont |= 4;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator5) {
+  Set<int> cont = {1, 2, 3};
+  Set<int> cont1 = {2, 3, 4};
+
+  cont &= cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {2, 3};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator6) {
+  Set<int> cont = {1, 2, 3};
+
+  cont &= 3;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {3};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator7) {
+  Set<int> cont = {1, 2, 3};
+
+  cont += 4;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator8) {
+  Set<int> cont = {1, 2, 3};
+
+  cont += {4};
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator9) {
+  Set<int> cont = {1, 2, 3, 4};
+
+  cont -= {4};
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator10) {
+  Set<int> cont = {1, 2, 3, 4};
+
+  cont -= 4;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator11) {
+  Set<int> cont = {1, 2, 3, 4};
+  Set<int> cont1 = {5};
+
+  cont = cont | cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4, 5};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator12) {
+  Set<int> cont = {1, 2, 3, 4};
+  Set<int> cont1 = {4};
+
+  cont = cont & cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {4};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, operator13) {
+  Set<int> cont = {1, 2, 3, 4};
+  Set<int> cont1 = {5};
+
+  cont = cont + cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4, 5};
+  EXPECT_EQ(cont, result);
+  EXPECT_TRUE(cont1.empty());
+}
+
+TEST(SetTest, operator14) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {5};
+
+  cont = cont - cont1;
+
+  for (auto& p : cont) {
+    std::cout << p << std::endl;
+  }
+
+  Set<int> result = {1, 2, 3, 4};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, haskey) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  EXPECT_TRUE(cont.hasKey(4));
+}
+
+TEST(SetTest, issubset) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3};
+  EXPECT_TRUE(cont.isSubset(&cont1));
+}
+
+TEST(SetTest, insertset) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3, 6};
+  cont.insertSet(&cont1);
+  Set<int> result = {1, 2, 3, 4, 5, 6};
+  EXPECT_EQ(cont, result);
+}
+
+TEST(SetTest, intersects) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3, 6};
+  EXPECT_TRUE(Set<int>::intersects(&cont, &cont1));
+}
+
+TEST(SetTest, nonmember1) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3};
+
+  EXPECT_FALSE(cont == cont1);
+}
+
+TEST(SetTest, nonmember2) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3, 6};
+
+  EXPECT_TRUE(cont != cont1);
+}
+
+TEST(SetTest, nonmember3) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3, 5, 6};
+
+  EXPECT_TRUE(cont < cont1);
+}
+
+TEST(SetTest, nonmember4) {
+  Set<int> cont = {1, 2, 3, 4, 5};
+  Set<int> cont1 = {1, 2, 3, 5, 6};
+
+  EXPECT_TRUE(cont <= cont1);
+}
+
+TEST(SetTest, nonmember5) {
+  Set<int> cont = {1, 2, 3, 5, 7};
+  Set<int> cont1 = {1, 2, 3, 5, 6};
+
+  EXPECT_TRUE(cont >= cont1);
+}
+
+TEST(SetTest, nonmember6) {
+  Set<int> cont = {1, 2, 3, 5, 7};
+  Set<int> cont1 = {1, 2, 3, 5, 6};
+
+  EXPECT_TRUE(cont > cont1);
+}
+
+TEST(SetTest, nonmember7) {
+  Set<int> cont = {1, 2, 3, 5, 7};
+  Set<int> cont1 = {1, 2, 3, 5, 6};
+
+  swap(cont, cont1);
+
+  Set<int> result_cont = {1, 2, 3, 5, 6};
+
+  EXPECT_EQ(cont, result_cont);
+}
+
 }  // namespace
