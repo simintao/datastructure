@@ -27,37 +27,50 @@ template <class KEY, class CMP = std::less<KEY>>
 class Set : public absl::btree_set<KEY, CMP> {
  public:
   using Base = typename Set::btree_set;
-  using Base::Base;
 
+  /*constructor*/
+  using Base::Base;
+  /*destrcutor*/
+  ~Set() = default;
+  using Base::operator=;
+
+  /*iterators*/
   using Base::begin;
   using Base::cbegin;
   using Base::cend;
-  using Base::clear;
-  using Base::contains;
-  using Base::count;
   using Base::crbegin;
   using Base::crend;
-  using Base::emplace;
-  using Base::emplace_hint;
-  using Base::empty;
   using Base::end;
-  using Base::equal_range;
-  using Base::erase;
-  using Base::extract;
-  using Base::find;
-  using Base::get_allocator;
-  using Base::insert;
-  using Base::key_comp;
-  using Base::lower_bound;
-  using Base::max_size;
-  using Base::merge;
   using Base::rbegin;
   using Base::rend;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
   using Base::size;
+
+  /*modifiers*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::merge;
   using Base::swap;
+
+  /*lookup*/
+  using Base::contains;
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+  using Base::lower_bound;
   using Base::upper_bound;
+
+  /*observer*/
+  using Base::get_allocator;
+  using Base::key_comp;
   using Base::value_comp;
-  using Base::operator=;
 
   /**
    * @brief Removes all items from this set that are contained in the other set.
@@ -174,18 +187,7 @@ class Set : public absl::btree_set<KEY, CMP> {
    * @return false
    */
   bool isSubset(const Set<KEY, CMP>* set2);
-
   void insertSet(const Set<KEY, CMP>* set2);
-
-  void deleteContents() {
-    Iterator iter(this);
-    while (iter.hasNext()) delete iter.next();
-  }
-
-  void deleteContentsClear() {
-    deleteContents();
-    this->clear();
-  }
 
   static bool intersects(Set<KEY, CMP>* set1, Set<KEY, CMP>* set2);
 
@@ -200,60 +202,76 @@ class Set : public absl::btree_set<KEY, CMP> {
    */
   class Iterator {
    public:
-    Iterator() : _container(nullptr) {}
+    Iterator() = default;
+    ~Iterator() = default;
+
     explicit Iterator(Set<KEY, CMP>* container) : _container(container) {
-      if (_container != nullptr) _iter = _container->begin();
+      if (_container != nullptr) {
+        _iter = _container->begin();
+      }
     }
-    explicit Iterator(Set<KEY, CMP>& container) : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     void init(Set<KEY, CMP>* container) {
       _container = container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (_container != nullptr) {
+        _iter = _container->begin();
+      }
     }
-    void init(const Set<KEY, CMP>& container) {
-      _container = &container;
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    KEY next() { return *_iter++; }
+    Iterator& next() {
+      ++_iter;
+      return *this;
+    }
     Set<KEY, CMP>* container() { return _container; }
+    inline const KEY& value() const { return *_iter; }
+    inline const KEY& operator*() const { return _iter->value(); }
+    inline const KEY& operator->() const { return &_iter->value(); }
+    inline bool operator==(const Iterator& o) const { return _iter == o._iter; }
+    inline bool operator!=(const Iterator& o) const { return _iter != o._iter; }
 
    private:
-    Set<KEY, CMP>* _container;
+    Set<KEY, CMP>* _container = nullptr;
     typename Set<KEY, CMP>::iterator _iter;
   };
 
   class ConstIterator {
    public:
-    ConstIterator() : _container(nullptr) {}
+    ConstIterator() = default;
+    ~ConstIterator() = default;
+
     explicit ConstIterator(const Set<KEY, CMP>* container)
         : _container(container) {
       if (_container != nullptr) _iter = _container->begin();
     }
-    explicit ConstIterator(const Set<KEY, CMP>& container)
-        : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     void init(const Set<KEY, CMP>* container) {
       _container = container;
-      if (_container != nullptr) _iter = _container->begin();
-    }
-    void init(const Set<KEY, CMP>& container) {
-      _container = &container;
       if (_container != nullptr) _iter = _container->begin();
     }
 
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    KEY next() { return *_iter++; }
+    ConstIterator& next() {
+      ++_iter;
+      return *this;
+    }
     const Set<KEY, CMP>* container() { return _container; }
+    inline const KEY& value() const { return _iter->second; }
+    inline const KEY& operator*() const { return _iter->value(); }
+    inline const KEY* operator->() const { return &(_iter->value()); }
+    inline bool operator==(const ConstIterator& o) const {
+      return _iter == o._iter;
+    }
+    inline bool operator!=(const ConstIterator& o) const {
+      return _iter != o._iter;
+    }
 
    private:
-    const Set<KEY, CMP>* _container;
+    const Set<KEY, CMP>* _container = nullptr;
     typename Set<KEY, CMP>::const_iterator _iter;
   };
 };
