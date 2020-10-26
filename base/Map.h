@@ -35,11 +35,14 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   using reverse_iterator = typename Base::reverse_iterator;
   using const_reverse_iterator = typename Base::const_reverse_iterator;
   using size_type = typename Base::size_type;
+  using value_type = typename Base::value_type;
 
   /*constructor and destructor*/
   using Base::Base;
-  using Base::operator=;
+  /*destrcutor*/
   ~Map() = default;
+  using Base::operator=;
+  
 
   /*accessor*/
   using Base::at;
@@ -88,36 +91,6 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   friend bool operator==(const Map<K, V, C>&, const Map<K, V, C>&);
   template <typename K, typename V, typename C>
   friend bool operator<(const Map<K, V, C>&, const Map<K, V, C>&);
-
-  inline VALUE& first() {
-    assert(!empty());
-    return begin()->second;
-  }
-
-  inline const VALUE& first() const {
-    assert(!empty());
-    return cbegin()->second;
-  }
-
-  inline const KEY& firstKey() const {
-    assert(!empty());
-    return cbegin()->first;
-  }
-
-  inline VALUE& last() {
-    assert(!empty());
-    return (--end())->second;
-  }
-
-  inline const VALUE& last() const {
-    assert(!empty());
-    return (--cend())->second;
-  }
-
-  inline const KEY& lastKey() const {
-    assert(!empty());
-    return (--cend())->first;
-  }
 
   /**
    * @brief Get all map keys.
@@ -185,13 +158,14 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
    *
    * Map<string *, Value, stringLess>::Iterator iter(map);
    * while (iter.hasNext()) {
-   *   Value v = iter.next();
+   *   iter.next();
    * }
    *
    */
   class Iterator {
    public:
     Iterator() = default;
+    ~Iterator() = default;
     explicit Iterator(Map<KEY, VALUE, CMP>* container) {
       if (container != nullptr) {
         _container = container;
@@ -206,7 +180,9 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
       }
     }
 
-    bool hasNext() { return _iter != _container->end(); }
+    bool hasNext() {
+      return _container != nullptr && _iter != _container->end();
+    }
     Iterator& next() {
       ++_iter;
       return *this;
@@ -233,6 +209,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   class ConstIterator {
    public:
     ConstIterator() = default;
+    ~ConstIterator() = default;
     explicit ConstIterator(const Map<KEY, VALUE, CMP>* container) {
       if (container != nullptr) {
         _container = container;
@@ -339,7 +316,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   using const_iterator = typename Base::const_iterator;
   using reverse_iterator = typename Base::reverse_iterator;
   using const_reverse_iterator = typename Base::const_reverse_iterator;
-  using ValueType = typename Base::value_type;
+  using value_type = typename Base::value_type;
 
   /*constructor*/
   using Base::Base;
@@ -393,7 +370,7 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   friend bool operator<(const Multimap<K, V, C>&, const Multimap<K, V, C>&);
 
   void insert(const KEY& key, const VALUE& value) {
-    insert(ValueType(key, value));
+    insert(value_type(key, value));
   }
 
   std::list<VALUE> values(const KEY& key) {
