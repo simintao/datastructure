@@ -249,7 +249,9 @@ class Set : public absl::btree_set<KEY, CMP> {
 
     void init(const Set<KEY, CMP>* container) {
       _container = container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (_container != nullptr) {
+        _iter = _container->begin();
+      }
     }
 
     bool hasNext() {

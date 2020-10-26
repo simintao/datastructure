@@ -26,37 +26,56 @@ template <class KEY>
 class HSet : public absl::flat_hash_set<KEY> {
  public:
   using Base = typename HSet::flat_hash_set;
-  using Base::Base;
+  using iterator = typename Base::iterator;
+  using const_iterator = typename Base::const_iterator;
+  using value_type = typename Base::value_type;
 
+  /*constructor*/
+  using Base::Base;
+  /*destructor*/
+  ~HSet() = default;
+  using Base::operator=;
+
+  /*iterator*/
   using Base::begin;
-  using Base::bucket_count;
-  using Base::capacity;
   using Base::cbegin;
   using Base::cend;
+  using Base::end;
+
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
+  using Base::size;
+
+  /*modifiers*/
   using Base::clear;
-  using Base::contains;
-  using Base::count;
   using Base::emplace;
   using Base::emplace_hint;
-  using Base::empty;
-  using Base::end;
-  using Base::equal_range;
   using Base::erase;
   using Base::extract;
-  using Base::find;
-  using Base::get_allocator;
-  using Base::hash_function;
   using Base::insert;
-  using Base::key_eq;
+  using Base::merge;
+  using Base::swap;
+
+  /*lookup*/
+  using Base::contains;
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+
+  /*bucket interface*/
+  using Base::bucket_count;
+
+  /*hash policy*/
   using Base::load_factor;
   using Base::max_load_factor;
-  using Base::max_size;
-  using Base::merge;
   using Base::rehash;
   using Base::reserve;
-  using Base::size;
-  using Base::swap;
-  using Base::operator=;
+
+  /*observers*/
+  using Base::get_allocator;
+  using Base::hash_function;
+  using Base::key_eq;
 
   /**
    * @brief Find the entry corresponding to key.
@@ -104,17 +123,6 @@ class HSet : public absl::flat_hash_set<KEY> {
   bool isSubset(const HSet<KEY>* set2);
 
   void insertSet(const HSet<KEY>* set2);
-
-  void deleteContents() {
-    Iterator iter(this);
-    while (iter.hasNext()) delete iter.next();
-  }
-
-  void deleteContentsClear() {
-    deleteContents();
-    this->clear();
-  }
-
   static bool intersects(HSet<KEY>* set1, HSet<KEY>* set2);
 
   /**
@@ -128,59 +136,80 @@ class HSet : public absl::flat_hash_set<KEY> {
    */
   class Iterator {
    public:
-    Iterator() : _container(nullptr) {}
-    explicit Iterator(HSet<KEY>* container) : _container(container) {
-      if (_container != nullptr) _iter = _container->begin();
+    Iterator() = default;
+    ~Iterator() = default;
+
+    explicit Iterator(HSet<KEY>* container) {
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
-    explicit Iterator(HSet<KEY>& container) : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     void init(HSet<KEY>* container) {
-      _container = container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
     }
-    void init(const HSet<KEY>& container) {
-      _container = &container;
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    KEY next() { return *_iter++; }
+    Iterator& next() {
+      ++_iter;
+      return *this;
+    }
     HSet<KEY>* container() { return _container; }
+    inline const KEY& value() const { return *_iter; }
+    inline const KEY& operator*() const { return _iter->value(); }
+    inline const KEY& operator->() const { return &_iter->value(); }
+    inline bool operator==(const Iterator& o) const { return _iter == o._iter; }
+    inline bool operator!=(const Iterator& o) const { return _iter != o._iter; }
 
    private:
-    HSet<KEY>* _container;
+    HSet<KEY>* _container = nullptr;
     typename HSet<KEY>::iterator _iter;
   };
 
   class ConstIterator {
    public:
-    ConstIterator() : _container(nullptr) {}
+    ConstIterator() = default;
+    ~ConstIterator() = default;
+
     explicit ConstIterator(const HSet<KEY>* container) : _container(container) {
-      if (_container != nullptr) _iter = _container->begin();
+      if (_container != nullptr) {
+        _iter = _container->begin();
+      }
     }
-    explicit ConstIterator(const HSet<KEY>& container)
-        : _container(&container) {
-      if (_container != nullptr) _iter = _container->begin();
-    }
+
     void init(const HSet<KEY>* container) {
       _container = container;
-      if (_container != nullptr) _iter = _container->begin();
-    }
-    void init(const HSet<KEY>& container) {
-      _container = &container;
-      if (_container != nullptr) _iter = _container->begin();
+      if (_container != nullptr) {
+        _iter = _container->begin();
+      }
     }
 
     bool hasNext() {
       return _container != nullptr && _iter != _container->end();
     }
-    KEY next() { return *_iter++; }
+    ConstIterator& next() {
+      ++_iter;
+      return *this;
+    }
     const HSet<KEY>* container() { return _container; }
+    inline const KEY& value() const { return _iter->second; }
+    inline const KEY& operator*() const { return _iter->value(); }
+    inline const KEY* operator->() const { return &(_iter->value()); }
+    inline bool operator==(const ConstIterator& o) const {
+      return _iter == o._iter;
+    }
+    inline bool operator!=(const ConstIterator& o) const {
+      return _iter != o._iter;
+    }
 
    private:
-    const HSet<KEY>* _container;
+    const HSet<KEY>* _container = nullptr;
     typename HSet<KEY>::const_iterator _iter;
   };
 };
