@@ -90,7 +90,7 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
   inline Set<KEY, CMP>& operator|=(const Set<KEY, CMP>& other) {
-    unite(other);
+    merge(other);
     return *this;
   }
   inline Set<KEY, CMP>& operator|=(const KEY& value) {
@@ -107,7 +107,7 @@ class Set : public absl::btree_set<KEY, CMP> {
     return (*this = result);
   }
   inline Set<KEY, CMP>& operator+=(const Set<KEY, CMP>& other) {
-    unite(other);
+    merge(other);
     return *this;
   }
   inline Set<KEY, CMP>& operator+=(const KEY& value) {
@@ -119,7 +119,7 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
   inline Set<KEY, CMP>& operator-=(const KEY& value) {
-    remove(value);
+    erase(value);
     return *this;
   }
   inline Set<KEY, CMP> operator|(const Set<KEY, CMP>& other) const {
@@ -262,9 +262,9 @@ class Set : public absl::btree_set<KEY, CMP> {
       return *this;
     }
     const Set<KEY, CMP>* container() { return _container; }
-    inline const KEY& value() const { return _iter->second; }
-    inline const KEY& operator*() const { return _iter->value(); }
-    inline const KEY* operator->() const { return &(_iter->value()); }
+    inline const KEY& value() const { return *_iter; }
+    inline const KEY& operator*() const { return *_iter; }
+    inline const KEY* operator->() const { return &(_iter); }
     inline bool operator==(const ConstIterator& o) const {
       return _iter == o._iter;
     }
@@ -289,7 +289,14 @@ bool Set<KEY, CMP>::equal(const Set<KEY, CMP>* set1,
       typename Set<KEY, CMP>::ConstIterator iter1(set1);
       typename Set<KEY, CMP>::ConstIterator iter2(set2);
       while (iter1.hasNext() && iter2.hasNext()) {
-        if (iter1.next() != iter2.next()) return false;
+        auto& value1 = iter1.value();
+        auto& value2 = iter2.value();
+        if (value1 != value2) {
+          return false;
+        }
+
+        iter1.next();
+        iter2.next();
       }
       return true;
     } else {
