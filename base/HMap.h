@@ -12,8 +12,10 @@
 #pragma once
 
 #include <list>
+#include <unordered_map>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/node_hash_map.h"
 
 namespace pcl {
 
@@ -268,24 +270,75 @@ inline bool operator!=(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE> y) {
  * @tparam VALUE Type of value objects.
  */
 template <class KEY, class VALUE>
-class HMultiMap : public HMap<KEY, VALUE> {
+class HMultimap : public std::unordered_multimap<KEY, VALUE> {
  public:
-  using Base = typename HMultiMap::HMap;
+  using Base = typename HMultimap::unordered_multimap;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
   using value_type = typename Base::value_type;
 
   /*constructor*/
   using Base::Base;
+
   /*destrcutor*/
-  ~HMultiMap() = default;
+  ~HMultimap() = default;
+  using Base::operator=;
 
-  /*the other function interface is the same with Hmap*/
+  /*iterator*/
+  using Base::begin;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::end;
 
-  void insert(const KEY& key, const VALUE& value) {
-    insert(value_type(key, value));
+  /*capacity*/
+  using Base::empty;
+  using Base::max_size;
+  using Base::size;
+
+  /*modifier*/
+  using Base::clear;
+  using Base::emplace;
+  using Base::emplace_hint;
+  using Base::erase;
+  using Base::extract;
+  using Base::insert;
+  using Base::merge;
+  using Base::swap;
+
+  /*lookup*/
+  using Base::count;
+  using Base::equal_range;
+  using Base::find;
+
+  /*bucket interface*/
+  using Base::bucket_count;
+
+  /*hash policy*/
+  using Base::load_factor;
+  using Base::max_load_factor;
+  using Base::rehash;
+  using Base::reserve;
+
+  using Base::hash_function;
+  using Base::key_eq;
+  /**
+   * @brief Get all map keys.
+   *
+   * @return std::list<KEY> all map keys.
+   */
+  std::list<KEY> keys() const {
+    std::list<KEY> ret_value;
+    for (auto p : *this) {
+      ret_value.push_back(p.first);
+    }
+    return ret_value;
   }
 
+  /**
+   * @brief Get all map values.
+   *
+   * @return std::list<VALUE> all map values of the key.
+   */
   std::list<VALUE> values(const KEY& key) {
     auto ret_values = equal_range(key);
     std::list<VALUE> ret_list;
@@ -295,23 +348,160 @@ class HMultiMap : public HMap<KEY, VALUE> {
 
     return ret_list;
   }
+
+  /**
+   * @brief Find out if key is in the map.
+   *
+   * @param key
+   * @return true if find out.
+   * @return false
+   */
+  bool hasKey(const KEY key) const { return this->find(key) != this->end(); }
+
+  /**
+   * @brief Find the value corresponding to key.
+   *
+   * @param key
+   * @param default_value the default return value if not found.
+   * @return const VALUE return the found value.
+   */
+  const VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
+    auto find_iter = this->find(key);
+    if (find_iter != this->end()) {
+      return find_iter->second;
+    } else {
+      return default_value;
+    }
+  }
+
+  /**
+   * @brief Insert the (key, value) to the map container.
+   *
+   * @param key
+   * @param value
+   */
+  void insert(const KEY& key, const VALUE& value) {
+    this->operator[](key) = value;
+  }
+
+  /**
+   * @brief Java style container itererator.
+   *
+   * HMap::Iterator<string *, Value> iter(hmap);
+   * while (iter.hasNext()) {
+   *   iter.next();
+   * }
+   *
+   */
+  class Iterator {
+   public:
+    Iterator() = default;
+    ~Iterator() = default;
+    explicit Iterator(HMultimap<KEY, VALUE>* container) {
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
+    }
+
+    void init(HMultimap<KEY, VALUE>* container) {
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
+    }
+
+    bool hasNext() {
+      return _container != nullptr && _iter != _container->end();
+    }
+    Iterator& next() {
+      ++_iter;
+      return *this;
+    }
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
+      _iter++;
+    }
+    HMultimap<KEY, VALUE>* container() { return _container; }
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
+    inline const VALUE& operator*() const { return _iter->value(); }
+    inline const VALUE& operator->() const { return &_iter->value(); }
+    inline bool operator==(const Iterator& o) const { return _iter == o._iter; }
+    inline bool operator!=(const Iterator& o) const { return _iter != o._iter; }
+
+   private:
+    HMultimap<KEY, VALUE>* _container = nullptr;
+    typename HMultimap<KEY, VALUE>::iterator _iter;
+  };
+  friend class Iterator;
+
+  class ConstIterator {
+   public:
+    ConstIterator() = default;
+    ~ConstIterator() = default;
+
+    explicit ConstIterator(const HMultimap<KEY, VALUE>* container) {
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
+    }
+
+    void init(const HMultimap<KEY, VALUE>* container) {
+      if (container != nullptr) {
+        _container = container;
+        _iter = container->begin();
+      }
+    }
+
+    bool hasNext() {
+      return _container != nullptr && _iter != _container->end();
+    }
+    ConstIterator& next() {
+      ++_iter;
+      return *this;
+    }
+    void next(KEY* key, VALUE* value) {
+      *key = _iter->first;
+      *value = _iter->second;
+      _iter++;
+    }
+    const HMap<KEY, VALUE>* container() { return _container; }
+    inline const KEY& key() const { return _iter->first; }
+    inline const VALUE& value() const { return _iter->second; }
+    inline const VALUE& operator*() const { return _iter->value(); }
+    inline const VALUE& operator->() const { return &_iter->value(); }
+    inline bool operator==(const ConstIterator& o) const {
+      return _iter == o._iter;
+    }
+    inline bool operator!=(const ConstIterator& o) const {
+      return _iter != o._iter;
+    }
+
+   private:
+    const HMultimap<KEY, VALUE>* _container = nullptr;
+    typename HMultimap<KEY, VALUE>::const_iterator _iter;
+  };
+  friend class ConstIterator;
 };
 
 template <typename KEY, typename VALUE>
-inline void swap(HMultiMap<KEY, VALUE>& x,
-                 HMultiMap<KEY, VALUE>& y) noexcept(noexcept(x.swap(y))) {
+inline void swap(HMultimap<KEY, VALUE>& x,
+                 HMultimap<KEY, VALUE>& y) noexcept(noexcept(x.swap(y))) {
   x.swap(y);
 }
 
 template <typename KEY, typename VALUE>
-inline bool operator==(const HMultiMap<KEY, VALUE>& x,
-                       const HMultiMap<KEY, VALUE>& y) {
-  return static_cast<const typename HMultiMap<KEY, VALUE>::Base&>(x) == y;
+inline bool operator==(const HMultimap<KEY, VALUE>& x,
+                       const HMultimap<KEY, VALUE>& y) {
+  return static_cast<const typename HMultimap<KEY, VALUE>::Base&>(x) == y;
 }
 
 template <typename KEY, typename VALUE>
-inline bool operator!=(const HMultiMap<KEY, VALUE>& x,
-                       const HMultiMap<KEY, VALUE>& y) {
+inline bool operator!=(const HMultimap<KEY, VALUE>& x,
+                       const HMultimap<KEY, VALUE>& y) {
   return !(x == y);
 }
 

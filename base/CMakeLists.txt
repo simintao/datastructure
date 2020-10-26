@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-# Abseil requires C++11
-SET(CMAKE_CXX_STANDARD 11)
+# Abseil requires C++17
+SET(CMAKE_CXX_STANDARD 17)
 
 SET(AbslLibs
         absl_bad_any_cast_impl
