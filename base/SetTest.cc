@@ -1,10 +1,12 @@
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <utility>
 
 #include "Set.h"
 #include "gtest/gtest.h"
 
+using pcl::Multiset;
 using pcl::Set;
 
 namespace {
@@ -395,6 +397,134 @@ TEST(SetTest, nonmember7) {
   Set<int> result_cont = {1, 2, 3, 5, 6};
 
   EXPECT_EQ(cont, result_cont);
+}
+
+TEST(MultisetTest, ctor) {
+  Multiset<int> bmultiset = {1, 1, 3};
+
+  for (auto& p : bmultiset) {
+    std::cout << p << std::endl;
+  }
+}
+
+TEST(MultisetTest, capacity) {
+  Multiset<int> bmultiset;
+
+  EXPECT_TRUE(bmultiset.empty());
+
+  std::cout << "max size : " << bmultiset.max_size() << std::endl;
+}
+
+TEST(MultisetTest, modifier1) {
+  Multiset<std::unique_ptr<int, std::function<void(int*)>>> bmultiset;
+  auto deleter = [](int* p) {
+    std::cout << "delete " << *p << std::endl;
+    delete p;
+  };
+
+  bmultiset.emplace(new int(2), deleter);
+  bmultiset.emplace_hint(bmultiset.begin(), new int(1), deleter);
+
+  std::cout << "remove one element" << std::endl;
+  bmultiset.erase(++bmultiset.begin());
+  std::cout << "add one element" << std::endl;
+  bmultiset.emplace(new int(3), deleter);
+
+  auto nh = bmultiset.extract(bmultiset.begin());
+  bmultiset.insert(std::move(nh));
+}
+
+TEST(MultisetTest, modifier2) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  bmultiset1.merge(bmultiset2);
+
+  for (auto& p : bmultiset1) {
+    std::cout << p << std::endl;
+  }
+
+  Multiset<int> result = {1, 2, 3, 2, 3, 4};
+  EXPECT_EQ(bmultiset1, result);
+  EXPECT_TRUE(bmultiset2.empty());
+}
+
+TEST(MultisetTest, swap) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  bmultiset1.swap(bmultiset2);
+
+  for (auto& p : bmultiset1) {
+    std::cout << p << std::endl;
+  }
+
+  Multiset<int> result = {2, 3, 4};
+  EXPECT_EQ(bmultiset1, result);
+}
+
+TEST(MultisetTest, lookup) {
+  Multiset<int> bmultiset1 = {1, 1, 3};
+  EXPECT_TRUE(bmultiset1.contains(1));
+  EXPECT_EQ(bmultiset1.count(1), 2);
+
+  auto range = bmultiset1.equal_range(1);
+  for (auto p = range.first; p != range.second; p++) {
+    std::cout << *p << std::endl;
+  }
+}
+
+TEST(MultisetTest, nonmember1) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_FALSE(bmultiset1 == bmultiset2);
+}
+
+TEST(MultisetTest, nonmember2) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_TRUE(bmultiset1 != bmultiset2);
+}
+
+TEST(MultisetTest, nonmember3) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_TRUE(bmultiset1 < bmultiset2);
+}
+
+TEST(MultisetTest, nonmember4) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_TRUE(bmultiset1 <= bmultiset2);
+}
+
+TEST(MultisetTest, nonmember5) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_FALSE(bmultiset1 >= bmultiset2);
+}
+
+TEST(MultisetTest, nonmember6) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  EXPECT_FALSE(bmultiset1 > bmultiset2);
+}
+
+TEST(MultisetTest, nonmember7) {
+  Multiset<int> bmultiset1 = {1, 2, 3};
+  Multiset<int> bmultiset2 = {2, 3, 4};
+
+  swap(bmultiset1, bmultiset2);
+
+  Multiset<int> result = {2, 3, 4};
+
+  EXPECT_EQ(bmultiset1, result);
 }
 
 }  // namespace
