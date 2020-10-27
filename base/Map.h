@@ -20,7 +20,18 @@
 namespace pcl {
 
 /**
- * @brief Add convenience functions around abseil container.
+ * @brief A map of unique key based on tree structure.
+ *
+ * The map is a wrapper of btree map from google abseil containers.The btree map
+ * contains ordered containers generally adhering to the STL container API
+ * contract, but implemented using (generally more efficient) B-trees rather
+ * than binary trees(as used in std::map et al). The ordered containers are
+ * designed to be more efficient replacements for std::map and std::set in most
+ * cases.Specifically, they provide several advantages over the ordered std::
+ * containers: 1) Provide lower memory overhead in most cases than their STL
+ * equivalents. 2) Are generally more cache friendly(and hence faster) than
+ * their STL equivalents. 3) Provide C++11 support for C++17 mechanisms such as
+ * try_emplace(). 4) Support heterogeneous lookup.
  *
  * @tparam KEY
  * @tparam VALUE
@@ -42,7 +53,6 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   /*destrcutor*/
   ~Map() = default;
   using Base::operator=;
-  
 
   /*accessor*/
   using Base::at;
