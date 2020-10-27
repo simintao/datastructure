@@ -11,6 +11,8 @@ build/
 
 .vscode/
 
+doxygen/
+
 Doxyfile
 
 # Compiled Java class files
