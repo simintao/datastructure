@@ -527,4 +527,58 @@ TEST(MultisetTest, nonmember7) {
   EXPECT_EQ(bmultiset1, result);
 }
 
+TEST(SetTest, perf1) {
+  class Dew {
+   private:
+    int _a;
+    int _b;
+    int _c;
+
+   public:
+    Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
+
+    bool operator<(const Dew& other) const {
+      if (_a < other._a) return true;
+      if (_a == other._a && _b < other._b) return true;
+      return (_a == other._a && _b == other._b && _c < other._c);
+    }
+  };
+
+  const int nof_operations = 12000000;
+
+  auto set_emplace = []() -> int {
+    Set<Dew> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.emplace(i, j, k);
+
+    return set.size();
+  };
+
+  auto stl_set_emplace = []() -> int {
+    std::set<Dew> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.emplace(i, j, k);
+
+    return set.size();
+  };
+
+  auto timeit = [](std::function<int()> set_test, std::string what = "") {
+    auto start = std::chrono::system_clock::now();
+    int setsize = set_test();
+    auto stop = std::chrono::system_clock::now();
+    std::chrono::duration<double, std::milli> time = stop - start;
+    if (what.size() > 0 && setsize > 0) {
+      std::cout << std::fixed << std::setprecision(2) << time.count()
+                << "  ms for " << what << '\n';
+    }
+  };
+
+  timeit(stl_set_emplace, "stl emplace");
+  timeit(set_emplace, "emplace");
+  timeit(stl_set_emplace, "stl emplace");
+  timeit(set_emplace, "emplace");
+}
+
 }  // namespace
