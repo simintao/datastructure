@@ -19,9 +19,10 @@
 namespace pcl {
 
 /**
- * @brief A wrap hash set container made up of unique keys.
+ * @brief A hash set made up of unique key.
  *
- * The inherited base class is google abseil hash set.
+ * The set is a wrapper of flat hash set from google abseil containers.The hash
+ * tables are knowns as "Swiss tables".
  */
 template <class KEY>
 class HSet : public absl::flat_hash_set<KEY> {
@@ -410,6 +411,9 @@ inline bool operator!=(const HSet<KEY>& x, const HSet<KEY>& y) {
 
 /**
  * @brief A hash set of multiple elements with equivalent keys.
+ *
+ * The HMultiset is a wrapper of std unordered_multiset.So we can
+ * add more convenient interface for development.
  *
  * @tparam KEY Type of key objects.
  */

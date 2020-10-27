@@ -20,7 +20,7 @@
 namespace pcl {
 
 /**
- * @brief A hash map of unique key.
+ * @brief A hash map made up of unique key.
  *
  * The hash map is a wrapper of flat hash map from google abseil containers.The
  * hash tables are knows as "Swiss tables" and are designed to be replacements
@@ -51,6 +51,7 @@ namespace pcl {
  * for conversions to string types, and for conversions to smart pointer
  * types(std::unique_ptr, std::shared_ptr), through the absl::Hash hashing
  * framwork.
+ *
  * @tparam KEY
  * @tparam VALUE
  * @tparam CMP
@@ -294,6 +295,9 @@ inline bool operator!=(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE> y) {
 
 /**
  * @brief A hash map of multiple elements with equivalent keys.
+ *
+ * The HMultimap is a wrapper of std unordered_multimap.So we can add
+ * more convenient interface for development.
  *
  * @tparam KEY Type of key objects.
  * @tparam VALUE Type of value objects.

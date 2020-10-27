@@ -19,9 +19,12 @@
 namespace pcl {
 
 /**
- * @brief A wrap set container made up of unique keys.
+ * @brief A set container made up of unique keys based on tree structure.
  *
- * The inherited base class is google abseil btree set.
+ * The set is a wrapper of btree set from google abseil containers.The btree set
+ * contains ordered containers generally adhering to the STL container API
+ * contract, but implemented using B-trees rather than binary trees, generally
+ * more efficient.
  */
 template <class KEY, class CMP = std::less<KEY>>
 class Set : public absl::btree_set<KEY, CMP> {
@@ -453,8 +456,10 @@ void swap(Set<KEY, CMP>& x, Set<KEY, CMP>& y) {
 }
 
 /**
- * @brief A wrap multi set container.
+ * @brief A ordered set of multiple elements with equivalent keys.
  *
+ * The Multiset is a wrapper of btree multiset from google abseil containers.
+ * The btree set implemented using B-trees is more efficent than binary tree.
  */
 template <class KEY, class CMP = std::less<KEY>>
 class Multiset : public absl::btree_multiset<KEY, CMP> {

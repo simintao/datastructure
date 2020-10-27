@@ -20,7 +20,7 @@
 namespace pcl {
 
 /**
- * @brief A map of unique key based on tree structure.
+ * @brief A map made up of unique key based on tree structure.
  *
  * The map is a wrapper of btree map from google abseil containers.The btree map
  * contains ordered containers generally adhering to the STL container API
@@ -314,9 +314,10 @@ inline void swap(Map<KEY, VALUE, CMP>& lhs, Map<KEY, VALUE, CMP>& rhs) {
 }
 
 /**
- * @brief The multimap is an ordered associative container.
+ * @brief A ordered map of multiple elements with equivalent keys.
  *
- * It allows multiple elements with equivalent keys.
+ * The Multimap is a wrapper of btree multimap from google abseil containers.
+ * The btree map implemented using B-trees is more efficent than binary tree.
  */
 template <typename KEY, typename VALUE, typename CMP = std::less<KEY>>
 class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
