@@ -93,7 +93,12 @@ class Set : public absl::btree_set<KEY, CMP> {
 
     return *this;
   }
-
+  /**
+   * @brief Insert all items from the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after unite the other.
+   */
   Set<KEY, CMP>& unite(const Set<KEY, CMP>& other) {
     for (const KEY& e : other) {
       insert(e);
@@ -101,6 +106,12 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
 
+  /**
+   * @brief Calculate the intersect between this and other.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after intersect the other.
+   */
   Set<KEY, CMP>& intersect(const Set<KEY, CMP>& other) {
     Set<KEY, CMP> copy1;
     Set<KEY, CMP> copy2;
@@ -120,11 +131,23 @@ class Set : public absl::btree_set<KEY, CMP> {
     return *this;
   }
 
+  /**
+   * @brief Insert a value to the set.
+   *
+   * @param value
+   * @return HSet<KEY>& This set after insert value.
+   */
   inline Set<KEY, CMP>& operator<<(const KEY& value) {
     insert(value);
     return *this;
   }
 
+  /**
+   * @brief Calculate the union set between this set and the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after unite the other.
+   */
   inline Set<KEY, CMP>& operator|=(const Set<KEY, CMP>& other) {
     unite(other);
     return *this;
@@ -138,6 +161,13 @@ class Set : public absl::btree_set<KEY, CMP> {
     insert(value);
     return *this;
   }
+
+  /**
+   * @brief Calculate the intersect set between this set and the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after intersect the other set.
+   */
   inline Set<KEY, CMP>& operator&=(const Set<KEY, CMP>& other) {
     intersect(other);
     return *this;
@@ -149,6 +179,13 @@ class Set : public absl::btree_set<KEY, CMP> {
     }
     return (*this = result);
   }
+
+  /**
+   * @brief Merge the other set to the set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after merge the other.
+   */
   inline Set<KEY, CMP>& operator+=(Set<KEY, CMP>& other) {
     merge(other);
     return *this;
@@ -157,6 +194,13 @@ class Set : public absl::btree_set<KEY, CMP> {
     insert(value);
     return *this;
   }
+
+  /**
+   * @brief Subtract the other set from the set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after subtract the other.
+   */
   inline Set<KEY, CMP>& operator-=(const Set<KEY, CMP>& other) {
     subtract(other);
     return *this;

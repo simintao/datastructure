@@ -103,7 +103,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   friend bool operator<(const Map<K, V, C>&, const Map<K, V, C>&);
 
   /**
-   * @brief Get all map keys.
+   * @brief Get all mapped keys.
    *
    * @return std::list<KEY> all map keys.
    */
@@ -116,7 +116,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   }
 
   /**
-   * @brief Get all map values.
+   * @brief Get all mapped values equavilent to the key.
    *
    * @return std::list<VALUE> all map values.
    */
@@ -129,9 +129,9 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   }
 
   /**
-   * @brief Find out if key is in the map.
+   * @brief Judge whether the key is in the map.
    *
-   * @param key
+   * @param key The key to be found.
    * @return true if find out.
    * @return false
    */
@@ -140,7 +140,7 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   /**
    * @brief Find the value corresponding to key.
    *
-   * @param key
+   * @param key The key to be found.
    * @param default_value the default return value if not found.
    * @return const VALUE return the found value.
    */
@@ -156,8 +156,8 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
   /**
    * @brief Insert the (key, value) to the map container.
    *
-   * @param key
-   * @param value
+   * @param key The key to be found.
+   * @param value The value to be found.
    */
   void insert(const KEY& key, const VALUE& value) {
     this->operator[](key) = value;
@@ -380,10 +380,22 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
   template <typename K, typename V, typename C>
   friend bool operator<(const Multimap<K, V, C>&, const Multimap<K, V, C>&);
 
+  /**
+   * @brief Insert the (key, value) to the map container.
+   *
+   * @param key
+   * @param value
+   */
   void insert(const KEY& key, const VALUE& value) {
     insert(value_type(key, value));
   }
 
+  /**
+   * @brief Get the mapped values equavilent to the key.
+   *
+   * @param key
+   * @return std::list<VALUE>
+   */
   std::list<VALUE> values(const KEY& key) {
     auto ret_values = equal_range(key);
     std::list<VALUE> ret_list;
@@ -393,6 +405,16 @@ class Multimap : public absl::btree_multimap<KEY, VALUE, CMP> {
 
     return ret_list;
   }
+
+  /**
+   * @brief Java style container itererator.
+   *
+   * Map<string *, Value, stringLess>::Iterator iter(map);
+   * while (iter.hasNext()) {
+   *   iter.next();
+   * }
+   *
+   */
   class Iterator {
    public:
     Iterator() = default;

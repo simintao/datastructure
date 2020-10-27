@@ -52,9 +52,8 @@ namespace pcl {
  * types(std::unique_ptr, std::shared_ptr), through the absl::Hash hashing
  * framwork.
  *
- * @tparam KEY
- * @tparam VALUE
- * @tparam CMP
+ * @tparam KEY Type of  key.
+ * @tparam VALUE Type of value.
  */
 template <class KEY, class VALUE>
 class HMap : public absl::flat_hash_map<KEY, VALUE> {
@@ -116,7 +115,7 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   /**
    * @brief Get all map keys.
    *
-   * @return std::list<KEY> all map keys.
+   * @return std::list<KEY> All map keys.
    */
   std::list<KEY> keys() const {
     std::list<KEY> ret_value;
@@ -127,9 +126,9 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   }
 
   /**
-   * @brief Get all map values.
+   * @brief Get all mapped values.
    *
-   * @return std::list<VALUE> all map values.
+   * @return std::list<VALUE> All map values.
    */
   std::list<VALUE> values() const {
     std::list<VALUE> ret_value;
@@ -149,11 +148,11 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   bool hasKey(const KEY key) const { return this->find(key) != this->end(); }
 
   /**
-   * @brief Find the value corresponding to key.
+   * @brief Find the value corresponding to the key.
    *
    * @param key
-   * @param default_value the default return value if not found.
-   * @return const VALUE return the found value.
+   * @param default_value The default return value if not found.
+   * @return const VALUE Return the found value.
    */
   const VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
     auto find_iter = this->find(key);
@@ -355,9 +354,9 @@ class HMultimap : public std::unordered_multimap<KEY, VALUE> {
   using Base::hash_function;
   using Base::key_eq;
   /**
-   * @brief Get all map keys.
+   * @brief Get all mapped keys.
    *
-   * @return std::list<KEY> all map keys.
+   * @return std::list<KEY> All mapped keys.
    */
   std::list<KEY> keys() const {
     std::list<KEY> ret_value;
@@ -368,9 +367,9 @@ class HMultimap : public std::unordered_multimap<KEY, VALUE> {
   }
 
   /**
-   * @brief Get all map values.
+   * @brief Get all mapped values.
    *
-   * @return std::list<VALUE> all map values of the key.
+   * @return std::list<VALUE> All mapped values of the key.
    */
   std::list<VALUE> values(const KEY& key) {
     auto ret_values = equal_range(key);
@@ -395,8 +394,8 @@ class HMultimap : public std::unordered_multimap<KEY, VALUE> {
    * @brief Find the value corresponding to key.
    *
    * @param key
-   * @param default_value the default return value if not found.
-   * @return const VALUE return the found value.
+   * @param default_value the default Return value if not found.
+   * @return const VALUE Return the found value.
    */
   const VALUE value(const KEY key, const VALUE& default_value = VALUE()) const {
     auto find_iter = this->find(key);

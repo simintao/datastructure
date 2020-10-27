@@ -92,6 +92,12 @@ class HSet : public absl::flat_hash_set<KEY> {
     return *this;
   }
 
+  /**
+   * @brief Insert all items from the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after unite the other.
+   */
   HSet<KEY>& unite(const HSet<KEY>& other) {
     for (const KEY& e : other) {
       insert(e);
@@ -99,6 +105,12 @@ class HSet : public absl::flat_hash_set<KEY> {
     return *this;
   }
 
+  /**
+   * @brief Calculate the intersect between this and other.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after intersect the other.
+   */
   HSet<KEY>& intersect(const HSet<KEY>& other) {
     HSet<KEY> copy1;
     HSet<KEY> copy2;
@@ -118,11 +130,23 @@ class HSet : public absl::flat_hash_set<KEY> {
     return *this;
   }
 
+  /**
+   * @brief Insert a value to the set.
+   *
+   * @param value
+   * @return HSet<KEY>& This set after insert value.
+   */
   inline HSet<KEY>& operator<<(const KEY& value) {
     insert(value);
     return *this;
   }
 
+  /**
+   * @brief Calculate the union set between this set and the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after unite the other.
+   */
   inline HSet<KEY>& operator|=(const HSet<KEY>& other) {
     unite(other);
     return *this;
@@ -136,6 +160,13 @@ class HSet : public absl::flat_hash_set<KEY> {
     insert(value);
     return *this;
   }
+
+  /**
+   * @brief Calculate the intersect set between this set and the other set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after intersect the other set.
+   */
   inline HSet<KEY>& operator&=(const HSet<KEY>& other) {
     intersect(other);
     return *this;
@@ -147,6 +178,13 @@ class HSet : public absl::flat_hash_set<KEY> {
     }
     return (*this = result);
   }
+
+  /**
+   * @brief Merge the other set to the set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after merge the other.
+   */
   inline HSet<KEY>& operator+=(HSet<KEY>& other) {
     merge(other);
     return *this;
@@ -155,6 +193,13 @@ class HSet : public absl::flat_hash_set<KEY> {
     insert(value);
     return *this;
   }
+
+  /**
+   * @brief Subtract the other set from the set.
+   *
+   * @param other
+   * @return HSet<KEY>& This set after subtract the other.
+   */
   inline HSet<KEY>& operator-=(const HSet<KEY>& other) {
     subtract(other);
     return *this;
@@ -353,6 +398,15 @@ bool HSet<KEY>::isSubset(const HSet<KEY>* set2) {
   }
 }
 
+/**
+ * @brief Judge whether exist the intersect set between set1 and set2.
+ *
+ * @tparam KEY
+ * @param set1
+ * @param set2
+ * @return true
+ * @return false
+ */
 template <class KEY>
 bool HSet<KEY>::intersects(HSet<KEY>* set1, HSet<KEY>* set2) {
   if (set1 && !set1->empty() && set2 && !set2->empty()) {
@@ -389,9 +443,17 @@ bool HSet<KEY>::intersects(HSet<KEY>* set1, HSet<KEY>* set2) {
   return false;
 }
 
+/**
+ * @brief Insert the set2 to this set.
+ *
+ * @tparam KEY
+ * @param set2
+ */
 template <class KEY>
 void HSet<KEY>::insertSet(const HSet<KEY>* set2) {
-  if (set2) this->insert(set2->begin(), set2->end());
+  if (set2) {
+    this->insert(set2->begin(), set2->end());
+  }
 }
 
 template <typename KEY>
