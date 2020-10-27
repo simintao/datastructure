@@ -309,4 +309,76 @@ TEST(HMultisetTest, ctor) {
   }
 }
 
+TEST(HMultisetTest, capacity) {
+  HMultiset<int> hmultiset;
+
+  EXPECT_TRUE(hmultiset.empty());
+
+  std::cout << "max size : " << hmultiset.max_size() << std::endl;
+}
+
+TEST(HMultisetTest, modifier1) {
+  HMultiset<std::unique_ptr<int, std::function<void(int*)>>> hmultiset;
+  auto deleter = [](int* p) {
+    std::cout << "delete " << *p << std::endl;
+    delete p;
+  };
+
+  hmultiset.emplace(new int(2), deleter);
+  hmultiset.emplace_hint(hmultiset.begin(), new int(1), deleter);
+
+  std::cout << "remove one element" << std::endl;
+  hmultiset.erase(++hmultiset.begin());
+  std::cout << "add one element" << std::endl;
+  hmultiset.emplace(new int(3), deleter);
+}
+
+TEST(HMultisetTest, swap) {
+  HMultiset<int> hmultiset1 = {1, 2, 3};
+  HMultiset<int> hmultiset2 = {2, 3, 4};
+
+  hmultiset1.swap(hmultiset2);
+
+  for (auto& p : hmultiset1) {
+    std::cout << p << std::endl;
+  }
+
+  HMultiset<int> result = {2, 3, 4};
+  EXPECT_EQ(hmultiset1, result);
+}
+
+TEST(HMultisetTest, lookup) {
+  HMultiset<int> hmultiset1 = {1, 1, 3};
+
+  auto range = hmultiset1.equal_range(1);
+  for (auto p = range.first; p != range.second; p++) {
+    std::cout << *p << std::endl;
+  }
+}
+
+TEST(HMultisetTest, nonmember1) {
+  HMultiset<int> hmultiset1 = {1, 2, 3};
+  HMultiset<int> hmultiset2 = {2, 3, 4};
+
+  EXPECT_FALSE(hmultiset1 == hmultiset2);
+}
+
+TEST(HMultisetTest, nonmember2) {
+  HMultiset<int> hmultiset1 = {1, 2, 3};
+  HMultiset<int> hmultiset2 = {2, 3, 4};
+
+  EXPECT_TRUE(hmultiset1 != hmultiset2);
+}
+
+TEST(HMultisetTest, nonmember7) {
+  HMultiset<int> hmultiset1 = {1, 2, 3};
+  HMultiset<int> hmultiset2 = {2, 3, 4};
+
+  swap(hmultiset1, hmultiset2);
+
+  HMultiset<int> result = {2, 3, 4};
+
+  EXPECT_EQ(hmultiset1, result);
+}
+
 }  // namespace
