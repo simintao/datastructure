@@ -434,7 +434,7 @@ auto timeit = [](std::function<int()> set_test, std::string what = "") {
 };
 
 TEST(HSetTest, perf1) {
-  const int nof_operations = 200;
+  const int nof_operations = 10;
 
   auto set_insert = []() -> int {
     HSet<Dew, DewGHash, DewGCmp> set;
@@ -461,7 +461,7 @@ TEST(HSetTest, perf1) {
 }
 
 TEST(HSetTest, perf2) {
-  const int nof_operations = 200;
+  const int nof_operations = 10;
 
   HSet<Dew, DewGHash, DewGCmp> set;
   for (int i = 0; i < nof_operations; ++i)
@@ -495,7 +495,7 @@ TEST(HSetTest, perf2) {
 }
 
 TEST(HSetTest, perf3) {
-  const int nof_operations = 200;
+  const int nof_operations = 10;
 
   HSet<Dew, DewGHash, DewGCmp> set;
   for (int i = 0; i < nof_operations; ++i)
