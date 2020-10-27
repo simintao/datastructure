@@ -1,5 +1,5 @@
 /**
- * @file HSet.hh
+ * @file HSet.h
  * @author simin tao (taosm@pcl.ac.cn)
  * @brief The hash set container for the eda project.
  * @version 0.1

@@ -1,5 +1,5 @@
 /**
- * @file Map.hh
+ * @file Map.h
  * @author simin tao (taosm@pcl.ac.cn)
  * @brief The map container for the eda project.
  * @version 0.1

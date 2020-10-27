@@ -1,5 +1,5 @@
 /**
- * @file HMap.hh
+ * @file HMap.h
  * @author simin tao (taosm@pcl.ac.cn)
  * @brief The hash map container for the eda project.
  * @version 0.1
