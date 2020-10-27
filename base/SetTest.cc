@@ -527,24 +527,35 @@ TEST(MultisetTest, nonmember7) {
   EXPECT_EQ(bmultiset1, result);
 }
 
+class Dew {
+ private:
+  int _a;
+  int _b;
+  int _c;
+
+ public:
+  Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
+
+  bool operator<(const Dew& other) const {
+    if (_a < other._a) return true;
+    if (_a == other._a && _b < other._b) return true;
+    return (_a == other._a && _b == other._b && _c < other._c);
+  }
+};
+
+auto timeit = [](std::function<int()> set_test, std::string what = "") {
+  auto start = std::chrono::system_clock::now();
+  int setsize = set_test();
+  auto stop = std::chrono::system_clock::now();
+  std::chrono::duration<double, std::milli> time = stop - start;
+  if (what.size() > 0 && setsize > 0) {
+    std::cout << std::fixed << std::setprecision(2) << time.count()
+              << "  ms for " << what << '\n';
+  }
+};
+
 TEST(SetTest, perf1) {
-  class Dew {
-   private:
-    int _a;
-    int _b;
-    int _c;
-
-   public:
-    Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
-
-    bool operator<(const Dew& other) const {
-      if (_a < other._a) return true;
-      if (_a == other._a && _b < other._b) return true;
-      return (_a == other._a && _b == other._b && _c < other._c);
-    }
-  };
-
-  const int nof_operations = 12000000;
+  const int nof_operations = 200;
 
   auto set_emplace = []() -> int {
     Set<Dew> set;
@@ -564,21 +575,105 @@ TEST(SetTest, perf1) {
     return set.size();
   };
 
-  auto timeit = [](std::function<int()> set_test, std::string what = "") {
-    auto start = std::chrono::system_clock::now();
-    int setsize = set_test();
-    auto stop = std::chrono::system_clock::now();
-    std::chrono::duration<double, std::milli> time = stop - start;
-    if (what.size() > 0 && setsize > 0) {
-      std::cout << std::fixed << std::setprecision(2) << time.count()
-                << "  ms for " << what << '\n';
-    }
+  timeit(stl_set_emplace, "stl emplace");
+  timeit(set_emplace, "emplace");
+  timeit(stl_set_emplace, "stl emplace");
+  timeit(set_emplace, "emplace");
+}
+
+TEST(SetTest, perf2) {
+  const int nof_operations = 200;
+
+  auto set_insert = []() -> int {
+    Set<Dew> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+    return set.size();
   };
 
-  timeit(stl_set_emplace, "stl emplace");
-  timeit(set_emplace, "emplace");
-  timeit(stl_set_emplace, "stl emplace");
-  timeit(set_emplace, "emplace");
+  auto stl_set_insert = []() -> int {
+    std::set<Dew> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+    return set.size();
+  };
+
+  timeit(stl_set_insert, "stl insert");
+  timeit(set_insert, "insert");
+  timeit(stl_set_insert, "stl insert");
+  timeit(set_insert, "insert");
+}
+
+TEST(SetTest, perf3) {
+  const int nof_operations = 200;
+
+  Set<Dew> set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+  std::set<Dew> stl_set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) stl_set.insert(Dew(i, j, k));
+
+  auto set_find = [&set]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.find(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_set_find = [&stl_set]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_set.find(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_set_find, "stl find");
+  timeit(set_find, "find");
+  timeit(stl_set_find, "stl find");
+  timeit(set_find, "find");
+}
+
+TEST(SetTest, perf4) {
+  const int nof_operations = 200;
+
+  Set<Dew> set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+  std::set<Dew> stl_set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) stl_set.insert(Dew(i, j, k));
+
+  auto set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.erase(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_set.erase(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
 }
 
 }  // namespace

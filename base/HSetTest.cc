@@ -381,4 +381,151 @@ TEST(HMultisetTest, nonmember7) {
   EXPECT_EQ(hmultiset1, result);
 }
 
+class Dew {
+ public:
+  int _a;
+  int _b;
+  int _c;
+
+  Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
+
+  bool operator<(const Dew& other) const {
+    if (_a < other._a) return true;
+    if (_a == other._a && _b < other._b) return true;
+    return (_a == other._a && _b == other._b && _c < other._c);
+  }
+};
+
+struct DewHash {
+  size_t operator()(const Dew& rhs) const {
+    return std::hash<int>()(rhs._a) ^ std::hash<int>()(rhs._b) ^
+           std::hash<int>()(rhs._c);
+  };
+};
+
+struct DewCmp {
+  bool operator()(const Dew& lhs, const Dew& rhs) const {
+    return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
+  };
+};
+
+struct DewGHash {
+  size_t operator()(const Dew& rhs) const {
+    return HSet<int>::hash()(rhs._a) ^ HSet<int>::hash()(rhs._b) ^
+           HSet<int>::hash()(rhs._c);
+  };
+};
+
+struct DewGCmp {
+  bool operator()(const Dew& lhs, const Dew& rhs) const {
+    return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
+  };
+};
+
+auto timeit = [](std::function<int()> set_test, std::string what = "") {
+  auto start = std::chrono::system_clock::now();
+  int setsize = set_test();
+  auto stop = std::chrono::system_clock::now();
+  std::chrono::duration<double, std::milli> time = stop - start;
+  if (what.size() > 0 && setsize > 0) {
+    std::cout << std::fixed << std::setprecision(2) << time.count()
+              << "  ms for " << what << '\n';
+  }
+};
+
+TEST(HSetTest, perf1) {
+  const int nof_operations = 200;
+
+  auto set_insert = []() -> int {
+    HSet<Dew, DewGHash, DewGCmp> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+    return set.size();
+  };
+
+  auto stl_set_insert = []() -> int {
+    std::unordered_set<Dew, DewHash, DewCmp> set;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+    return set.size();
+  };
+
+  timeit(stl_set_insert, "stl insert");
+  timeit(set_insert, "insert");
+  timeit(stl_set_insert, "stl insert");
+  timeit(set_insert, "insert");
+}
+
+TEST(HSetTest, perf2) {
+  const int nof_operations = 200;
+
+  HSet<Dew, DewGHash, DewGCmp> set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+  std::unordered_set<Dew, DewHash, DewCmp> stl_set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) stl_set.insert(Dew(i, j, k));
+
+  auto set_find = [&]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.find(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_set_find = [&]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_set.find(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_set_find, "stl find");
+  timeit(set_find, "find");
+  timeit(stl_set_find, "stl find");
+  timeit(set_find, "find");
+}
+
+TEST(HSetTest, perf3) {
+  const int nof_operations = 200;
+
+  HSet<Dew, DewGHash, DewGCmp> set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) set.insert(Dew(i, j, k));
+
+  std::unordered_set<Dew, DewHash, DewCmp> stl_set;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k) stl_set.insert(Dew(i, j, k));
+
+  auto set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) set.erase(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_set.erase(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
+}
+
 }  // namespace
