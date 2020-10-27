@@ -441,9 +441,11 @@ class HMultiset : public std::unordered_multiset<KEY> {
   using Base::emplace;
   using Base::emplace_hint;
   using Base::erase;
-  using Base::extract;
+
+  // using Base::extract; /* not supported yet */
   using Base::insert;
-  using Base::merge;
+
+  // using Base::merge; /* not supported yet */
   using Base::swap;
 
   /*lookup*/
