@@ -22,6 +22,35 @@ namespace pcl {
 /**
  * @brief A hash map of unique key.
  *
+ * The hash map is a wrapper of flat hash map from google abseil containers.The
+ * hash tables are knows as "Swiss tables" and are designed to be replacements
+ * for std::unordered_map.They provide several advantages over the stl
+ * containers: 1) Provides C++11 support for C++17 mechanisms such as
+ * try_emplace(); 2) Support heterogeneous lookup; 3) Allow optimizations for
+ * emplace({key, value}) to avoid allocating a pair in most common cases; 4)
+ * Support a heterogeneous std::initializer_list to avoid extra copies for
+ * construction and insertion; 5) Guarantees an O(1) erase method by returning
+ * void instead of an iterator.
+ *
+ * Guarantees
+ * 1) Keys and values are stored inline; 2) Iterators, references, and pointers
+ * to elements are invalidated on rehash; 3) Move operation do not invalidate
+ * iterators or pointers.
+ *
+ * Memory Usage
+ * The container uses O((sizeof(std::pair<const K, V>) + 1) * bucket_count()),
+ * the max load factor is 87.5%, after which the table doubles in size(making
+ * load factor go down by 2x).
+ *
+ * Heterogeneous Lookup
+ * Inserting into or looking up an element within an associative container
+ * requires a key.In general, containers require the keys to be of a specific
+ * type, which can lead to inefficiencies at call sites that need to convert
+ * between near-equivalent types(such as std::string and absl::string_view).To
+ * avoid this unnecessary work, the Swiss tables provide heterogeneous lookup
+ * for conversions to string types, and for conversions to smart pointer
+ * types(std::unique_ptr, std::shared_ptr), through the absl::Hash hashing
+ * framwork.
  * @tparam KEY
  * @tparam VALUE
  * @tparam CMP
