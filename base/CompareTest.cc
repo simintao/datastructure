@@ -8,7 +8,7 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "gtest/gtest.h"
-int main() {
+TEST(CompareTest, comparetest) {
   bool flag = true;
   size_t value;
   if (flag == true) {
