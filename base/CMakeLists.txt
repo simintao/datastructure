@@ -3,6 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 # Abseil requires C++17
 SET(CMAKE_CXX_STANDARD 17)
 
+# Abseil lib
 SET(AbslLibs
         absl_bad_any_cast_impl
         absl_bad_optional_access
@@ -69,13 +70,28 @@ SET(AbslLibs
 
 #message("libs ${AbslLibs}")
 
-# Process Abseil
-INCLUDE_DIRECTORIES("./abseil/include" "../third_party/googletest")
-LINK_DIRECTORIES("./abseil/lib" "../third_party/googletest")
+# add include and lib dirs
+INCLUDE_DIRECTORIES("./abseil/include")
+LINK_DIRECTORIES("./abseil/lib")
+INCLUDE_DIRECTORIES("./include")
 
-AUX_SOURCE_DIRECTORY(./ SourceFiles)
+LINK_LIBRARIES(${AbslLibs})
 
-ADD_EXECUTABLE(contain_test ${SourceFiles})
+option(BASE_RUN_TESTS "If ON, the tests will be run." OFF)
 
-# Declare dependency on the absl::strings library
-TARGET_LINK_LIBRARIES(contain_test gmock_main gtest gmock pthread ${AbslLibs})
+if(${BASE_RUN_TESTS})
+
+# declare googletest
+INCLUDE_DIRECTORIES("../third_party/googletest")
+LINK_DIRECTORIES("../third_party/googletest")
+
+# build test
+AUX_SOURCE_DIRECTORY(./test SourceFiles)
+ADD_EXECUTABLE(base_test ${SourceFiles})
+TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread)
+
+endif()
+
+
+
+
