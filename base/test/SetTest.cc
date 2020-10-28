@@ -63,7 +63,7 @@ TEST(SetTest, insert_emplace) {
 
   const int nof_operations = 120;
 
-  auto set_emplace = []() -> int {
+  auto set_emplace = [=]() -> int {
     Set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -72,7 +72,7 @@ TEST(SetTest, insert_emplace) {
     return set.size();
   };
 
-  auto set_insert = []() -> int {
+  auto set_insert = [=]() -> int {
     Set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -557,7 +557,7 @@ auto timeit = [](std::function<int()> set_test, std::string what = "") {
 TEST(SetTest, perf1) {
   const int nof_operations = 200;
 
-  auto set_emplace = []() -> int {
+  auto set_emplace = [=]() -> int {
     Set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -566,7 +566,7 @@ TEST(SetTest, perf1) {
     return set.size();
   };
 
-  auto stl_set_emplace = []() -> int {
+  auto stl_set_emplace = [=]() -> int {
     std::set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -584,7 +584,7 @@ TEST(SetTest, perf1) {
 TEST(SetTest, perf2) {
   const int nof_operations = 200;
 
-  auto set_insert = []() -> int {
+  auto set_insert = [=]() -> int {
     Set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -593,7 +593,7 @@ TEST(SetTest, perf2) {
     return set.size();
   };
 
-  auto stl_set_insert = []() -> int {
+  auto stl_set_insert = [=]() -> int {
     std::set<Dew> set;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -621,7 +621,7 @@ TEST(SetTest, perf3) {
     for (int j = 0; j < nof_operations; ++j)
       for (int k = 0; k < nof_operations; ++k) stl_set.insert(Dew(i, j, k));
 
-  auto set_find = [&set]() -> int {
+  auto set_find = [=,&set]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) set.find(Dew(i, j, k));
@@ -629,7 +629,7 @@ TEST(SetTest, perf3) {
     return 1;
   };
 
-  auto stl_set_find = [&stl_set]() -> int {
+  auto stl_set_find = [=,&stl_set]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) stl_set.find(Dew(i, j, k));

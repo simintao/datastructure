@@ -656,7 +656,7 @@ struct DewGCmp {
   }
 };
 
-auto timeit = [](std::function<int()> set_test, std::string what = "") {
+auto timeit = [](std::function<int(void)> set_test, std::string what = "") {
   auto start = std::chrono::system_clock::now();
   int setsize = set_test();
   auto stop = std::chrono::system_clock::now();
@@ -668,9 +668,9 @@ auto timeit = [](std::function<int()> set_test, std::string what = "") {
 };
 
 TEST(HMapTest, perf1) {
-  const int nof_operations = 20;
+  constexpr int nof_operations = 20;
 
-  auto map_emplace = []() -> int {
+  auto map_emplace = [=]() -> int {
     HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -681,7 +681,7 @@ TEST(HMapTest, perf1) {
     return hmap.size();
   };
 
-  auto stl_map_emplace = []() -> int {
+  auto stl_map_emplace = [=]() -> int {
     std::unordered_map<Dew, Dew, DewHash, DewCmp> hmap;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -692,16 +692,16 @@ TEST(HMapTest, perf1) {
     return hmap.size();
   };
 
-  timeit(stl_map_emplace, "stl emplace");
-  timeit(map_emplace, "emplace");
-  timeit(stl_map_emplace, "stl emplace");
-  timeit(map_emplace, "emplace");
+  //timeit(stl_map_emplace, "stl emplace");
+  //timeit(map_emplace, "emplace");
+  //timeit(stl_map_emplace, "stl emplace");
+  //timeit(map_emplace, "emplace");
 }
 
 TEST(HMapTest, perf2) {
   const int nof_operations = 20;
 
-  auto map_insert = []() -> int {
+  auto map_insert = [=]() -> int {
     HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -711,7 +711,7 @@ TEST(HMapTest, perf2) {
     return hmap.size();
   };
 
-  auto stl_map_insert = []() -> int {
+  auto stl_map_insert = [=]() -> int {
     std::unordered_map<Dew, Dew, DewHash, DewCmp> hmap;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -742,7 +742,7 @@ TEST(HMapTest, perf3) {
       for (int k = 0; k < nof_operations; ++k)
         stl_hmap[Dew(i, j, k)] = Dew(i, j, k);
 
-  auto map_find = [&hmap]() -> int {
+  auto map_find = [=, &hmap]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) hmap.find(Dew(i, j, k));
@@ -750,7 +750,7 @@ TEST(HMapTest, perf3) {
     return 1;
   };
 
-  auto stl_map_find = [&stl_hmap]() -> int {
+  auto stl_map_find = [=, &stl_hmap]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) stl_hmap.find(Dew(i, j, k));

@@ -755,7 +755,7 @@ auto timeit = [](std::function<int()> set_test, std::string what = "") {
 TEST(MapTest, perf1) {
   const int nof_operations = 200;
 
-  auto map_emplace = []() -> int {
+  auto map_emplace = [=]() -> int {
     Map<Dew, Dew> map;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -766,7 +766,7 @@ TEST(MapTest, perf1) {
     return map.size();
   };
 
-  auto stl_map_emplace = []() -> int {
+  auto stl_map_emplace = [=]() -> int {
     std::map<Dew, Dew> map;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -786,7 +786,7 @@ TEST(MapTest, perf1) {
 TEST(MapTest, perf2) {
   const int nof_operations = 200;
 
-  auto map_insert = []() -> int {
+  auto map_insert = [=]() -> int {
     Map<Dew, Dew> map;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -796,7 +796,7 @@ TEST(MapTest, perf2) {
     return map.size();
   };
 
-  auto stl_map_insert = []() -> int {
+  auto stl_map_insert = [=]() -> int {
     std::map<Dew, Dew> map;
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
@@ -827,7 +827,7 @@ TEST(MapTest, perf3) {
       for (int k = 0; k < nof_operations; ++k)
         stl_map[Dew(i, j, k)] = Dew(i, j, k);
 
-  auto map_find = [&map]() -> int {
+  auto map_find = [=, &map]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) map.find(Dew(i, j, k));
@@ -835,7 +835,7 @@ TEST(MapTest, perf3) {
     return 1;
   };
 
-  auto stl_map_find = [&stl_map]() -> int {
+  auto stl_map_find = [=, &stl_map]() -> int {
     for (int i = 0; i < nof_operations; ++i)
       for (int j = 0; j < nof_operations; ++j)
         for (int k = 0; k < nof_operations; ++k) stl_map.find(Dew(i, j, k));

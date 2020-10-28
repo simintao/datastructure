@@ -74,11 +74,11 @@ SET(AbslLibs
 INCLUDE_DIRECTORIES("./abseil/include")
 INCLUDE_DIRECTORIES("./include")
 
-
 IF (WIN32)
     MESSAGE(STATUS "Now is windows")
+    LINK_DIRECTORIES("./abseil/lib/win")
 ELSEIF (APPLE)
-    MESSAGE(STATUS "Now is Apple systens.")
+    MESSAGE(STATUS "Now is Apple systems.")
 ELSEIF (UNIX)
     MESSAGE(STATUS "Now is UNIX-like OS's.")
     LINK_DIRECTORIES("./abseil/lib/unix")
@@ -86,17 +86,29 @@ ENDIF ()
 
 OPTION(BASE_RUN_TESTS "If ON, the tests will be run." ON)
 
-if(${BASE_RUN_TESTS})
+IF(${BASE_RUN_TESTS})
 
 # declare googletest
-INCLUDE_DIRECTORIES("../third_party/googletest")
-LINK_DIRECTORIES("../third_party/googletest")
+IF (WIN32)
+    INCLUDE_DIRECTORIES("../third_party/googletest/win")
+    LINK_DIRECTORIES("../third_party/googletest/win")
+ELSEIF (APPLE)
+    MESSAGE(STATUS "Now is Apple systems.")
+ELSEIF (UNIX)
+    INCLUDE_DIRECTORIES("../third_party/googletest/unix")
+    LINK_DIRECTORIES("../third_party/googletest/unix")
+ENDIF ()
+ENDIF (${BASE_RUN_TESTS})
+
 
 # build test
 AUX_SOURCE_DIRECTORY(./test SourceFiles)
 ADD_EXECUTABLE(base_test ${SourceFiles})
-TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
 
+IF (WIN32)
+TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock ${AbslLibs})
+ELSEIF (UNIX)
+TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
 endif()
 
 
