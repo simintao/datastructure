@@ -72,12 +72,19 @@ SET(AbslLibs
 
 # add include and lib dirs
 INCLUDE_DIRECTORIES("./abseil/include")
-LINK_DIRECTORIES("./abseil/lib")
 INCLUDE_DIRECTORIES("./include")
 
-LINK_LIBRARIES(${AbslLibs})
 
-option(BASE_RUN_TESTS "If ON, the tests will be run." OFF)
+IF (WIN32)
+    MESSAGE(STATUS "Now is windows")
+ELSEIF (APPLE)
+    MESSAGE(STATUS "Now is Apple systens.")
+ELSEIF (UNIX)
+    MESSAGE(STATUS "Now is UNIX-like OS's.")
+    LINK_DIRECTORIES("./abseil/lib/unix")
+ENDIF ()
+
+OPTION(BASE_RUN_TESTS "If ON, the tests will be run." ON)
 
 if(${BASE_RUN_TESTS})
 
@@ -88,7 +95,7 @@ LINK_DIRECTORIES("../third_party/googletest")
 # build test
 AUX_SOURCE_DIRECTORY(./test SourceFiles)
 ADD_EXECUTABLE(base_test ${SourceFiles})
-TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread)
+TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
 
 endif()
 
