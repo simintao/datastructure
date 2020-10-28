@@ -58,7 +58,7 @@ namespace pcl {
 template <class KEY, class VALUE,
           class HASH = typename absl::flat_hash_map<KEY, VALUE>::hasher,
           class EQ = typename absl::flat_hash_map<KEY, VALUE>::key_equal>
-class HMap : public absl::flat_hash_map<KEY, VALUE> {
+class HMap : public absl::flat_hash_map<KEY, VALUE, HASH, EQ> {
  public:
   using Base = typename HMap::flat_hash_map;
   using iterator = typename Base::iterator;
@@ -175,6 +175,10 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
    */
   void insert(const KEY& key, const VALUE& value) {
     this->operator[](key) = value;
+  }
+
+  void insert(const KEY&& key, const VALUE&& value) {
+    this->operator[](std::move(key)) = std::move(value);
   }
 
   /**

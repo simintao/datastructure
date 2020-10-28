@@ -2,6 +2,7 @@
 #include <functional>
 #include <iterator>
 #include <random>
+#include <unordered_map>
 
 #include "HMap.h"
 #include "gmock/gmock.h"
@@ -605,6 +606,197 @@ TEST(HMultimapTest, swap) {
   HMap<int, std::string> container2{{1, "x1"}, {1, "y1"}, {3, "z1"}};
 
   swap(container1, container2);
+}
+
+class Dew {
+ public:
+  int _a;
+  int _b;
+  int _c;
+
+  Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
+
+  Dew() = default;
+  Dew(Dew &&other) = default;
+  Dew(const Dew &other) = default;
+
+  Dew &operator=(const Dew &other) = default;
+  Dew &operator=(Dew &&other) = default;
+
+  bool operator<(const Dew &other) const {
+    if (_a < other._a) return true;
+    if (_a == other._a && _b < other._b) return true;
+    return (_a == other._a && _b == other._b && _c < other._c);
+  }
+};
+
+struct DewHash {
+  size_t operator()(const Dew &rhs) const {
+    return std::hash<int>()(rhs._a) ^ std::hash<int>()(rhs._b) ^
+           std::hash<int>()(rhs._c);
+  }
+};
+
+struct DewCmp {
+  bool operator()(const Dew &lhs, const Dew &rhs) const {
+    return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
+  }
+};
+
+struct DewGHash {
+  size_t operator()(const Dew &rhs) const {
+    return HMap<int, int>::hash()(rhs._a) ^ HMap<int, int>::hash()(rhs._b) ^
+           HMap<int, int>::hash()(rhs._c);
+  }
+};
+
+struct DewGCmp {
+  bool operator()(const Dew &lhs, const Dew &rhs) const {
+    return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
+  }
+};
+
+auto timeit = [](std::function<int()> set_test, std::string what = "") {
+  auto start = std::chrono::system_clock::now();
+  int setsize = set_test();
+  auto stop = std::chrono::system_clock::now();
+  std::chrono::duration<double, std::milli> time = stop - start;
+  if (what.size() > 0 && setsize > 0) {
+    std::cout << std::fixed << std::setprecision(2) << time.count()
+              << "  ms for " << what << '\n';
+  }
+};
+
+TEST(HMapTest, perf1) {
+  const int nof_operations = 20;
+
+  auto map_emplace = []() -> int {
+    HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          hmap.emplace(std::piecewise_construct, std::forward_as_tuple(i, j, k),
+                       std::forward_as_tuple(i, j, k));
+
+    return hmap.size();
+  };
+
+  auto stl_map_emplace = []() -> int {
+    std::unordered_map<Dew, Dew, DewHash, DewCmp> hmap;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          hmap.emplace(std::piecewise_construct, std::forward_as_tuple(i, j, k),
+                       std::forward_as_tuple(i, j, k));
+
+    return hmap.size();
+  };
+
+  timeit(stl_map_emplace, "stl emplace");
+  timeit(map_emplace, "emplace");
+  timeit(stl_map_emplace, "stl emplace");
+  timeit(map_emplace, "emplace");
+}
+
+TEST(HMapTest, perf2) {
+  const int nof_operations = 20;
+
+  auto map_insert = []() -> int {
+    HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          hmap.insert(Dew(i, j, k), Dew(i, j, k));
+
+    return hmap.size();
+  };
+
+  auto stl_map_insert = []() -> int {
+    std::unordered_map<Dew, Dew, DewHash, DewCmp> hmap;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          hmap[Dew(i, j, k)] = Dew(i, j, k);
+
+    return hmap.size();
+  };
+
+  timeit(stl_map_insert, "stl insert");
+  timeit(map_insert, "insert");
+  timeit(stl_map_insert, "stl insert");
+  timeit(map_insert, "insert");
+}
+
+TEST(HMapTest, perf3) {
+  const int nof_operations = 20;
+
+  HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        hmap.insert(Dew(i, j, k), Dew(i, j, k));
+
+  std::unordered_map<Dew, Dew, DewHash, DewCmp> stl_hmap;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        stl_hmap[Dew(i, j, k)] = Dew(i, j, k);
+
+  auto map_find = [&hmap]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) hmap.find(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_map_find = [&stl_hmap]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_hmap.find(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_map_find, "stl find");
+  timeit(map_find, "find");
+  timeit(stl_map_find, "stl find");
+  timeit(map_find, "find");
+}
+
+TEST(HMapTest, perf4) {
+  const int nof_operations = 20;
+
+  HMap<Dew, Dew, DewGHash, DewGCmp> hmap;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        hmap.insert(Dew(i, j, k), Dew(i, j, k));
+
+  std::unordered_map<Dew, Dew, DewHash, DewCmp> stl_hmap;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        stl_hmap[Dew(i, j, k)] = Dew(i, j, k);
+
+  auto map_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) hmap.erase(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_map_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_hmap.erase(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_map_erase, "stl erase");
+  timeit(map_erase, "erase");
+  timeit(stl_map_erase, "stl erase");
+  timeit(map_erase, "erase");
 }
 
 }  // namespace

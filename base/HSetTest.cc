@@ -406,7 +406,7 @@ struct DewHash {
 struct DewCmp {
   bool operator()(const Dew& lhs, const Dew& rhs) const {
     return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
-  };
+  }
 };
 
 struct DewGHash {
