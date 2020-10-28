@@ -1,7 +1,10 @@
 #include <algorithm>
+#include <chrono>
 #include <functional>
 #include <iterator>
+#include <map>
 #include <random>
+#include <utility>
 
 #include "Map.h"
 #include "gmock/gmock.h"
@@ -430,28 +433,6 @@ TEST(MapTest, value_comp) {
   auto cmp = m.value_comp();
 }
 
-TEST(MapTest, first) {
-  const Map<int, const char *> m{
-      {0, "zero"},
-      {1, "one"},
-      {3, "three"},
-  };
-
-  EXPECT_STREQ(m.first(), "zero");
-  EXPECT_EQ(m.firstKey(), 0);
-}
-
-TEST(MapTest, last) {
-  const Map<int, const char *> m{
-      {0, "zero"},
-      {1, "one"},
-      {3, "three"},
-  };
-
-  EXPECT_STREQ(m.last(), "three");
-  EXPECT_EQ(m.lastKey(), 3);
-}
-
 TEST(MapTest, keys) {
   const Map<int, const char *> m{
       {0, "zero"},
@@ -529,8 +510,8 @@ TEST(MapTest, Iterator) {
   Map<int, char> container{{1, 'x'}, {2, 'y'}, {3, 'z'}};
   Map<int, char>::Iterator iter(&container);
   while (iter.hasNext()) {
-    char v = iter.next();
-    std::cout << v << std::endl;
+    std::cout << iter.value() << std::endl;
+    iter = iter.next();
   }
 }
 
@@ -650,6 +631,257 @@ TEST(MultimapTest, begin) {
   for (auto p : bmap) {
     std::cout << p.second << std::endl;
   }
+
+  Multimap<int, const char *>::const_reverse_iterator it = bmap.crbegin();
+  for (; it != bmap.crend(); it++) {
+    std::cout << it->second << std::endl;
+  }
+}
+
+TEST(MultimapTest, Iterator) {
+  Multimap<const char *, int> bmap = {{"test", 1}, {"test", 2}};
+  Multimap<const char *, int>::Iterator p(&bmap);
+
+  while (p.hasNext()) {
+    std::cout << p.key() << "=>" << p.value() << std::endl;
+    p = p.next();
+  }
+
+  p.init(&bmap);
+  Multimap<const char *, int>::Iterator q = p;
+  while (q.hasNext()) {
+    const char *key;
+    int value;
+    q.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
+  }
+
+  Multimap<const char *, int>::ConstIterator q1(&bmap);
+  while (q1.hasNext()) {
+    const char *key;
+    int value;
+    q1.next(&key, &value);
+    std::cout << key << "=>" << value << std::endl;
+  }
+}
+
+TEST(MultimapTest, NoMemberOperator1) {
+  Map<int, std::string> container1{{1, "x"}, {1, "y"}, {3, "z"}};
+  Map<int, std::string> container2{{1, "x"}, {1, "y"}, {3, "z"}};
+
+  EXPECT_TRUE(container1 == container2);
+}
+
+TEST(MultimapTest, NoMemberOperator2) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+}
+
+TEST(MultimapTest, NoMemberOperator3) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 != container2);
+}
+
+TEST(MultimapTest, NoMemberOperator4) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 <= container2);
+}
+
+TEST(MultimapTest, NoMemberOperator5) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_FALSE(container1 >= container2);
+}
+
+TEST(MultimapTest, NoMemberOperator6) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x2"}, {1, "y2"}, {3, "z2"}};
+
+  EXPECT_TRUE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
+}
+
+TEST(MultimapTest, swap) {
+  Map<int, std::string> container1{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+  Map<int, std::string> container2{{1, "x1"}, {1, "y1"}, {3, "z1"}};
+
+  EXPECT_FALSE(container1 < container2);
+  swap(container1, container2);
+  EXPECT_FALSE(container1 < container2);
+}
+
+class Dew {
+ private:
+  int _a;
+  int _b;
+  int _c;
+
+ public:
+  Dew(int a, int b, int c) : _a(a), _b(b), _c(c) {}
+
+  Dew() = default;
+  Dew(Dew &&other) = default;
+  Dew(const Dew &other) = default;
+
+  Dew &operator=(const Dew &other) = default;
+  Dew &operator=(Dew &&other) = default;
+
+  bool operator<(const Dew &other) const {
+    if (_a < other._a) return true;
+    if (_a == other._a && _b < other._b) return true;
+    return (_a == other._a && _b == other._b && _c < other._c);
+  }
+};
+
+auto timeit = [](std::function<int()> set_test, std::string what = "") {
+  auto start = std::chrono::system_clock::now();
+  int setsize = set_test();
+  auto stop = std::chrono::system_clock::now();
+  std::chrono::duration<double, std::milli> time = stop - start;
+  if (what.size() > 0 && setsize > 0) {
+    std::cout << std::fixed << std::setprecision(2) << time.count()
+              << "  ms for " << what << '\n';
+  }
+};
+
+TEST(MapTest, perf1) {
+  const int nof_operations = 200;
+
+  auto map_emplace = []() -> int {
+    Map<Dew, Dew> map;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          map.emplace(std::piecewise_construct, std::forward_as_tuple(i, j, k),
+                      std::forward_as_tuple(i, j, k));
+
+    return map.size();
+  };
+
+  auto stl_map_emplace = []() -> int {
+    std::map<Dew, Dew> map;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          map.emplace(std::piecewise_construct, std::forward_as_tuple(i, j, k),
+                      std::forward_as_tuple(i, j, k));
+
+    return map.size();
+  };
+
+  timeit(stl_map_emplace, "stl emplace");
+  timeit(map_emplace, "emplace");
+  timeit(stl_map_emplace, "stl emplace");
+  timeit(map_emplace, "emplace");
+}
+
+TEST(MapTest, perf2) {
+  const int nof_operations = 200;
+
+  auto map_insert = []() -> int {
+    Map<Dew, Dew> map;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          map.insert(Dew(i, j, k), Dew(i, j, k));
+
+    return map.size();
+  };
+
+  auto stl_map_insert = []() -> int {
+    std::map<Dew, Dew> map;
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k)
+          map[Dew(i, j, k)] = Dew(i, j, k);
+
+    return map.size();
+  };
+
+  timeit(stl_map_insert, "stl insert");
+  timeit(map_insert, "insert");
+  timeit(stl_map_insert, "stl insert");
+  timeit(map_insert, "insert");
+}
+
+TEST(MapTest, perf3) {
+  const int nof_operations = 200;
+
+  Map<Dew, Dew> map;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        map.insert(Dew(i, j, k), Dew(i, j, k));
+
+  std::map<Dew, Dew> stl_map;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        stl_map[Dew(i, j, k)] = Dew(i, j, k);
+
+  auto map_find = [&map]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) map.find(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_map_find = [&stl_map]() -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_map.find(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_map_find, "stl find");
+  timeit(map_find, "find");
+  timeit(stl_map_find, "stl find");
+  timeit(map_find, "find");
+}
+
+TEST(MapTest, perf4) {
+  const int nof_operations = 200;
+
+  Map<Dew, Dew> map;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        map.insert(Dew(i, j, k), Dew(i, j, k));
+
+  std::map<Dew, Dew> stl_map;
+  for (int i = 0; i < nof_operations; ++i)
+    for (int j = 0; j < nof_operations; ++j)
+      for (int k = 0; k < nof_operations; ++k)
+        stl_map.insert(std::make_pair(Dew(i, j, k), Dew(i, j, k)));
+
+  auto set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) map.erase(Dew(i, j, k));
+
+    return 1;
+  };
+
+  auto stl_set_erase = [=]() mutable -> int {
+    for (int i = 0; i < nof_operations; ++i)
+      for (int j = 0; j < nof_operations; ++j)
+        for (int k = 0; k < nof_operations; ++k) stl_map.erase(Dew(i, j, k));
+    return 1;
+  };
+
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
+  timeit(stl_set_erase, "stl erase");
+  timeit(set_erase, "erase");
 }
 
 }  // namespace

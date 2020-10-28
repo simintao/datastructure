@@ -14,7 +14,6 @@ int main() {
   if (flag == true) {
     absl::Time startTime, endTime;
     startTime = absl::Now();
-
     constexpr size_t array_size = 900000;
     pcl::Array<size_t, array_size* 2 / 3>* ar1 =
         new pcl::Array<size_t, array_size * 2 / 3>(array_size);
@@ -101,5 +100,4 @@ int main() {
               << duration / absl::Nanoseconds(1) << "ns" << std::endl;
     std::cout << "last parameter is " << value << std::endl;
   }
-  return 0;
 }
