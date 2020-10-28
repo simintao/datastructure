@@ -1,3 +1,0 @@
-/mnt/k/project/base/CMakeFiles/CMakeTmp/CMakeFiles/rebuild_cache.dir
-/mnt/k/project/base/CMakeFiles/CMakeTmp/CMakeFiles/edit_cache.dir
-/mnt/k/project/base/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_e0116.dir
