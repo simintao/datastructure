@@ -55,13 +55,17 @@ namespace pcl {
  * @tparam KEY Type of  key.
  * @tparam VALUE Type of value.
  */
-template <class KEY, class VALUE>
+template <class KEY, class VALUE,
+          class HASH = typename absl::flat_hash_map<KEY, VALUE>::hasher,
+          class EQ = typename absl::flat_hash_map<KEY, VALUE>::key_equal>
 class HMap : public absl::flat_hash_map<KEY, VALUE> {
  public:
   using Base = typename HMap::flat_hash_map;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
   using value_type = typename Base::value_type;
+  using hash = typename Base::hasher;
+  using eq = typename Base::key_equal;
 
   /*constructor*/
   using Base::Base;
@@ -276,18 +280,18 @@ class HMap : public absl::flat_hash_map<KEY, VALUE> {
   friend class ConstIterator;
 };
 
-template <typename KEY, typename VALUE>
-inline void swap(HMap<KEY, VALUE>& x,
-                 HMap<KEY, VALUE>& y) noexcept(noexcept(x.swap(y))) {
+template <class KEY, class VALUE, class HASH, class EQ>
+inline void swap(HMap<KEY, VALUE, HASH, EQ>& x,
+                 HMap<KEY, VALUE, HASH, EQ>& y) noexcept(noexcept(x.swap(y))) {
   x.swap(y);
 }
 
-template <typename KEY, typename VALUE>
+template <class KEY, class VALUE, class HASH, class EQ>
 inline bool operator==(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE>& y) {
   return static_cast<const typename HMap<KEY, VALUE>::Base&>(x) == y;
 }
 
-template <typename KEY, typename VALUE>
+template <class KEY, class VALUE, class HASH, class EQ>
 inline bool operator!=(const HMap<KEY, VALUE>& x, const HMap<KEY, VALUE> y) {
   return !(x == y);
 }

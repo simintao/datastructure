@@ -400,7 +400,7 @@ struct DewHash {
   size_t operator()(const Dew& rhs) const {
     return std::hash<int>()(rhs._a) ^ std::hash<int>()(rhs._b) ^
            std::hash<int>()(rhs._c);
-  };
+  }
 };
 
 struct DewCmp {
@@ -413,13 +413,13 @@ struct DewGHash {
   size_t operator()(const Dew& rhs) const {
     return HSet<int>::hash()(rhs._a) ^ HSet<int>::hash()(rhs._b) ^
            HSet<int>::hash()(rhs._c);
-  };
+  }
 };
 
 struct DewGCmp {
   bool operator()(const Dew& lhs, const Dew& rhs) const {
     return lhs._a == rhs._a && lhs._b == rhs._b && lhs._b == rhs._b;
-  };
+  }
 };
 
 auto timeit = [](std::function<int()> set_test, std::string what = "") {

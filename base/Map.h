@@ -163,6 +163,10 @@ class Map : public absl::btree_map<KEY, VALUE, CMP> {
     this->operator[](key) = value;
   }
 
+  void insert(KEY&& key, VALUE&& value) {
+    this->operator[](std::move(key)) = std::move(value);
+  }
+
   /**
    * @brief Java style container itererator.
    *
