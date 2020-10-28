@@ -3,14 +3,18 @@
 #include <iostream>
 
 #include "Vector.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 #include "gtest/gtest.h"
 TEST(VectorCompare, add) {
-  clock_t startTime, endTime;
-  pcl::EfficientVector<int> ar;
-  startTime = clock();
-  for (int i = 0; i < 9900; i++) {
-    ar.push_back(i + 2);
+  absl::Time startTime2, endTime2;
+  pcl::Vector<int> ar3;
+  startTime2 = absl::Now();
+  for (int i = 0; i < 9900000; i++) {
+    ar3.push_back(i + 2);
   }
-  endTime = clock();
-  std::cout << "the vector run time is = " << endTime - startTime << std::endl;
+  endTime2 = absl::Now();
+  absl::Duration duration = endTime2 - startTime2;
+  std::cout << "the vector run time is = " << duration / absl::Nanoseconds(1)
+            << "ns" << std::endl;
 }

@@ -15,28 +15,43 @@
 
 namespace pcl {
 template <typename T>
-class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
+class Vector : public absl::InlinedVector<T, /* N= */ 256> {
  public:
-  using Base = typename EfficientVector::InlinedVector;
+  using Base = typename Vector::InlinedVector;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
   using pointer = typename Base::pointer;
   using const_pointer = typename Base::const_pointer;
   using reference = typename Base::reference;
   using const_reference = typename Base::const_reference;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
 
+  using Base::assign;
   using Base::at;
   using Base::back;
   using Base::Base;
   using Base::begin;
   using Base::capacity;
+  using Base::cbegin;
+  using Base::cend;
+  using Base::clear;
+  using Base::crbegin;
+  using Base::crend;
   using Base::data;
+  using Base::emplace;
+  using Base::emplace_back;
   using Base::empty;
   using Base::end;
+  using Base::erase;
   using Base::front;
   using Base::insert;
+  using Base::max_size;
   using Base::pop_back;
   using Base::push_back;
+  using Base::rbegin;
+  using Base::rend;
+  using Base::reserve;
   using Base::resize;         // Resizes the vector to contain `n` elements.
   using Base::shrink_to_fit;  // Reduces memory usage by freeing unused memory
   using Base::size;
@@ -111,15 +126,15 @@ class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
     return -1;
   }
   /**
-   * @brief Returns a vector whose elements are copied from this vectro,starting
+   * @brief Returns a vector whose elements are copied from this vector,starting
    * at position pos, len elements are copied.
    *
    * @param pos
    * @param len
-   * @return EfficientVector<T>&
+   * @return Vector<T>&
    */
-  EfficientVector<T>& mid(size_t pos, size_t len) {
-    EfficientVector<T>* midVector = new EfficientVector<T>();
+  Vector<T>& mid(size_t pos, size_t len) {
+    Vector<T>* midVector = new Vector<T>();
     const_iterator from = this->begin() + pos;
     const_iterator to = this->begin() + pos + len;
     for (from; from != to; ++from) {
@@ -133,9 +148,9 @@ class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
    * @brief Appends value to the vector.
    *
    * @param value
-   * @return EfficientVector<T>&
+   * @return Vector<T>&
    */
-  EfficientVector<T>& operator+=(const T& value) {
+  Vector<T>& operator+=(const T& value) {
     push_back(value);
     return *this;
   }
@@ -145,18 +160,17 @@ class EfficientVector : public absl::InlinedVector<T, /* N= */ 256> {
    *
    * @param val1
    * @param val2
-   * @return EfficientVector<T>&
+   * @return Vector<T>&
    */
-  friend EfficientVector<T>& operator+(const EfficientVector<T>& val1,
-                                       const EfficientVector<T>& val2) {
-    EfficientVector<T>* ret_val = new EfficientVector<T>;
+  friend Vector<T>& operator+(const Vector<T>& val1, const Vector<T>& val2) {
+    Vector<T>* ret_val = new Vector<T>;
 
-    for (EfficientVector<T>::const_iterator it1 = val1.begin();
-         it1 != val1.end(); it1++) {
+    for (Vector<T>::const_iterator it1 = val1.begin(); it1 != val1.end();
+         it1++) {
       ret_val->push_back(*it1);
     }
-    for (EfficientVector<T>::const_iterator it2 = val2.begin();
-         it2 != val2.end(); it2++) {
+    for (Vector<T>::const_iterator it2 = val2.begin(); it2 != val2.end();
+         it2++) {
       ret_val->push_back(*it2);
     }
     return *ret_val;

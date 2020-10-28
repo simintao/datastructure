@@ -15,12 +15,17 @@
 #include "absl/algorithm/algorithm.h"
 namespace pcl {
 template <typename T>
-class EfficientList : public std::list<T> {
+class List : public std::list<T> {
  public:
-  using Base = typename EfficientList::list;
+  using Base = typename List::list;
   using Base::Base;
+  using reference = typename Base::reference;
   using iterator = typename Base::iterator;
   using const_iterator = typename Base::const_iterator;
+  using pointer = typename Base::pointer;
+  using const_pointer = typename Base::const_pointer;
+  using reverse_iterator = typename Base::reverse_iterator;
+  using const_reverse_iterator = typename Base::const_reverse_iterator;
   using Base::assign;
   using Base::back;   // Returns a reference to the last item in the list.
   using Base::begin;  // Returns an STL-style iterator pointing to the first
@@ -28,6 +33,9 @@ class EfficientList : public std::list<T> {
   using Base::cbegin;
   using Base::cend;
   using Base::clear;  // Removes all items from the list
+  using Base::crbegin;
+  using Base::crend;
+  using Base::emplace;
   using Base::empty;  // returns true if the list is empty
   using Base::end;    // Returns an STL-style iterator pointing to the imaginary
                       // item after the last item in the list
@@ -43,14 +51,19 @@ class EfficientList : public std::list<T> {
   using Base::push_back;
   using Base::push_front;
   using Base::rbegin;
+  using Base::remove;
+  using Base::remove_if;
   using Base::rend;
   using Base::resize;
+  using Base::reverse;
+  using Base::size;
+  using Base::sort;
   using Base::splice;  // Splices the other list at the pos(iterator pointing)
                        // position
   using Base::swap;    // Swaps list other with this list.
   using Base::unique;  // Removes adjacent duplicate elements
 
-  EfficientList<T>& operator+=(const T& value) {
+  List<T>& operator+=(const T& value) {
     push_back(value);
     return *this;
   }
@@ -60,18 +73,15 @@ class EfficientList : public std::list<T> {
    *
    * @param val1
    * @param val2
-   * @return EfficientList<T>&
+   * @return List<T>&
    */
-  friend EfficientList<T>& operator+(const EfficientList<T>& val1,
-                                     const EfficientList<T>& val2) {
-    EfficientList<T>* ret_val = new EfficientList<T>;
+  friend List<T>& operator+(const List<T>& val1, const List<T>& val2) {
+    List<T>* ret_val = new List<T>;
 
-    for (EfficientList<T>::const_iterator it1 = val1.begin(); it1 != val1.end();
-         it1++) {
+    for (List<T>::const_iterator it1 = val1.begin(); it1 != val1.end(); it1++) {
       ret_val->push_back(*it1);
     }
-    for (EfficientList<T>::const_iterator it2 = val2.begin(); it2 != val2.end();
-         it2++) {
+    for (List<T>::const_iterator it2 = val2.begin(); it2 != val2.end(); it2++) {
       ret_val->push_back(*it2);
     }
     return *ret_val;
@@ -83,35 +93,33 @@ class EfficientList : public std::list<T> {
    * @param val1
    * @param val2
    */
-  // friend void operator+(EfficientList<T>& val1, EfficientList<T>& val2) {
-  //   for (EfficientList<T>::iterator it1 = val2.begin(); it1 != val2.end();
+  // friend void operator+(List<T>& val1, List<T>& val2) {
+  //   for (List<T>::iterator it1 = val2.begin(); it1 != val2.end();
   //        it1++) {
   //     val1.push_back(*it1);
   //   }
   // }
 
-  friend bool operator==(const EfficientList& lhs, const EfficientList& rhs) {
+  friend bool operator==(const List& lhs, const List& rhs) {
     return absl::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
-  friend bool operator!=(const EfficientList& lhs, const EfficientList& rhs) {
+  friend bool operator!=(const List& lhs, const List& rhs) {
     return !(lhs == rhs);
   }
 
-  friend bool operator<(const EfficientList& lhs, const EfficientList& rhs) {
+  friend bool operator<(const List& lhs, const List& rhs) {
     return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
                                         rhs.end());
   }
 
-  friend bool operator>(const EfficientList& lhs, const EfficientList& rhs) {
-    return rhs < lhs;
-  }
+  friend bool operator>(const List& lhs, const List& rhs) { return rhs < lhs; }
 
-  friend bool operator<=(const EfficientList& lhs, const EfficientList& rhs) {
+  friend bool operator<=(const List& lhs, const List& rhs) {
     return !(rhs < lhs);
   }
 
-  friend bool operator>=(const EfficientList& lhs, const EfficientList& rhs) {
+  friend bool operator>=(const List& lhs, const List& rhs) {
     return !(lhs < rhs);
   }
 };

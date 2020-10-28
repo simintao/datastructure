@@ -2,17 +2,19 @@
 #include <iostream>
 #include <vector>
 //#include "Vector.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 #include "gtest/gtest.h"
 
 TEST(vectorCompare, addSTL) {
-  clock_t startTime, endTime;
-
-  std::vector<int> ar;
-  startTime = clock();
-  for (int i = 0; i < 9900; i++) {
-    ar.push_back(i + 2);
+  absl::Time startTime3, endTime3;
+  std::vector<int> ar4;
+  startTime3 = absl::Now();
+  for (int i = 0; i < 9900000; i++) {
+    ar4.push_back(i + 2);
   }
-  endTime = clock();
-  std::cout << "the STL vector run time is = " << endTime - startTime
-            << std::endl;
+  endTime3 = absl::Now();
+  absl::Duration duration = endTime3 - startTime3;
+  std::cout << "the STL vector run time is = "
+            << duration / absl::Nanoseconds(1) << "ns" << std::endl;
 }

@@ -4,12 +4,11 @@
 #include "gtest/gtest.h"
 
 TEST(VectorTest, Push) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   ev.push_back(1);
   ev.push_back(2);
   ev.push_back(3);
-  for (pcl::EfficientVector<int>::const_iterator it = ev.begin();
-       it != ev.end(); ++it) {
+  for (pcl::Vector<int>::const_iterator it = ev.begin(); it != ev.end(); ++it) {
     std::cout << *it << std::endl;
   }
 
@@ -33,18 +32,17 @@ TEST(VectorTest, Push) {
 }
 
 TEST(VectorTest, Pop) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   ev.push_back(1);
   ev.push_back(2);
   ev.push_back(3);
   ev.pop_back();
-  for (pcl::EfficientVector<int>::const_iterator it = ev.begin();
-       it != ev.end(); ++it) {
+  for (pcl::Vector<int>::const_iterator it = ev.begin(); it != ev.end(); ++it) {
     std::cout << *it << std::endl;
   }
 }
 TEST(VectorTest, Empty) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   for (int i = 0; i < 256; ++i) {
     ev.push_back(i + 2);
   }
@@ -56,9 +54,9 @@ TEST(VectorTest, Empty) {
   std::cout << capacity << std::endl;
 }
 TEST(VectorTest, operator) {
-  pcl::EfficientVector<int> ev1;
-  pcl::EfficientVector<int> ev2;
-  pcl::EfficientVector<int> ev3;
+  pcl::Vector<int> ev1;
+  pcl::Vector<int> ev2;
+  pcl::Vector<int> ev3;
 
   ev1.push_back(1);
   ev1.push_back(2);
@@ -70,16 +68,16 @@ TEST(VectorTest, operator) {
   std::cout << val << std::endl;
 
   ev3 = ev1 + ev2;
-  for (pcl::EfficientVector<int>::const_iterator it3 = ev3.begin();
-       it3 != ev3.end(); ++it3) {
+  for (pcl::Vector<int>::const_iterator it3 = ev3.begin(); it3 != ev3.end();
+       ++it3) {
     std::cout << *it3 << std::endl;
   }
   ev1 += 4;
-  for (pcl::EfficientVector<int>::const_iterator it1 = ev1.begin();
-       it1 != ev1.end(); ++it1) {
+  for (pcl::Vector<int>::const_iterator it1 = ev1.begin(); it1 != ev1.end();
+       ++it1) {
     std::cout << *it1 << std::endl;
   }
-  pcl::EfficientVector<int> ev4;
+  pcl::Vector<int> ev4;
   ev4.push_back(1);
   ev4.push_back(2);
   ev4.push_back(3);
@@ -87,13 +85,13 @@ TEST(VectorTest, operator) {
   std::cout << equ << std::endl;
   ev1.pop_back();
   ev1.swap(ev2);
-  for (pcl::EfficientVector<int>::const_iterator it3 = ev1.begin();
-       it3 != ev1.end(); ++it3) {
+  for (pcl::Vector<int>::const_iterator it3 = ev1.begin(); it3 != ev1.end();
+       ++it3) {
     std::cout << *it3 << std::endl;
   }
 }
 TEST(VectorTest, index) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   for (int i = 0; i < 222; ++i) {
     ev.push_back(i + 2);
   }
@@ -109,7 +107,7 @@ TEST(VectorTest, index) {
   std::cout << index1 << std::endl;
 }
 TEST(VectorTest, index1) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   for (int i = 0; i < 222; ++i) {
     ev.push_back(i + 2);
   }
@@ -117,26 +115,22 @@ TEST(VectorTest, index1) {
   ev.push_back(2);
   ev.push_back(3);
 
-  pcl::EfficientVector<int> ret = ev.mid(3, 8);
-  for (pcl::EfficientVector<int>::const_iterator it4 = ret.begin();
-       it4 != ret.end(); ++it4) {
+  pcl::Vector<int> ret = ev.mid(3, 8);
+  for (pcl::Vector<int>::const_iterator it4 = ret.begin(); it4 != ret.end();
+       ++it4) {
     std::cout << *it4 << std::endl;
   }
 }
 
 TEST(VectorTest, maxNum) {
-  pcl::EfficientVector<int> ev;
+  pcl::Vector<int> ev;
   for (int i = 0; i < 280; ++i) {
     ev.push_back(i + 2);
   }
 
-  pcl::EfficientVector<int> ret = ev.mid(270, 8);
-  for (pcl::EfficientVector<int>::const_iterator it4 = ret.begin();
-       it4 != ret.end(); ++it4) {
+  pcl::Vector<int> ret = ev.mid(270, 8);
+  for (pcl::Vector<int>::const_iterator it4 = ret.begin(); it4 != ret.end();
+       ++it4) {
     std::cout << *it4 << std::endl;
   }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 5c835fc1a5fdfb6aa5b412c5826e2e9f86ab7c60

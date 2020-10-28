@@ -3,7 +3,7 @@
 #include "List.h"
 #include "gtest/gtest.h"
 TEST(ListTest, base) {
-  pcl::EfficientList<int> el;
+  pcl::List<int> el;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -22,7 +22,7 @@ TEST(ListTest, base) {
   el.push_front(7);
 }
 TEST(ListTest, addElements) {
-  pcl::EfficientList<int> el;
+  pcl::List<int> el;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -30,17 +30,17 @@ TEST(ListTest, addElements) {
   el.push_back(5);
   el.push_back(6);
   el.push_front(7);
-  pcl::EfficientList<int>::iterator it = el.begin();
+  pcl::List<int>::iterator it = el.begin();
   el.insert(it, 8);
   el.insert(el.begin(), 3, 9);
-  pcl::EfficientList<int> el2(5, 10);
+  pcl::List<int> el2(5, 10);
   el.insert(el.begin(), el2.begin(), ++el2.begin());
   for (it = el.begin(); it != el.end(); it++) {
     std::cout << *it << std::endl;
   }
 }
 TEST(ListTest, deleteElements) {
-  pcl::EfficientList<int> el;
+  pcl::List<int> el;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -49,7 +49,7 @@ TEST(ListTest, deleteElements) {
   el.push_back(6);
   el.pop_front();
   el.pop_back();
-  pcl::EfficientList<int>::iterator it = el.begin();
+  pcl::List<int>::iterator it = el.begin();
   el.erase(it);
   el.erase(el.begin(), ++el.begin());
 
@@ -58,7 +58,7 @@ TEST(ListTest, deleteElements) {
   }
 }
 TEST(ListTest, getElements) {
-  pcl::EfficientList<int> el;
+  pcl::List<int> el;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -70,8 +70,8 @@ TEST(ListTest, getElements) {
   std::cout << el.back() << std::endl;
 }
 TEST(ListTest, others) {
-  pcl::EfficientList<int> el;
-  pcl::EfficientList<int> el2;
+  pcl::List<int> el;
+  pcl::List<int> el2;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -84,30 +84,30 @@ TEST(ListTest, others) {
   std::cout << el.back() << std::endl;
   swap(el, el2);
 
-  for (pcl::EfficientList<int>::iterator it = el.begin(); it != el.end();
+  for (pcl::List<int>::iterator it = el.begin(); it != el.end();
        it++) {
     std::cout << *it << " ";
   }
   std::cout << std ::endl;
   el.splice(el.end(), el2);
 
-  for (pcl::EfficientList<int>::iterator it1 = el.begin(); it1 != el.end();
+  for (pcl::List<int>::iterator it1 = el.begin(); it1 != el.end();
        it1++) {
     std::cout << *it1 << " ";
   }
   std::cout << std ::endl;
-  pcl::EfficientList<int> el3(3, 5);
-  pcl::EfficientList<int> el4(3, 7);
-  pcl::EfficientList<int> el5 = el3 + el4;
+  pcl::List<int> el3(3, 5);
+  pcl::List<int> el4(3, 7);
+  pcl::List<int> el5 = el3 + el4;
   el5 += 8;
   // el3.unique();
-  for (pcl::EfficientList<int>::iterator it2 = el5.begin(); it2 != el5.end();
+  for (pcl::List<int>::iterator it2 = el5.begin(); it2 != el5.end();
        it2++) {
     std::cout << *it2 << " ";
   }
 }
 TEST(ListTest, iterator) {
-  pcl::EfficientList<int> el;
+  pcl::List<int> el;
   el.push_back(1);
   el.push_back(2);
   el.push_back(3);
@@ -119,8 +119,8 @@ TEST(ListTest, iterator) {
   std::cout << *(--el.rend()) << std::endl;
 }
 TEST(ListTest, operator) {
-  pcl::EfficientList<int> el1;
-  pcl::EfficientList<int> el2;
+  pcl::List<int> el1;
+  pcl::List<int> el2;
   el1.push_back(1);
   el1.push_back(2);
   el1.push_back(3);

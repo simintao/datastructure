@@ -26,11 +26,11 @@ TEST(ArrayListTest, init) {
   cout << a1.size() << endl;
   cout << a1.capacity() << endl;
 
-  pcl::EfficientArray<Person> arr1(2);
-  pcl::EfficientArray<Person> arr2(2);
-  pcl::EfficientArray<Person> arr3(2);
-  pcl::EfficientArray<Person> arr4(2);
-  pcl::EfficientArray<Person> arr5(2);
+  pcl::Array<Person, 2> arr1(2);
+  pcl::Array<Person, 2> arr2(2);
+  pcl::Array<Person, 2> arr3(2);
+  pcl::Array<Person, 2> arr4(2);
+  pcl::Array<Person, 2> arr5(2);
   Person p1("ab", 100);
   Person p2("cd", 30);
   Person p3("dg", 20);
@@ -41,7 +41,7 @@ TEST(ArrayListTest, init) {
   arr3[0] = p3;
   arr4[0] = p4;
   arr5[0] = p5;
-  pcl::ArrayList<pcl::EfficientArray<Person>> a2;
+  pcl::ArrayList<pcl::Array<Person, 2>> a2;
   a2.add(&arr1);
   a2.add(&arr2);
   a2.add(&arr3);

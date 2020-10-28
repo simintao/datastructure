@@ -2,17 +2,23 @@
 #include <ctime>
 #include <iostream>
 //#include <vector>
-
 #include "Array.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 //#include "Vector.h"
 #include "gtest/gtest.h"
 TEST(arrayCompare, add) {
-  clock_t startTime, endTime;
-  pcl::EfficientArray<int> ar1(10000);
-  startTime = clock();
-  for (int i = 0; i < 9900; i++) {
-    ar1[i] = i + 1;
+  absl::Time startTime, endTime;
+  startTime = absl::Now();
+
+  constexpr size_t array_size = 99000000;
+  pcl::Array<size_t, 9900000>* ar1 =
+      new pcl::Array<size_t, 9900000>(array_size);
+  for (size_t i = 0; i < array_size; i++) {
+    (*ar1)[i] = i + 1;
   }
-  endTime = clock();
-  std::cout << "the array run time is = " << endTime - startTime << std::endl;
+  endTime = absl::Now();
+  absl::Duration duration = endTime - startTime;
+  int64_t duration_time = duration / absl::Nanoseconds(1);
+  std::cout << "the array run time is = " << duration_time << "ns" << std::endl;
 }
