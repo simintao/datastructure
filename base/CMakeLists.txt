@@ -70,7 +70,7 @@ SET (AbslLibs
 
 #message("libs ${AbslLibs}")
 
-set(CMAKE_BUILD_TYPE "Debug")
+SET (CMAKE_BUILD_TYPE "Debug")
 
 # add include and lib dirs
 INCLUDE_DIRECTORIES("./abseil/include")
