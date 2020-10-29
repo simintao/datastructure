@@ -1,6 +1,6 @@
 # PCL Base Data Structure
 
-The repository contains the base data structure for the PCL EDA project. It is a wrapper of  the google open-source abseil library. Abseil is an collection of C++ code designed to augment the C++ standard library.
+The repository contains the base data structure for the PCL EDA project. It is a wrapper of  the google open-source abseil container. Abseil is an collection of C++ code designed to augment the C++ standard library.
 
 ## QuickStart
 
