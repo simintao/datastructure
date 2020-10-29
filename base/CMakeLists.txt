@@ -1,7 +1,20 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-# Abseil requires C++17
-SET (CMAKE_CXX_STANDARD 17)
+SET (CMAKE_BUILD_TYPE "Debug")
+# add include and lib dirs
+INCLUDE_DIRECTORIES("./abseil/include")
+INCLUDE_DIRECTORIES("./include")
+
+IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    MESSAGE(STATUS "Now is windows")
+    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        LINK_DIRECTORIES("./abseil/lib/win/debug")
+    ELSE ()
+        LINK_DIRECTORIES("./abseil/lib/win/release")
+    ENDIF ()
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    MESSAGE(STATUS "Now is UNIX-like OS's.")
+    LINK_DIRECTORIES("./abseil/lib/unix")
+ENDIF ()
 
 # Abseil lib
 SET (AbslLibs
@@ -68,30 +81,10 @@ SET (AbslLibs
         absl_time_zone
         )
 
-#message("libs ${AbslLibs}")
+OPTION (BASE_RUN_TESTS "If ON, the tests will be run." ON)
 
-SET (CMAKE_BUILD_TYPE "Debug")
-
-# add include and lib dirs
-INCLUDE_DIRECTORIES("./abseil/include")
-INCLUDE_DIRECTORIES("./include")
-
-IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
-    MESSAGE(STATUS "Now is windows")
-    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        LINK_DIRECTORIES("./abseil/lib/win/debug")
-    ELSE ()
-        LINK_DIRECTORIES("./abseil/lib/win/release")
-    ENDIF ()
-ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    MESSAGE(STATUS "Now is UNIX-like OS's.")
-    LINK_DIRECTORIES("./abseil/lib/unix")
-ENDIF ()
-
-OPTION(BASE_RUN_TESTS "If ON, the tests will be run." ON)
-
-IF(${BASE_RUN_TESTS})
-
+IF (BASE_RUN_TESTS)
+    MESSAGE(STATUS "RUN BASE TESTS")
     # declare googletest
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
@@ -131,7 +124,7 @@ IF(${BASE_RUN_TESTS})
         endif()
     ENDIF ()
 
-ENDIF (${BASE_RUN_TESTS})
+ENDIF (BASE_RUN_TESTS)
 
 
 
