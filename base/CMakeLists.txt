@@ -1,10 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
 # Abseil requires C++17
-SET(CMAKE_CXX_STANDARD 17)
+SET (CMAKE_CXX_STANDARD 17)
 
 # Abseil lib
-SET(AbslLibs
+SET (AbslLibs
         absl_bad_any_cast_impl
         absl_bad_optional_access
         absl_bad_variant_access
@@ -74,12 +74,14 @@ SET(AbslLibs
 INCLUDE_DIRECTORIES("./abseil/include")
 INCLUDE_DIRECTORIES("./include")
 
-IF (WIN32)
+IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE(STATUS "Now is windows")
-    LINK_DIRECTORIES("./abseil/lib/win")
-ELSEIF (APPLE)
-    MESSAGE(STATUS "Now is Apple systems.")
-ELSEIF (UNIX)
+    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        LINK_DIRECTORIES("./abseil/lib/win/debug")
+    ELSE ()
+        LINK_DIRECTORIES("./abseil/lib/win/release")
+    ENDIF ()
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "Now is UNIX-like OS's.")
     LINK_DIRECTORIES("./abseil/lib/unix")
 ENDIF ()
@@ -88,29 +90,46 @@ OPTION(BASE_RUN_TESTS "If ON, the tests will be run." ON)
 
 IF(${BASE_RUN_TESTS})
 
-# declare googletest
-IF (WIN32)
-    INCLUDE_DIRECTORIES("../third_party/googletest/win")
-    LINK_DIRECTORIES("../third_party/googletest/win")
-ELSEIF (APPLE)
-    MESSAGE(STATUS "Now is Apple systems.")
-ELSEIF (UNIX)
-    INCLUDE_DIRECTORIES("../third_party/googletest/unix")
-    LINK_DIRECTORIES("../third_party/googletest/unix")
-ENDIF ()
+    # declare googletest
+    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+            INCLUDE_DIRECTORIES("../third_party/googletest/win/debug")
+            LINK_DIRECTORIES("../third_party/googletest/win/debug")
+        ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+            INCLUDE_DIRECTORIES("../third_party/googletest/unix")
+            LINK_DIRECTORIES("../third_party/googletest/unix")
+        ENDIF ()
+        
+    ELSE ()
+        IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+            INCLUDE_DIRECTORIES("../third_party/googletest/win/release")
+            LINK_DIRECTORIES("../third_party/googletest/win/release")
+        ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+            INCLUDE_DIRECTORIES("../third_party/googletest/unix")
+            LINK_DIRECTORIES("../third_party/googletest/unix")
+        ENDIF ()
+        
+    ENDIF()
+
+    # build test
+    AUX_SOURCE_DIRECTORY(./test SourceFiles)
+    ADD_EXECUTABLE(base_test ${SourceFiles})
+
+    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+        TARGET_LINK_LIBRARIES(base_test gmock_maind gtestd gmockd ${AbslLibs})
+        ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        endif()
+    ELSE ()
+        IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock ${AbslLibs})
+        ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        endif()
+    ENDIF ()
+
 ENDIF (${BASE_RUN_TESTS})
-
-
-# build test
-AUX_SOURCE_DIRECTORY(./test SourceFiles)
-ADD_EXECUTABLE(base_test ${SourceFiles})
-
-IF (WIN32)
-TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock ${AbslLibs})
-ELSEIF (UNIX)
-TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
-endif()
-
 
 
 
