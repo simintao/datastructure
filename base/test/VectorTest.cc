@@ -50,6 +50,7 @@ TEST(VectorTest, Empty) {
   int size = ev.size();
   int capacity = ev.capacity();
   std::cout << flag << std::endl;
+  
   std::cout << size << std::endl;
   std::cout << capacity << std::endl;
 }
@@ -65,7 +66,10 @@ TEST(VectorTest, operator) {
   ev2.push_back(6);
   ev2.push_back(7);
   int val = ev2[2];
-  std::cout << val << std::endl;
+
+  bool com1 = ev1 < ev2;
+  bool com2 = ev1 > ev2;
+  std::cout << com1 << com2 << std::endl;
 
   ev3 = ev1 + ev2;
   for (pcl::Vector<int>::const_iterator it3 = ev3.begin(); it3 != ev3.end();
@@ -132,5 +136,13 @@ TEST(VectorTest, maxNum) {
   for (pcl::Vector<int>::const_iterator it4 = ret.begin(); it4 != ret.end();
        ++it4) {
     std::cout << *it4 << std::endl;
+  }
+  pcl::Vector<int> ev1;
+  for (int i = 0; i < 5; ++i) {
+    ev.push_back(i + 2);
+  }
+  for (pcl::Vector<int>::reverse_iterator it5 = ev1.rbegin(); it5 != ev1.rend();
+       ++it5) {
+    std::cout << *it5 << std::endl;
   }
 }
