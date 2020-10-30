@@ -190,6 +190,22 @@ class Vector : public absl::InlinedVector<T, /* N= */ 256> {
   // }
   const_reference operator[](size_t i) const { return data()[i]; }
   reference operator[](size_t i) { return data()[i]; }
-};
 
+  friend bool operator<(const Vector<T>& a, const Vector<T>& b) {
+    auto a_data = a.data();
+    auto b_data = b.data();
+    return std::lexicographical_compare(a_data, a_data + a.size(), b_data,
+                                        b_data + b.size());
+  }
+
+  friend bool operator>(const Vector<T>& a, const Vector<T>& b) {
+    return b < a;
+  }
+  friend bool operator<=(const Vector<T>& a, const Vector<T>& b) {
+    return !(b < a);
+  }
+  friend bool operator>=(const Vector<T>& a, const Vector<T>& b) {
+    return !(a < b);
+  }
+};
 }  // namespace pcl
