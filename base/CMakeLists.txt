@@ -66,17 +66,29 @@ IF (BASE_RUN_TESTS)
     AUX_SOURCE_DIRECTORY(./test SourceFiles)
     ADD_EXECUTABLE(base_test ${SourceFiles})
 
+    FILE(GLOB SO_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/abseil/lib/unix/*.so 
+    )
+
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
         TARGET_LINK_LIBRARIES(base_test gmock_maind gtestd gmockd ${AbslLibs})
         ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
         TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        ADD_CUSTOM_COMMAND(TARGET base_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
+    )
         endif()
     ELSE ()
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
         TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock ${AbslLibs})
         ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
         TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        ADD_CUSTOM_COMMAND(TARGET base_test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
+    )
         endif()
     ENDIF ()
 

@@ -47,6 +47,22 @@ SET (AbslLibs
 ADD_EXECUTABLE(main main.cc)
 
 TARGET_LINK_LIBRARIES(main ${AbslLibs})
+ 
+IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    MESSAGE(STATUS "windows do not need dll")
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    MESSAGE(STATUS "linux need so file")
+
+    FILE(GLOB SO_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/base/abseil/lib/unix/*.so 
+    )
+
+    add_custom_command(TARGET main
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
+    )
+
+ENDIF ()
 
 
 
