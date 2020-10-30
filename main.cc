@@ -2,11 +2,11 @@
 #include "base/include/HashMap.h"
 #include "base/include/Map.h"
 
-using pcl::HMap;
+using pcl::HashMap;
 using pcl::Map;
 
 int main() {
-  HMap<int, const char *> hmap{{1, "a"}, {1, "b"}};
+  HashMap<int, const char *> hmap{{1, "a"}, {1, "b"}};
   for (auto p = hmap.cbegin(); p != hmap.cend(); p++) {
     std::cout << p->first << " " << p->second << std::endl;
   }
