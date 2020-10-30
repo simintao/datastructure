@@ -7,21 +7,21 @@ SET (CMAKE_CXX_STANDARD 17)
 ADD_SUBDIRECTORY(base)
 
 # add include and lib dirs
-INCLUDE_DIRECTORIES("./base/abseil/include")
-INCLUDE_DIRECTORIES("./base/include")
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base/abseil/include")
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base/include")
 
 SET (CMAKE_BUILD_TYPE "Debug")
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE(STATUS "Now is windows")
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        LINK_DIRECTORIES("./base/abseil/lib/win/debug")
+        LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base/abseil/lib/win/debug")
     ELSE ()
-        LINK_DIRECTORIES("./base/abseil/lib/win/release")
+        LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base/abseil/lib/win/release")
     ENDIF ()
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "Now is UNIX-like OS's.")
-    LINK_DIRECTORIES("./base/abseil/lib/unix")
+    LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base/abseil/lib/unix")
 ENDIF ()
 
 
