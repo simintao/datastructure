@@ -753,7 +753,7 @@ auto timeit = [](std::function<int()> set_test, std::string what = "") {
 };
 
 TEST(MapTest, perf1) {
-  const int nof_operations = 200;
+  const int nof_operations = 100;
 
   auto map_emplace = [=]() -> int {
     Map<Dew, Dew> map;
@@ -784,7 +784,7 @@ TEST(MapTest, perf1) {
 }
 
 TEST(MapTest, perf2) {
-  const int nof_operations = 200;
+  const int nof_operations = 100;
 
   auto map_insert = [=]() -> int {
     Map<Dew, Dew> map;
@@ -813,7 +813,7 @@ TEST(MapTest, perf2) {
 }
 
 TEST(MapTest, perf3) {
-  const int nof_operations = 200;
+  const int nof_operations = 100;
 
   Map<Dew, Dew> map;
   for (int i = 0; i < nof_operations; ++i)
@@ -849,7 +849,7 @@ TEST(MapTest, perf3) {
 }
 
 TEST(MapTest, perf4) {
-  const int nof_operations = 200;
+  const int nof_operations = 100;
 
   Map<Dew, Dew> map;
   for (int i = 0; i < nof_operations; ++i)
