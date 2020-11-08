@@ -12,6 +12,7 @@
 
 #include "boost/pool/object_pool.hpp"
 #include "boost/pool/poolfwd.hpp"
+#include "boost/pool/singleton_pool.hpp"
 
 namespace pcl {
 
@@ -23,8 +24,7 @@ namespace pcl {
  * @tparam T object type.
  */
 template <typename T>
-class ObjectPool
-    : public boost::object_pool<T, boost::default_user_allocator_new_delete> {
+class ObjectPool : public boost::object_pool<T> {
  public:
   using Base = typename ObjectPool::object_pool;
   using size_type = typename Base::size_type;
@@ -40,6 +40,32 @@ class ObjectPool
 
   /*destory the object*/
   using Base::destroy;
+};
+
+/**
+ * @brief A singleton memory pool.It can be used as global meomory pool.The Tag
+ * can be used as distinguish different singleton pool.
+ *
+ * @tparam TAG the tag for distinguish singleton pool.
+ * @tparam ES the element size.
+ */
+template <typename TAG, unsigned ES>
+class SingletonPool : public boost::singleton_pool<TAG, ES> {
+  using Base = typename SingletonPool::singleton_pool;
+  using Tag = TAG;
+  using size_type = typename Base::size_type;
+  using difference_type = typename Base::difference_type;
+
+  using Base::Base;
+  ~SingletonPool() = default;
+
+  using Base::free;
+  using Base::malloc;
+  using Base::ordered_free;
+  using Base::ordered_malloc;
+
+  using Base::purge_memory;
+  using Base::release_memory;
 };
 
 }  // namespace pcl

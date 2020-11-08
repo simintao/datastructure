@@ -14,8 +14,8 @@
 #include "absl/container/inlined_vector.h"
 
 namespace pcl {
-template <typename T>
-class Vector : public absl::InlinedVector<T, /* N= */ 256> {
+template <typename T, typename A = std::allocator<T>>
+class Vector : public absl::InlinedVector<T, /* N= */ 256, A> {
  public:
   using Base = typename Vector::InlinedVector;
   using iterator = typename Base::iterator;
@@ -133,8 +133,8 @@ class Vector : public absl::InlinedVector<T, /* N= */ 256> {
    * @param len
    * @return Vector<T>&
    */
-  Vector<T>& mid(size_t pos, size_t len) {
-    Vector<T>* midVector = new Vector<T>();
+  Vector<T, A>& mid(size_t pos, size_t len) {
+    Vector<T>* midVector = new Vector<T, A>();
     const_iterator from = this->begin() + pos;
     const_iterator to = this->begin() + pos + len;
     for (from; from != to; ++from) {
@@ -162,14 +162,14 @@ class Vector : public absl::InlinedVector<T, /* N= */ 256> {
    * @param val2
    * @return Vector<T>&
    */
-  friend Vector<T>& operator+(const Vector<T>& val1, const Vector<T>& val2) {
+  friend Vector<T, A>& operator+(const Vector<T, A>& val1, const Vector<T, A>& val2) {
     Vector<T>* ret_val = new Vector<T>;
 
-    for (Vector<T>::const_iterator it1 = val1.begin(); it1 != val1.end();
+    for (Vector<T, A>::const_iterator it1 = val1.begin(); it1 != val1.end();
          it1++) {
       ret_val->push_back(*it1);
     }
-    for (Vector<T>::const_iterator it2 = val2.begin(); it2 != val2.end();
+    for (Vector<T, A>::const_iterator it2 = val2.begin(); it2 != val2.end();
          it2++) {
       ret_val->push_back(*it2);
     }
@@ -191,20 +191,20 @@ class Vector : public absl::InlinedVector<T, /* N= */ 256> {
   const_reference operator[](size_t i) const { return data()[i]; }
   reference operator[](size_t i) { return data()[i]; }
 
-  friend bool operator<(const Vector<T>& a, const Vector<T>& b) {
+  friend bool operator<(const Vector<T, A>& a, const Vector<T, A>& b) {
     auto a_data = a.data();
     auto b_data = b.data();
     return std::lexicographical_compare(a_data, a_data + a.size(), b_data,
                                         b_data + b.size());
   }
 
-  friend bool operator>(const Vector<T>& a, const Vector<T>& b) {
+  friend bool operator>(const Vector<T, A>& a, const Vector<T, A>& b) {
     return b < a;
   }
-  friend bool operator<=(const Vector<T>& a, const Vector<T>& b) {
+  friend bool operator<=(const Vector<T, A>& a, const Vector<T, A>& b) {
     return !(b < a);
   }
-  friend bool operator>=(const Vector<T>& a, const Vector<T>& b) {
+  friend bool operator>=(const Vector<T, A>& a, const Vector<T, A>& b) {
     return !(a < b);
   }
 };
