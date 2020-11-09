@@ -10,6 +10,7 @@
  */
 #pragma once
 #include <algorithm>
+#include <memory>
 
 #include "absl/container/inlined_vector.h"
 
@@ -162,7 +163,8 @@ class Vector : public absl::InlinedVector<T, /* N= */ 256, A> {
    * @param val2
    * @return Vector<T>&
    */
-  friend Vector<T, A>& operator+(const Vector<T, A>& val1, const Vector<T, A>& val2) {
+  friend Vector<T, A>& operator+(const Vector<T, A>& val1,
+                                 const Vector<T, A>& val2) {
     Vector<T>* ret_val = new Vector<T>;
 
     for (Vector<T, A>::const_iterator it1 = val1.begin(); it1 != val1.end();
