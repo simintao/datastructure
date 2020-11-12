@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
 SET (CMAKE_BUILD_TYPE "Debug")
 SET (CMAKE_CXX_STANDARD 17)
 # add include and lib dirs
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/abseil/include")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/base")
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/log")
+
+ADD_SUBDIRECTORY(log)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE(STATUS "Now is windows")
@@ -67,15 +69,17 @@ IF (BASE_RUN_TESTS)
     AUX_SOURCE_DIRECTORY(./test SourceFiles)
     ADD_EXECUTABLE(base_test ${SourceFiles})
 
+    SET(MyLibs base_log)
+
     FILE(GLOB SO_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/abseil/lib/unix/*.so 
     )
 
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
-        TARGET_LINK_LIBRARIES(base_test gmock_maind gtestd gmockd ${AbslLibs})
+        TARGET_LINK_LIBRARIES(base_test gmock_maind gtestd gmockd ${AbslLibs} ${MyLibs})
         ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs} ${MyLibs})
         ADD_CUSTOM_COMMAND(TARGET base_test
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
@@ -85,7 +89,7 @@ IF (BASE_RUN_TESTS)
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
         TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock ${AbslLibs})
         ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs})
+        TARGET_LINK_LIBRARIES(base_test gmock_main gtest gmock pthread ${AbslLibs} ${MyLibs})
         ADD_CUSTOM_COMMAND(TARGET base_test
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/

@@ -22,18 +22,33 @@ class A {
  public:
   explicit A(std::string str) : _str(str) {}
   A(const A& other) : _str(other._str) {
-    // std::cout << "copy"
-    //           << "\n";
+    std::cout << "copy"
+              << "\n";
   }
 
   A(A&& other) : _str(std::move(other._str)) {
-    // std::cout << "move"
-    //           << "\n";
+    std::cout << "move"
+              << "\n";
   }
 
   ~A() {
-    // std::cout << "desctructor"
-    //<< "\n";
+    std::cout << "desctructor"
+              << "\n";
+  }
+
+  static void* operator new(size_t size) {
+    std::cout << "operator new size " << size << std::endl;
+    return PoolAllocator<A>().allocate(size);
+  }
+
+  static void operator delete(void* pointee) {
+    std::cout << "operator delete" << std::endl;
+    PoolAllocator<A>().destroy(static_cast<A*>(pointee));
+  }
+
+  static void* operator new(std::size_t count, void* ptr) {
+    std::cout << "placement new size " << std::endl;
+    return ptr;
   }
 
   A& operator=(const A& other) {
@@ -88,9 +103,10 @@ TEST(ObjectPoolTest, construct1) {
   //   auto& test5 = func(std::move(test));
   //   auto&& test6 = func(std::move(test));
 
-  constexpr size_t count = 100000;
-  ObjectPool<A> p(count);
-  auto boost_func = [&p]() -> int {
+  constexpr size_t count = 1;
+
+  auto boost_func = []() -> int {
+    ObjectPool<A> p(count);
     for (size_t i = 0; i < count; ++i) {
       A* const t = p.construct("test");
       // std::cout << *t << std::endl;
@@ -166,7 +182,7 @@ TEST(SingtonPool, construct) {
 }
 
 TEST(SingtonPool, allocator) {
-  constexpr size_t count = 100000;
+  constexpr size_t count = 1;
   auto boost_alloc = []() -> int {
     std::vector<A, PoolAllocator<A>> v;
     for (int i = 0; i < count; ++i) v.emplace_back("test");

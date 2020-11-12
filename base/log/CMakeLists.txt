@@ -1,0 +1,22 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+
+SET (CMAKE_CXX_STANDARD 17)
+
+AUX_SOURCE_DIRECTORY(./ SRC)
+
+IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    MESSAGE(STATUS "Now is windows")
+    IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../abseil/lib/win/debug")
+    ELSE ()
+        LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../abseil/lib/win/release")
+    ENDIF ()
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    MESSAGE(STATUS "Now is UNIX-like OS's.")
+    LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../abseil/lib/unix")
+ENDIF ()
+
+ADD_LIBRARY(base_log STATIC ${SRC})
+
+TARGET_INCLUDE_DIRECTORIES(base_log PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../abseil/include)
+TARGET_LINK_LIBRARIES(base_log absl_base absl_raw_logging_internal absl_log_severity)
