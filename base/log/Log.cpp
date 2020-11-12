@@ -12,12 +12,28 @@
 #include "Log.h"
 
 #include <iostream>
+#include <thread>
 
 namespace pcl {
 
-// void Log::print(LogSeverity s, const char* msg) {
-//   using absl::operator<<;
-//   std::cout << s << msg << std::endl;
-// }
+void Log::init() {
+  boost::log::register_simple_formatter_factory<
+      boost::log::trivial::severity_level, char>("Severity");
+  logging::add_file_log(
+      keywords::file_name = "/sign_%Y-%m-%d_%H-%M-%S.%N.log",
+      keywords::rotation_size = 10 * 1024 * 1024,
+      keywords::time_based_rotation =
+          sinks::file::rotation_at_time_point(0, 0, 0),
+      keywords::format = "[%TimeStamp%] (%Severity%) : %Message%",
+      keywords::min_free_space = 3 * 1024 * 1024);
+  logging::core::get()->set_filter(logging::trivial::severity >=
+                                   logging::trivial::debug);
+
+  logging::add_common_attributes();
+  using namespace logging::trivial;
+  src::severity_logger<severity_level> lg;
+  BOOST_LOG_SEV(lg, info) << "thread id: " << std::this_thread::get_id()
+                          << " Initialization succeeded";
+}
 
 }  // namespace pcl

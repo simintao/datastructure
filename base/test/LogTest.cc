@@ -5,4 +5,4 @@
 
 using namespace testing;
 using pcl::Log;
-TEST(LogTest, print) { Log::print(LogSeverity::kInfo, "%s", "test"); }
+TEST(LogTest, print) { Log().init(); }
