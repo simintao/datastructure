@@ -18,7 +18,7 @@ IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     ENDIF ()
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "Now is UNIX-like OS's.")
-    LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/abseil/lib/unix")
+    LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/abseil/lib/unix")    
 ENDIF ()
 
 # Abseil lib

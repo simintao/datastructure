@@ -16,7 +16,11 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     LINK_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../abseil/lib/unix")
 ENDIF ()
 
+FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS log_setup log thread filesystem)
+
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+
 ADD_LIBRARY(base_log STATIC ${SRC})
 
-TARGET_INCLUDE_DIRECTORIES(base_log PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../abseil/include)
-TARGET_LINK_LIBRARIES(base_log absl_base absl_raw_logging_internal absl_log_severity)
+TARGET_LINK_LIBRARIES(base_log ${Boost_LIBRARIES})
