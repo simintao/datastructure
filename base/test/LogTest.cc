@@ -12,10 +12,12 @@ class LogTest : public testing::Test {
   void TearDown() {}
 };
 
-TEST_F(LogTest, print) {
-  src::severity_logger<logging::trivial::severity_level> lg;
-
-  BOOST_LOG_SEV(lg, logging::trivial::info)
-      << "thread id: " << std::this_thread::get_id()
-      << " Initialization succeeded";
+TEST_F(LogTest, glogprint) {
+  // You can specify one of the following severity levels (in increasing order
+  // of severity)
+  LOG(INFO) << "info";
+  LOG(WARNING) << "warning";
+  LOG(ERROR) << "error";
+  LOG(FATAL) << "fatal";  // Logging a FATAL message terminates the program
+                          // (after the message is logged)!
 }

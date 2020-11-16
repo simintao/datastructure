@@ -12,23 +12,28 @@
 #include "Log.h"
 
 #include <iostream>
+#include <string>
+
+using std::string;
 
 namespace pcl {
 
 void Log::init() {
-  boost::log::register_simple_formatter_factory<
-      boost::log::trivial::severity_level, char>("Severity");
-  logging::add_file_log(
-      keywords::file_name = "./sign_%Y-%m-%d_%H-%M-%S.%N.log",
-      keywords::rotation_size = 10 * 1024 * 1024,
-      keywords::time_based_rotation =
-          sinks::file::rotation_at_time_point(0, 0, 0),
-      keywords::format = "[%TimeStamp%] (%Severity%) : %Message%",
-      keywords::min_free_space = 3 * 1024 * 1024);
-  logging::core::get()->set_filter(logging::trivial::severity >=
-                                   logging::trivial::debug);
+  string home = "./log/";
 
-  logging::add_common_attributes();
+  const char config[] = {};
+  google::InitGoogleLogging(config);
+
+  string info_log = home + "info_";
+  google::SetLogDestination(google::INFO, info_log.c_str());
+
+  string warning_log = home + "warning_";
+  google::SetLogDestination(google::WARNING, warning_log.c_str());
+
+  string error_log = home + "error_";
+  google::SetLogDestination(google::ERROR, error_log.c_str());
+
+  string fatal_log = home + "fatal_";
+  google::SetLogDestination(google::FATAL, fatal_log.c_str());
 }
-
 }  // namespace pcl
