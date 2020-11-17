@@ -11,6 +11,7 @@
 
 #include "Log.h"
 
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -18,11 +19,10 @@ using std::string;
 
 namespace pcl {
 
-void Log::init() {
+void Log::init(char* argv[]) {
   string home = "./log/";
 
-  const char config[] = {};
-  google::InitGoogleLogging(config);
+  google::InitGoogleLogging(argv[0]);
 
   string info_log = home + "info_";
   google::SetLogDestination(google::INFO, info_log.c_str());
@@ -36,4 +36,7 @@ void Log::init() {
   string fatal_log = home + "fatal_";
   google::SetLogDestination(google::FATAL, fatal_log.c_str());
 }
+
+void Log::end() { google::ShutdownGoogleLogging(); }
+
 }  // namespace pcl
