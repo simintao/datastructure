@@ -19,6 +19,11 @@ using std::string;
 
 namespace pcl {
 
+/**
+ * @brief The init of log module.
+ *
+ * @param argv The gflag config from main function.
+ */
 void Log::init(char* argv[]) {
   string home = "./log/";
 
@@ -37,6 +42,10 @@ void Log::init(char* argv[]) {
   google::SetLogDestination(google::FATAL, fatal_log.c_str());
 }
 
+/**
+ * @brief The end of log module.
+ *
+ */
 void Log::end() { google::ShutdownGoogleLogging(); }
 
 }  // namespace pcl

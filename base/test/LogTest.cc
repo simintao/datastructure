@@ -56,7 +56,7 @@ TEST_F(LogTest, glogdlog) {
   int num_cookies = 11;
   DLOG_INFO << "Found cookies";
 
-  DLOG_WARNING_IF(num_cookies > 10) << "Got lots of cookies";
+  DLOG_WARNING_IF(num_cookies > 10) << "Got lots of cookies " << num_cookies;
 
   DLOG_FATAL_EVERY_N(10) << "Got the " << google::COUNTER << "th cookie";
 }
