@@ -15,10 +15,14 @@
 
 #include "tcl.h"
 
+/**
+ * @brief The ScriptEngine is used for tcl file process such as sdc file.
+ *
+ */
 class ScriptEngine {
  public:
-  static ScriptEngine* GetOrCreateInstance();
-  static void DestroyInstance();
+  static ScriptEngine* getOrCreateInstance();
+  static void destroyInstance();
 
  private:
   ScriptEngine();
@@ -27,7 +31,12 @@ class ScriptEngine {
   ScriptEngine(const ScriptEngine&) = delete;
   ScriptEngine& operator=(const ScriptEngine&) = delete;
 
+  int evalScriptFile(const char* file_name);
+
+  void appendResult(char* result);
+  const char* getResult();
+
  private:
-  static ScriptEngine* _instance;
-  Tcl_Interp* _interp;
+  static ScriptEngine* _instance;  //!< The sington instance.
+  Tcl_Interp* _interp;             //!< The tcl interpreter.
 };

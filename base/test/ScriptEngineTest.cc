@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 
 TEST(TclTest, ctor) {
-  ScriptEngine* my_engine = ScriptEngine::GetOrCreateInstance();
+  ScriptEngine* my_engine = ScriptEngine::getOrCreateInstance();
   ASSERT_TRUE(my_engine);
-  ScriptEngine::DestroyInstance();
+  ScriptEngine::destroyInstance();
 }
