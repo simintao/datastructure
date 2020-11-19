@@ -27,8 +27,8 @@ ENDIF(TCL_FOUND)
 ADD_SUBDIRECTORY(log)
 ADD_SUBDIRECTORY(tcl)
 
-LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/glog/)
 LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/gflags/)
+LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/glog/)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE(STATUS "Now is windows")
@@ -90,11 +90,17 @@ IF (BASE_RUN_TESTS)
     AUX_SOURCE_DIRECTORY(./test SourceFiles)
     ADD_EXECUTABLE(base_test ${SourceFiles})
 
-    SET(MyLibs base_log base_tcl)
+    SET(MyLibs base_log base_tcl glog gflags unwind)
 
     FILE(GLOB SO_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/abseil/lib/unix/*.so 
     )
+
+    FILE(GLOB GLOG_SO_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/glog/lib*
+    )
+
+    message(STATUS ${GLOG_SO_FILES})
 
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
@@ -104,6 +110,7 @@ IF (BASE_RUN_TESTS)
         ADD_CUSTOM_COMMAND(TARGET base_test
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLOG_SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
     )
         endif()
     ELSE ()
@@ -114,6 +121,7 @@ IF (BASE_RUN_TESTS)
         ADD_CUSTOM_COMMAND(TARGET base_test
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLOG_SO_FILES} ${CMAKE_CURRENT_BINARY_DIR}/
     )
         endif()
     ENDIF ()
