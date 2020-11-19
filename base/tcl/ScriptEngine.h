@@ -37,6 +37,6 @@ class ScriptEngine {
   const char* getResult();
 
  private:
-  static ScriptEngine* _instance;  //!< The sington instance.
+  static ScriptEngine* _instance;  //!< The singleton instance.
   Tcl_Interp* _interp;             //!< The tcl interpreter.
 };
