@@ -37,9 +37,15 @@ TEST(VectorTest, Pop) {
   ev.push_back(2);
   ev.push_back(3);
   ev.pop_back();
+
   for (pcl::Vector<int>::const_iterator it = ev.begin(); it != ev.end(); ++it) {
     std::cout << *it << std::endl;
   }
+  std::cout << "the size = " << ev.size() << std::endl;
+  ev.resize(100);
+  std::cout << "after resize,the size = " << ev.size() << std::endl;
+  ev.shrink_to_fit();
+  std::cout << "after resize,the size = " << ev.size() << std::endl;
 }
 TEST(VectorTest, Empty) {
   pcl::Vector<int> ev;
@@ -48,11 +54,12 @@ TEST(VectorTest, Empty) {
   }
   bool flag = ev.empty();
   int size = ev.size();
+  int max_size = ev.max_size();
   int capacity = ev.capacity();
   std::cout << flag << std::endl;
-  
-  std::cout << size << std::endl;
-  std::cout << capacity << std::endl;
+  std::cout << "max size = " << max_size << std::endl;
+  std::cout << "size = " << size << std::endl;
+  std::cout << "capacity = " << capacity << std::endl;
 }
 TEST(VectorTest, operator) {
   pcl::Vector<int> ev1;
@@ -139,10 +146,17 @@ TEST(VectorTest, maxNum) {
   }
   pcl::Vector<int> ev1;
   for (int i = 0; i < 5; ++i) {
-    ev.push_back(i + 2);
+    ev1.push_back(i + 2);
   }
   for (pcl::Vector<int>::reverse_iterator it5 = ev1.rbegin(); it5 != ev1.rend();
        ++it5) {
+    std::cout << *it5 << std::endl;
+  }
+  ev1.assign(5, 666);
+  ev1.emplace(ev1.begin(), 555);
+  ev1.erase(ev1.begin() + 1);
+  for (pcl::Vector<int>::const_reverse_iterator it5 = ev1.crbegin();
+       it5 != ev1.crend(); ++it5) {
     std::cout << *it5 << std::endl;
   }
 }
