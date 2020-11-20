@@ -103,8 +103,6 @@ IF (BASE_RUN_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/glog/lib*
     )
 
-    message(STATUS ${GLOG_SO_FILES})
-
     IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
         TARGET_LINK_LIBRARIES(base_test gmock_maind gtestd gmockd ${AbslLibs} ${MyLibs})
