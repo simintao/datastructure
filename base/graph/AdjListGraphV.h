@@ -28,7 +28,7 @@ class Graph {
   std::queue<int> que;
 
  public:
-  Graph(int numVer);
+  explicit Graph(int numVer);
   void createGraph(int tail, int head, int weight);
   ~Graph();
   int getNumVer() { return numVer; }
